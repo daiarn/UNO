@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2C65BC78-55A8-4DB6-9D11-3E7E2B9C985E}</ProjectGuid>
+    <ProjectGuid>{A49F77E8-7ABA-41A6-B3C3-865114E2FEDB}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>UNO</RootNamespace>
     <AssemblyName>UNO</AssemblyName>

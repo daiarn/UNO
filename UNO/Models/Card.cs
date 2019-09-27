@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UNO.Models
 {
-    class Card
+    public class Card
     {
         private Color color { get; set; }
         private String icon { get; set; }

@@ -8,9 +8,22 @@ namespace UNO.Models
 {
     class Game
     {
-        private DateTime gameTime { get; set; }
-        private Boolean flowClockWise { get; set; }
-        private Deck deck { get; set; }
+        public DateTime gameTime { get; set; }
+        public Boolean flowClockWise { get; set; }
+        public Deck deck { get; set; }
+        public Deck usedDeck { get; set; }
 
+        private static Game instance = null;
+        private Game() {}
+
+        public static Game getInstance()
+        {
+            if (instance == null)
+            {
+                instance = new Game();
+            }
+
+            return instance;
+        }
     }
 }

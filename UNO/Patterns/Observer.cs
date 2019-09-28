@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace UNO.Models
 {
-    public class Card
+    public abstract class Observer
     {
-        private Color color { get; set; }
-        private String icon { get; set; }
+        protected Game Game;
+        public abstract void Update(Card card);
     }
 }

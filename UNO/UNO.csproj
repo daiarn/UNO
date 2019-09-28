@@ -65,6 +65,7 @@
     <Compile Include="Models\Hand.cs" />
     <Compile Include="Strategy\MultipleDeckStrategy.cs" />
     <Compile Include="Models\NumberCard.cs" />
+    <Compile Include="Patterns\Observer.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\ReverseCard.cs" />
     <Compile Include="Strategy\SingleDectStrategy.cs" />

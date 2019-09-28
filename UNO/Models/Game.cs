@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UNO.Strategy;
 
 namespace UNO.Models
 {
@@ -13,17 +14,27 @@ namespace UNO.Models
         public Deck deck { get; set; }
         public Deck usedDeck { get; set; }
 
-        private static Game instance = null;
-        private Game() {}
+        public GameModeStrategy strategy { get; set; }
 
-        public static Game getInstance()
+        private static Game instance = null;
+        private Game(GameModeStrategy strategy)
+        {
+            this.strategy = strategy;
+        }
+
+        public static Game getInstance(GameModeStrategy strategy = null)
         {
             if (instance == null)
             {
-                instance = new Game();
+                instance = new Game(strategy);
             }
 
             return instance;
+        }
+
+        public Deck getDeck()
+        {
+            return strategy.getDect(this.deck, this.usedDeck);
         }
     }
 }

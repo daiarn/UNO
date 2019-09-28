@@ -8,7 +8,24 @@ namespace UNO.Models
 {
     public class Card
     {
-        private Color color { get; set; }
-        private String icon { get; set; }
+        private string color { get; set; }
+        //private String icon { get; set; }
+
+        public Card(string color)
+        {
+            Color = color;
+        }
+
+        public double Color
+        {
+            get
+            {
+                return color;
+            }
+            set
+            {
+                color = value < 0 ? -value : value;
+            }
+        }
     }
 }

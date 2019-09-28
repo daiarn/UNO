@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UNO.Models
+namespace UNO.Controllers
 {
-    class Deck
+    class DefaultController
     {
-        public Card[] cards { get; set; }
-
-
+        //some kinda of magic goes here
     }
 }

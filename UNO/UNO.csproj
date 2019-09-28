@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,11 +61,14 @@
     <Compile Include="Models\Draw2Card.cs" />
     <Compile Include="Models\Draw4Card.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Strategy\GameModeStrategy.cs" />
     <Compile Include="Models\Hand.cs" />
+    <Compile Include="Strategy\MultipleDeckStrategy.cs" />
     <Compile Include="Models\NumberCard.cs" />
     <Compile Include="Patterns\Observer.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\ReverseCard.cs" />
+    <Compile Include="Strategy\SingleDectStrategy.cs" />
     <Compile Include="Models\SkipCard.cs" />
     <Compile Include="Models\WildCard.cs" />
     <Compile Include="Program.cs" />
@@ -94,8 +98,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

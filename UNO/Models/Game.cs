@@ -11,24 +11,24 @@ namespace UNO.Models
     {
         public DateTime gameTime { get; set; }
         public Boolean flowClockWise { get; set; }
-        public Deck deck { get; set; }
-        public Deck usedDeck { get; set; }
+        public Deck Deck { get; set; }
+        public Deck UsedDeck { get; set; }
       
         private readonly Observer[] observers;
         private int observersCount;
       
-        public GameModeStrategy strategy { get; set; }
+        public GameModeStrategy Strategy { get; set; }
       
         private static Game instance = null;
       
         private Game(GameModeStrategy strategy)
         {
-            this.strategy = strategy;
+            this.Strategy = strategy;
             observers = new Observer[10];
             observersCount = 0;
         }
 
-        public static Game getInstance(GameModeStrategy strategy = null)
+        public static Game GetInstance(GameModeStrategy strategy = null)
         {
             if (instance == null)
             {
@@ -38,9 +38,9 @@ namespace UNO.Models
             return instance;
         }
 
-        public Deck getDeck()
+        public Deck GetDeck()
         {
-            return strategy.getDect(this.deck, this.usedDeck);
+            return Strategy.getDect(this.Deck, this.UsedDeck);
         }
       
         public void AttachObserver(Observer observer)

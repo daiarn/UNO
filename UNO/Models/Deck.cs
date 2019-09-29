@@ -6,10 +6,18 @@ using System.Threading.Tasks;
 
 namespace UNO.Models
 {
-    class Deck
+    public class Deck
     {
         public Card[] cards { get; set; }
 
+        public void RemoveActionAndWildCards()
+        {
+            //remove cards
+        }
 
+        public void RemoveWildAndNumberCards()
+        {
+            //remove cards
+        }
     }
 }

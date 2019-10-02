@@ -61,6 +61,7 @@
     <Compile Include="Models\Draw2Card.cs" />
     <Compile Include="Models\Draw4Card.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Strategy\AllActionCardDeckStrategy.cs" />
     <Compile Include="Strategy\GameModeStrategy.cs" />
     <Compile Include="Models\Hand.cs" />
     <Compile Include="Strategy\MultipleDeckStrategy.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Patterns\Observer.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\ReverseCard.cs" />
+    <Compile Include="Strategy\OnlyNumbersDeckStrategy.cs" />
     <Compile Include="Strategy\SingleDectStrategy.cs" />
     <Compile Include="Models\SkipCard.cs" />
     <Compile Include="Models\WildCard.cs" />

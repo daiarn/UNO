@@ -7,7 +7,7 @@ using UNO.Models;
 
 namespace UNO.Strategy
 {
-    interface GameModeStrategy
+    public interface GameModeStrategy
     {
         Deck getDect(Deck playDeck, Deck usedDeck);
     }

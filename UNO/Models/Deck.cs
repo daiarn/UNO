@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UNO.Models
 {
-	class Deck
+	public class Deck
 	{
 		private List<Card> cards { get; set; }
 
@@ -31,5 +31,16 @@ namespace UNO.Models
 
 			cards = arr.ToList();
 		}
+    
+
+    public void RemoveActionAndWildCards()
+    {
+        //remove cards
+    }
+
+    public void RemoveWildAndNumberCards()
+    {
+        //remove cards
+    }
 	}
 }

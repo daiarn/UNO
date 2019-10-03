@@ -61,6 +61,7 @@
     <Compile Include="Models\Draw2Card.cs" />
     <Compile Include="Models\Draw4Card.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Patterns\DeckBuilder.cs" />
     <Compile Include="Strategy\AllActionCardDeckStrategy.cs" />
     <Compile Include="Strategy\GameModeStrategy.cs" />
     <Compile Include="Models\Hand.cs" />

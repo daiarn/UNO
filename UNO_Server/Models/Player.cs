@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace UNO.Models
 {
-    class Player : Observer
+    class Player
     {
         private String username { get; set; }
 
         private Hand hand { get; set; }
 
-        public override void Update(Card card)
-        {
-            throw new NotImplementedException();
-        }
+        //public override void Update(Card card)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3755495E-9128-4E2B-8496-3D65A61FBC80}</ProjectGuid>
+    <ProjectGuid>{238AE429-D881-488A-8123-3286B2BC32D6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>UNO</RootNamespace>
-    <AssemblyName>UNO</AssemblyName>
+    <RootNamespace>UNO_Client</RootNamespace>
+    <AssemblyName>UNO_Client</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -46,39 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\ActionCard.cs" />
-    <Compile Include="Models\Card.cs" />
-    <Compile Include="Models\Color.cs" />
-    <Compile Include="Models\ColorChangeCard.cs" />
-    <Compile Include="Models\Deck.cs" />
-    <Compile Include="Models\Draw2Card.cs" />
-    <Compile Include="Models\Draw4Card.cs" />
-    <Compile Include="Models\Game.cs" />
-    <Compile Include="Patterns\DeckBuilder.cs" />
-    <Compile Include="Strategy\AllActionCardDeckStrategy.cs" />
-    <Compile Include="Strategy\GameModeStrategy.cs" />
-    <Compile Include="Models\Hand.cs" />
-    <Compile Include="Strategy\MultipleDeckStrategy.cs" />
-    <Compile Include="Models\NumberCard.cs" />
-    <Compile Include="Patterns\Observer.cs" />
-    <Compile Include="Models\Player.cs" />
-    <Compile Include="Models\ReverseCard.cs" />
-    <Compile Include="Strategy\OnlyNumbersDeckStrategy.cs" />
-    <Compile Include="Strategy\SingleDectStrategy.cs" />
-    <Compile Include="Models\SkipCard.cs" />
-    <Compile Include="Models\WildCard.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -101,6 +76,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

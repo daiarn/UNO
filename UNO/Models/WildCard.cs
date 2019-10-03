@@ -8,11 +8,5 @@ namespace UNO.Models
 {
     class WildCard : ColorChangeCard
     {
-        private string wildType;
-        public WildCard(string col, string wild)
-        {
-            this.wildType = wild;
-            color = col;
-        }
     }
 }

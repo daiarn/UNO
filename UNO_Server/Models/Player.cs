@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace UNO.Models
+{
+    class Player : Observer
+    {
+        private String username { get; set; }
+
+        private Hand hand { get; set; }
+
+        public override void Update(Card card)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

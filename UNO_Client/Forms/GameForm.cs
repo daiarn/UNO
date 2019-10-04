@@ -22,7 +22,7 @@ namespace UNO_Client.Forms
 
         }
 
-        private void Skip_Click(object sender, EventArgs e)
+        private void GiveUp_Click(object sender, EventArgs e)
         {
 
         }

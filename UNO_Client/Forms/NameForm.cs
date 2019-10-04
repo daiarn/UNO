@@ -19,7 +19,18 @@ namespace UNO_Client.Forms
 
         private void Login_Click(object sender, EventArgs e)
         {
-            
+            string playerName = Nick_textBox.Text;
+            //do post
+        }
+
+        private void NameForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Nick_textBox_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

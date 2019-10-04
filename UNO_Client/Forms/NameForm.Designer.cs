@@ -36,24 +36,28 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(163, 142);
+            this.label1.Location = new System.Drawing.Point(122, 115);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 17);
+            this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Nick";
             // 
             // Nick_textBox
             // 
-            this.Nick_textBox.Location = new System.Drawing.Point(166, 173);
+            this.Nick_textBox.Location = new System.Drawing.Point(124, 141);
+            this.Nick_textBox.Margin = new System.Windows.Forms.Padding(2);
             this.Nick_textBox.Name = "Nick_textBox";
-            this.Nick_textBox.Size = new System.Drawing.Size(158, 22);
+            this.Nick_textBox.Size = new System.Drawing.Size(120, 20);
             this.Nick_textBox.TabIndex = 1;
+            this.Nick_textBox.TextChanged += new System.EventHandler(this.Nick_textBox_TextChanged);
             // 
             // Login
             // 
-            this.Login.Location = new System.Drawing.Point(166, 313);
+            this.Login.Location = new System.Drawing.Point(124, 254);
+            this.Login.Margin = new System.Windows.Forms.Padding(2);
             this.Login.Name = "Login";
-            this.Login.Size = new System.Drawing.Size(158, 74);
+            this.Login.Size = new System.Drawing.Size(118, 60);
             this.Login.TabIndex = 2;
             this.Login.Text = "Login";
             this.Login.UseVisualStyleBackColor = true;
@@ -61,14 +65,16 @@
             // 
             // NameForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(503, 450);
+            this.ClientSize = new System.Drawing.Size(377, 366);
             this.Controls.Add(this.Login);
             this.Controls.Add(this.Nick_textBox);
             this.Controls.Add(this.label1);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "NameForm";
             this.Text = "NameForm";
+            this.Load += new System.EventHandler(this.NameForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

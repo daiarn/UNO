@@ -3,15 +3,16 @@
 
 namespace UNO.Models
 {
-	enum GamePhase
+	public enum GamePhase
 	{
 		WaitingForPlayers, Playing, Finished
 	}
 
 	public class Game
     {
-		private GamePhase phase;
+		public GamePhase phase;
         public DateTime gameTime { get; set; }
+		public bool finiteDeck = false;
 
         public bool flowClockWise { get; set; }
         public Deck drawPile { get; set; }
@@ -45,13 +46,31 @@ namespace UNO.Models
 			numPlayers++;
 		}
 
-		public void RemovePlayer(int index)
+		public void DeletePlayer(int index)
 		{
+			if (index < 0 || index > numPlayers) return;
+
 			var temp = players[numPlayers];
 			temp.id = index;
 			players[index] = temp;
 			players[numPlayers] = null;
 			numPlayers--;
+		}
+
+		public void EliminatePlayer(int index)
+		{
+			if (index < 0 || index > numPlayers) return;
+
+			var player = players[numPlayers];
+			player.isPlaying = false;
+			// TODO: check if it's that player's turn (also check if it's game over)
+		}
+
+		public Player GetPlayerById(int id)
+		{
+			if (id < 0 || id > numPlayers) return null;
+			if (players[id].isPlaying) return players[id];
+			return null;
 		}
 
 		public int GetActivePlayers()
@@ -65,7 +84,22 @@ namespace UNO.Models
 			return count;
 		}
 
-		// other methods
+		// card related methods
+
+		public static bool CanCardBePlayed(Card activeCard, Card playerCard)
+		{
+			if (playerCard.color == Color.Black) return true;
+
+			if (activeCard.color == playerCard.color) return true;
+			//if (activeCard.color == card.color) return true; // TODO: check card action/number
+
+			return false;
+		}
+
+		public bool CanCardBePlayed(Card playerCard)
+		{
+			return Game.CanCardBePlayed(discardPile.PeekBottomCard(), playerCard);
+		}
 
 		public Card FromDrawPile() // safely draws from the draw pile following the reset rules
 		{
@@ -75,7 +109,7 @@ namespace UNO.Models
 			}
 			else
 			{
-				if (true) // TODO: infinite draw pile attribute/property/variable
+				if (!finiteDeck) // TODO: infinite draw pile attribute/property/variable
 				{
 					var activeCard = discardPile.DrawBottomCard();
 
@@ -90,5 +124,34 @@ namespace UNO.Models
 					return null;
 			}
 		}
-    }
+
+		public void PlayCard(Card card)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DrawCard()
+		{
+			throw new NotImplementedException();
+		}
+
+		// other gameplay methods
+
+		public void StartGame(bool finiteDeck = false, bool onlyNumbers = false)
+		{
+			phase = GamePhase.Playing;
+			activePlayer = 0;
+
+			discardPile = new Deck();
+			drawPile = new Deck(); // use builder here to create deck
+
+			for (int j = 0; j < numPlayers; j++)
+			{
+				for (int i = 0; i < 7; i++) // each player draws 7 cards
+				{
+					players[i].hand.Add(FromDrawPile());
+				}
+			}
+		}
+	}
 }

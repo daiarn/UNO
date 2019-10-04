@@ -59,6 +59,11 @@ namespace UNO.Models
 				return null;
 		}
 
+		public Card PeekBottomCard()
+		{
+			return cards.Last();
+		}
+
 		public int GetCount()
 		{
 			return cards.Count;

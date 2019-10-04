@@ -19,5 +19,15 @@ namespace UNO.Models
 			this.name = name;
 			hand = new Hand();
 		}
-    }
+
+		public bool CanPlayAnyOn(Card activeCard)
+		{
+			for (int i = 0; i < hand.Count(); i++)
+			{
+				var playerCard = hand.getCard(i);
+				if (Game.CanCardBePlayed(activeCard, playerCard)) return true;
+			}
+			return false;
+		}
+	}
 }

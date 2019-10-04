@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace UNO.Models
 {
@@ -24,6 +25,16 @@ namespace UNO.Models
 		public void Remove(Card card)
 		{
 			cards.Remove(card);
+		}
+
+		public bool Contains(Card card)
+		{
+			return cards.Contains(card);
+		}
+
+		public Card getCard(int i)
+		{
+			return cards[i];
 		}
 	}
 }

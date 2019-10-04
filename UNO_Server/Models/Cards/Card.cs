@@ -9,7 +9,7 @@ namespace UNO.Models
 
     public abstract class Card
     {
-        private Color color { get; set; }
+        public Color color { get; set; }
         //private String icon { get; set; }
 
         public Card(Color color)

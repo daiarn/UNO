@@ -16,5 +16,12 @@ namespace UNO_Client.Forms
         {
             InitializeComponent();
         }
+
+        private void BackStatistics_Click(object sender, EventArgs e)
+        {
+            //go back to menu
+        }
+
+        //Metodas kuris getina žaidėjo statistiką ir priskiria laukams. Neturim klasės kuri saugotų statistiką.
     }
 }

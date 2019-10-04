@@ -9,9 +9,8 @@ namespace UNO_Server.Controllers
     public class GameController : ControllerBase
     {
 		// GET api/game
-		// returns game state
 		[HttpGet]
-		public ActionResult<IEnumerable<string>> Get()
+		public ActionResult Get()
 		{
 			return new JsonResult(new
 			{
@@ -21,23 +20,31 @@ namespace UNO_Server.Controllers
 					discardPile = new
 					{
 						count = 2,
-						activeCard = new { color = Color.Blue, type = "number", value = 5 }
+						activeCard = new { color = Color.Blue, value = "5" }
 					},
 					drawPile = new { count = 15 },
+					activePlayer = 1,
 					players = new[]
 					{
-						new { count = 4 },
-						new { count = 5 },
-						new { count = 2 },
-						new { count = 4 }
+						new { name = "alpha", count = 4, isPlaying = true },
+						new { name = "bravo", count = 5, isPlaying = true },
+						new { name = "charlie", count = 2, isPlaying = true },
+						new { name = "delta", count = 4, isPlaying = true }
 					},
 					hand = new[]
 					{
-						new { color = Color.Blue, type = "number", value = 5 },
-						new { color = Color.Green, type = "number", value = 4 }
+						new { color = Color.Blue, value = "5" },
+						new { color = Color.Green, value = "skip" }
 					}
 				}
 			});
+		}
+
+		// GET api/game/5
+		[HttpGet("{id}")]
+		public ActionResult Get(int id)
+		{
+			return new JsonResult(new { success = true, id = id });
 		}
 	}
 }

@@ -6,15 +6,18 @@ using System.Threading.Tasks;
 
 namespace UNO.Models
 {
-    class Player
+    public class Player
     {
-        private String username { get; set; }
+		public int id;
+        public string name { get; set; }
+        public Hand hand { get; set; }
+		public bool isPlaying = false; // has already won or quit
 
-        private Hand hand { get; set; }
-
-        //public override void Update(Card card)
-        //{
-        //    throw new NotImplementedException();
-        //}
+		public Player(int id, string name)
+		{
+			this.id = id;
+			this.name = name;
+			hand = new Hand();
+		}
     }
 }

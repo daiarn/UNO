@@ -101,6 +101,61 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Assets\UnoCards\b0.png" />
+    <Content Include="Assets\UnoCards\b1.png" />
+    <Content Include="Assets\UnoCards\b2.png" />
+    <Content Include="Assets\UnoCards\b3.png" />
+    <Content Include="Assets\UnoCards\b4.png" />
+    <Content Include="Assets\UnoCards\b5.png" />
+    <Content Include="Assets\UnoCards\b6.png" />
+    <Content Include="Assets\UnoCards\b7.png" />
+    <Content Include="Assets\UnoCards\b8.png" />
+    <Content Include="Assets\UnoCards\b9.png" />
+    <Content Include="Assets\UnoCards\bp.png" />
+    <Content Include="Assets\UnoCards\br.png" />
+    <Content Include="Assets\UnoCards\bs.png" />
+    <Content Include="Assets\UnoCards\c.png" />
+    <Content Include="Assets\UnoCards\g0.png" />
+    <Content Include="Assets\UnoCards\g1.png" />
+    <Content Include="Assets\UnoCards\g2.png" />
+    <Content Include="Assets\UnoCards\g3.png" />
+    <Content Include="Assets\UnoCards\g4.png" />
+    <Content Include="Assets\UnoCards\g5.png" />
+    <Content Include="Assets\UnoCards\g6.png" />
+    <Content Include="Assets\UnoCards\g7.png" />
+    <Content Include="Assets\UnoCards\g8.png" />
+    <Content Include="Assets\UnoCards\g9.png" />
+    <Content Include="Assets\UnoCards\gp.png" />
+    <Content Include="Assets\UnoCards\gr.png" />
+    <Content Include="Assets\UnoCards\gs.png" />
+    <Content Include="Assets\UnoCards\p4.png" />
+    <Content Include="Assets\UnoCards\r0.png" />
+    <Content Include="Assets\UnoCards\r1.png" />
+    <Content Include="Assets\UnoCards\r2.png" />
+    <Content Include="Assets\UnoCards\r3.png" />
+    <Content Include="Assets\UnoCards\r4.png" />
+    <Content Include="Assets\UnoCards\r5.png" />
+    <Content Include="Assets\UnoCards\r6.png" />
+    <Content Include="Assets\UnoCards\r7.png" />
+    <Content Include="Assets\UnoCards\r8.png" />
+    <Content Include="Assets\UnoCards\r9.png" />
+    <Content Include="Assets\UnoCards\rp.png" />
+    <Content Include="Assets\UnoCards\rr.png" />
+    <Content Include="Assets\UnoCards\rs.png" />
+    <Content Include="Assets\UnoCards\y0.png" />
+    <Content Include="Assets\UnoCards\y1.png" />
+    <Content Include="Assets\UnoCards\y2.png" />
+    <Content Include="Assets\UnoCards\y3.png" />
+    <Content Include="Assets\UnoCards\y4.png" />
+    <Content Include="Assets\UnoCards\y5.png" />
+    <Content Include="Assets\UnoCards\y6.png" />
+    <Content Include="Assets\UnoCards\y7.png" />
+    <Content Include="Assets\UnoCards\y8.png" />
+    <Content Include="Assets\UnoCards\y9.png" />
+    <Content Include="Assets\UnoCards\yp.png" />
+    <Content Include="Assets\UnoCards\yr.png" />
+    <Content Include="Assets\UnoCards\ys.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

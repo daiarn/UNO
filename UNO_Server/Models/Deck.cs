@@ -35,7 +35,7 @@ namespace UNO.Models
 			cards.Add(card);
 		}
 
-		public Card DrawTopCard() // removes card from deck and returns said card
+		public Card DrawTopCard()
 		{
 			if (cards.Count > 0)
 			{
@@ -47,7 +47,7 @@ namespace UNO.Models
 				return null;
 		}
 
-		public Card DrawBottomCard() // removes card from deck and returns said card
+		public Card DrawBottomCard()
 		{
 			if (cards.Count > 0)
 			{

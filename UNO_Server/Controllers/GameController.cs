@@ -253,7 +253,7 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			else if (!player.CanPlayAnyOn(game.discardPile.PeekBottomCard()))
+			else if (!game.CanPlayerPlayAnyOn(player))
 			{
 				return new JsonResult(new
 				{

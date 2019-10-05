@@ -1,5 +1,4 @@
 ﻿using System;
-//using UNO.Strategy;
 
 namespace UNO.Models
 {
@@ -23,7 +22,7 @@ namespace UNO.Models
 		public int activePlayer; // player whose turn it is
 
         private static readonly Game instance = new Game();
-      
+
         private Game()
         {
 			phase = GamePhase.WaitingForPlayers;
@@ -84,10 +83,24 @@ namespace UNO.Models
 			return count;
 		}
 
+		// player & card method
+
+		public bool CanPlayerPlayAnyOn(Player player)
+		{
+			var activeCard = discardPile.PeekBottomCard();
+			for (int i = 0; i < player.hand.Count(); i++)
+			{
+				var playerCard = player.hand.getCard(i);
+				if (CanCardBePlayed(activeCard, playerCard)) return true;
+			}
+			return false;
+		}
+
 		// card related methods
 
 		public static bool CanCardBePlayed(Card activeCard, Card playerCard)
 		{
+			if (activeCard == null) return true; // wait, what? how did this happen? we're smarter than this
 			if (playerCard.color == Color.Black) return true;
 
 			if (activeCard.color == playerCard.color) return true;
@@ -109,7 +122,7 @@ namespace UNO.Models
 			}
 			else
 			{
-				if (!finiteDeck) // TODO: infinite draw pile attribute/property/variable
+				if (!finiteDeck)
 				{
 					var activeCard = discardPile.DrawBottomCard();
 
@@ -152,6 +165,8 @@ namespace UNO.Models
 					players[i].hand.Add(FromDrawPile());
 				}
 			}
+
+			discardPile.AddToBottom(FromDrawPile());
 		}
 	}
 }

@@ -10,9 +10,13 @@ namespace UNO_Client.Models
 {
     class Card
     {
-        public string Color { get; set; }
-        public string Value { get; set; }
-        public string Image { get; set; }
+        string color;
+        string value;
+        string image;
+
+        public string Color { get => color; set => color = value; }
+        public string Value { get => value; set => this.value = value; }
+        public string Image { get => image; set => image = value; }
 
         public Bitmap GetImage()
         {

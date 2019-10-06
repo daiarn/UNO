@@ -4,15 +4,15 @@ namespace UNO.Models
 {
 	public enum CardColor
 	{
-		Red, Yellow, Green, Blue, Black
+		Black, Red, Yellow, Green, Blue
 	}
 
 	public enum CardType
 	{
-		One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Zero, Skip, Reverse, Draw2, Wild, Draw4
+		Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Skip, Reverse, Draw2, Wild, Draw4
 	}
 
-    public class Card
+    public class Card : IEquatable<Card>
     {
 		public CardColor color;
 		public CardType type;
@@ -24,6 +24,11 @@ namespace UNO.Models
             this.type = type;
             this.strategy = strategy;
         }
+
+		public bool Equals(Card other)
+		{
+			return color == other.color && type == other.type;
+		}
 
 		public int getScore()
 		{

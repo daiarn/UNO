@@ -61,7 +61,7 @@ namespace UNO.Models
 
 		public Card PeekBottomCard()
 		{
-			return cards.Last();
+			return cards.LastOrDefault();
 		}
 
 		public int GetCount()

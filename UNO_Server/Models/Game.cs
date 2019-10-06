@@ -1,4 +1,5 @@
 ﻿using System;
+using UNO_Server.Utility;
 
 namespace UNO.Models
 {
@@ -7,29 +8,38 @@ namespace UNO.Models
 		WaitingForPlayers, Playing, Finished
 	}
 
-    public class Game
+	public enum ExpectedPlayerAction
+	{
+		DrawCard, PlayCard, SayUNO
+	}
+
+	public class Game
     {
-        public GamePhase phase;
+		public GamePhase phase;
         public DateTime gameTime { get; set; }
-        public bool finiteDeck = false;
+		public bool finiteDeck = false;
 
         public bool flowClockWise { get; set; }
         public Deck drawPile { get; set; }
         public Deck discardPile { get; set; }
 
-        public Player[] players;
-        public int numPlayers;
-        public Player activePlayer; // player whose turn it is
-        public Player nextPlayer;
+		public Player[] players;
+		public int numPlayers;
+
+		public int activePlayer; // player whose turn it is
+		public ExpectedPlayerAction expectedAction;
 
         private static readonly Game instance = new Game();
 
         private Game()
         {
-            phase = GamePhase.WaitingForPlayers;
-            players = new Player[10];
+			phase = GamePhase.WaitingForPlayers;
+			players = new Player[10];
+			numPlayers = 0;
 
-            // something?
+			discardPile = new Deck();
+			drawPile = new Deck();
+			// something?
         }
 
         public static Game GetInstance()
@@ -37,142 +47,184 @@ namespace UNO.Models
             return instance;
         }
 
-        // player methods
+		// player methods
 
-        public void AddPlayer(string name)
-        {
-            int index = numPlayers;
-            players[index] = new Player(index, name);
-            numPlayers++;
-        }
+		public Guid AddPlayer(string name)
+		{
+			int index = numPlayers;
+			players[index] = new Player(name);
+			numPlayers++;
+			return players[index].id;
+		}
 
-        public void DeletePlayer(int index)
-        {
-            if (index < 0 || index > numPlayers) return;
+		private int GetPlayerIdByUUID(Guid id)
+		{
+			for (int i = 0; i < players.Length; i++)
+			{
+				if (players[i].id == id) return i;
+			}
+			return -1;
+		}
 
-            var temp = players[numPlayers];
-            temp.id = index;
-            players[index] = temp;
-            players[numPlayers] = null;
-            numPlayers--;
-        }
+		public void DeletePlayer(Guid id)
+		{
+			var index = GetPlayerIdByUUID(id);
+			if (index < 0 || index > numPlayers) return;
 
-        public void EliminatePlayer(int index)
-        {
-            if (index < 0 || index > numPlayers) return;
+			var temp = players[numPlayers];
+			players[index] = temp;
+			players[numPlayers] = null;
+			numPlayers--;
+		}
 
-            var player = players[numPlayers];
-            player.isPlaying = false;
-            // TODO: check if it's that player's turn (also check if it's game over)
-        }
+		public void EliminatePlayer(Guid id)
+		{
+			var index = GetPlayerIdByUUID(id);
+			if (index < 0 || index > numPlayers) return;
 
-        public Player GetPlayerById(int id)
-        {
-            if (id < 0 || id > numPlayers) return null;
-            if (players[id].isPlaying) return players[id];
-            return null;
-        }
+			var player = players[numPlayers];
+			player.isPlaying = false;
+			// TODO: check if it's that player's turn (also check if it's game over)
+		}
 
-        public int GetActivePlayers()
-        {
-            int count = 0;
-            for (int i = 0; i < numPlayers; i++)
-            {
-                if (players[i].isPlaying)
-                    count++;
-            }
-            return count;
-        }
+		public Player GetPlayerById(Guid id)
+		{
+			foreach (var player in players)
+				if (player != null && player.id == id) return player;
+			return null;
+		}
 
-        // player & card method
+		public int GetActivePlayers()
+		{
+			int count = 0;
+			for (int i = 0; i < numPlayers; i++)
+			{
+				if (phase != GamePhase.Playing || players[i].isPlaying)
+					count++;
+			}
+			return count;
+		}
 
-        public bool CanPlayerPlayAnyOn(Player player)
-        {
-            var activeCard = discardPile.PeekBottomCard();
-            for (int i = 0; i < player.hand.Count(); i++)
-            {
-                var playerCard = player.hand.getCard(i);
-                if (CanCardBePlayed(activeCard, playerCard)) return true;
-            }
-            return false;
-        }
+		// player & card method
 
-        // card related methods
+		public bool CanPlayerPlayAnyOn(Player player)
+		{
+			var activeCard = discardPile.PeekBottomCard();
+			for (int i = 0; i < player.hand.Count(); i++)
+			{
+				var playerCard = player.hand.GetCard(i);
+				if (CanCardBePlayed(activeCard, playerCard)) return true;
+			}
+			return false;
+		}
 
-        public static bool CanCardBePlayed(Card activeCard, Card playerCard)
-        {
-            if (activeCard == null) return true; // wait, what? how did this happen? we're smarter than this
-            if (playerCard.color == CardColor.Black) return true;
+		// card related methods
 
-            if (activeCard.color == playerCard.color) return true;
-            if (activeCard.type == playerCard.type) return true;
+		public static bool CanCardBePlayed(Card activeCard, Card playerCard)
+		{
+			if (activeCard == null) return true; // wait, what? how did this happen? we're smarter than this
+			if (playerCard.color == CardColor.Black) return true;
 
-            return false;
-        }
+			if (activeCard.color == playerCard.color) return true;
+			if (activeCard.type == playerCard.type) return true;
 
-        public bool CanCardBePlayed(Card playerCard)
-        {
-            return Game.CanCardBePlayed(discardPile.PeekBottomCard(), playerCard);
-        }
+			return false;
+		}
 
-        public Card FromDrawPile() // safely draws from the draw pile following the reset rules
-        {
-            if (drawPile.GetCount() > 0)
-            {
-                return drawPile.DrawTopCard();
-            }
-            else
-            {
-                if (!finiteDeck)
-                {
-                    var activeCard = discardPile.DrawBottomCard();
+		public bool CanCardBePlayed(Card playerCard)
+		{
+			return Game.CanCardBePlayed(discardPile.PeekBottomCard(), playerCard);
+		}
 
-                    drawPile = discardPile;
+		public Card FromDrawPile() // safely draws from the draw pile following the reset rules
+		{
+			if (drawPile.GetCount() > 0)
+			{
+				return drawPile.DrawTopCard();
+			}
+			else
+			{
+				if (!finiteDeck)
+				{
+					var activeCard = discardPile.DrawBottomCard();
 
-                    discardPile = new Deck();
-                    discardPile.AddToBottom(activeCard);
+					drawPile = discardPile;
 
-                    return drawPile.DrawTopCard();
-                }
-                else
-                    return null;
-            }
-        }
+					discardPile = new Deck();
+					discardPile.AddToBottom(activeCard);
 
-        public void SkipAction()
-        {
-            throw new NotImplementedException();
-        }
+					return drawPile.DrawTopCard();
+				}
+				else
+					return null;
+			}
+		}
 
-        public void PlayCard(Card card)
-        {
-            throw new NotImplementedException();
-        }
+		public void PlayCard(Player player, Card card)
+		{
+			player.hand.Remove(card);
+			discardPile.AddToBottom(card);
 
-        public void DrawCard()
-        {
-            throw new NotImplementedException();
-        }
+			switch (card.type)
+			{
+				case CardType.Skip:
+					throw new NotImplementedException();
+					break;
+				case CardType.Reverse:
+					throw new NotImplementedException();
+					break;
+				case CardType.Draw2:
+					throw new NotImplementedException();
+					break;
+				case CardType.Wild:
+					throw new NotImplementedException();
+					break;
+				case CardType.Draw4:
+					throw new NotImplementedException();
+					break;
+				default:// regular number card
+					// TODO: give turn to next player (if player doesn't need to say uno)
+					break;
+			}
+		}
 
-        // other gameplay methods
+		public void DrawCard(Player player)
+		{
+			var card = FromDrawPile();
+			if (card == null)
+				GameOver();
+			else
+				player.hand.Add(card);
 
-        public void StartGame(bool finiteDeck = false, bool onlyNumbers = false)
-        {
-            phase = GamePhase.Playing;
-            activePlayer = players[0];
+			// TODO: give turn to next player (if card cannot be played)
+		}
 
-            discardPile = new Deck();
-            drawPile = new Deck(); // use builder here to create deck
+		// other gameplay methods
 
-            for (int j = 0; j < numPlayers; j++)
-            {
-                for (int i = 0; i < 7; i++) // each player draws 7 cards
-                {
-                    players[i].hand.Add(FromDrawPile());
-                }
-            }
+		public void StartGame(bool finiteDeck = false, bool onlyNumbers = false)
+		{
+			phase = GamePhase.Playing;
+			activePlayer = 0;
 
-            discardPile.AddToBottom(FromDrawPile());
-        }
+			var builder = new DeckBuilder();
+			if (onlyNumbers) builder.setActionCards(0);
+			drawPile = builder.build();
+			discardPile = new Deck();
+
+			for (int i = 0; i < numPlayers; i++)
+			{
+				for (int j = 0; j < 7; j++) // each player draws 7 cards
+				{
+					players[i].hand.Add(FromDrawPile());
+				}
+			}
+
+			discardPile.AddToBottom(FromDrawPile());
+		}
+
+		public void GameOver()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

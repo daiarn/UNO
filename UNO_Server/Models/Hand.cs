@@ -32,7 +32,7 @@ namespace UNO.Models
 			return cards.Contains(card);
 		}
 
-		public Card getCard(int i)
+		public Card GetCard(int i)
 		{
 			return cards[i];
 		}

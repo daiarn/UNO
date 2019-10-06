@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using UNO.Models;
+using UNO_Server.Models;
 
 namespace UNO_Server.Controllers
 {
@@ -14,6 +17,15 @@ namespace UNO_Server.Controllers
 		[HttpGet]
 		public ActionResult Get() // for spectators maybe
 		{
+			var game = Game.GetInstance();
+
+			List<object> allPlayerData = new List<object>();
+			foreach (var player in game.players)
+			{
+				if (player == null) break;
+				allPlayerData.Add(new { name = player.name, count = player.hand.Count(), isPlaying = player.isPlaying });
+			}
+
 			return new JsonResult(new
 			{
 				success = true,
@@ -21,26 +33,21 @@ namespace UNO_Server.Controllers
 				{
 					discardPile = new
 					{
-						count = 2,
-						activeCard = new { color = Color.Blue, value = "5" }
+						count = game.discardPile.GetCount(),
+						activeCard = game.discardPile.PeekBottomCard()
 					},
-					drawPile = new { count = 15 },
-					activePlayer = 1,
-					players = new[]
-					{
-						new { name = "alpha", count = 4, isPlaying = true },
-						new { name = "bravo", count = 5, isPlaying = true },
-						new { name = "charlie", count = 2, isPlaying = true },
-						new { name = "delta", count = 4, isPlaying = true }
-					}
+					drawPile = new { count = game.drawPile.GetCount() },
+					activePlayer = game.activePlayer,
+					players = allPlayerData
 				}
 			});
 		}
 
 		// GET api/game/5
 		[HttpGet("{id}")]
-		public ActionResult Get(int id) // get gamestate of player
+		public ActionResult Get(PlayerData data) // get gamestate of player
 		{
+
 			return new JsonResult(new
 			{
 				success = true,
@@ -49,7 +56,7 @@ namespace UNO_Server.Controllers
 					discardPile = new
 					{
 						count = 2,
-						activeCard = new { color = Color.Blue, value = "5" }
+						activeCard = new { color = CardColor.Blue, type = CardType.Five }
 					},
 					drawPile = new { count = 15 },
 					activePlayer = 1,
@@ -62,18 +69,19 @@ namespace UNO_Server.Controllers
 					},
 					hand = new[]
 					{
-						new { color = Color.Blue, value = "5" },
-						new { color = Color.Green, value = "skip" }
-					}
+						new { color = CardColor.Blue, type = CardType.Four },
+						new { color = CardColor.Green, type = CardType.Skip }
+					},
+					player = Game.GetInstance().GetPlayerById(data.id)
 				}
 			});
 		}
 
 		// POST api/game/leave
-		[HttpPost("/leave")]
-		public ActionResult Leave() // player leaves/surrenders
+		[HttpPost("leave")]
+		public ActionResult Leave(PlayerData data) // player leaves/surrenders
 		{
-			int playerId = 2; // fake id for testing purposes for now
+			Guid playerId = data.id;
 
 			var game = Game.GetInstance();
 
@@ -83,10 +91,10 @@ namespace UNO_Server.Controllers
 				return new JsonResult(new { success = true });
 			}
 
-			// game is playing, be more careful
+			// TODO: more checks when game is playing
 
 			game.EliminatePlayer(playerId);
-			return new JsonResult(new { success = true, message = "You were in a game, but left anyway" });
+			return new JsonResult(new { success = true, message = "You were in an in-progress game, but left anyway" });
 		}
 
 		#endregion
@@ -94,11 +102,10 @@ namespace UNO_Server.Controllers
 		#region PRE-GAME PHASE
 
 		// POST api/game/join
-		[HttpPost("/join")]
-		public ActionResult Join() // new player joins the game
+		[HttpPost("join")]
+		public ActionResult Join(JoinData dta) // new player joins the game
 		{
-			var name = "Your name here"; // fake name for testing purposes for now 
-
+			var name = dta.name;
 			var game = Game.GetInstance();
 
 			if (game.phase != GamePhase.WaitingForPlayers)
@@ -118,13 +125,13 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			game.AddPlayer(name);
-			return new JsonResult(new { success = true });
+			Guid id = game.AddPlayer(name);
+			return new JsonResult(new { success = true, id = id });
 		}
 
 		// POST api/game/start
-		[HttpPost("/start")]
-		public ActionResult Start() // a player decides to start the game
+		[HttpPost("start")]
+		public ActionResult Start(StartData data) // a player decides to start the game
 		{
 			var game = Game.GetInstance();
 
@@ -147,7 +154,7 @@ namespace UNO_Server.Controllers
 
 			// that's probably enough checks
 
-			game.StartGame();
+			game.StartGame(data.finiteDeck, data.onlyNumbers);
 			return new JsonResult(new { success = true });
 		}
 
@@ -156,11 +163,11 @@ namespace UNO_Server.Controllers
 		#region GAMEPLAY PHASE
 
 		// POST api/game/play
-		[HttpPost("/play")]
-		public ActionResult Play() // player plays a card
+		[HttpPost("play")]
+		public ActionResult Play(PlayData data) // player plays a card
 		{
-			int playerId = 5; // fake id for testing purposes for now
-			var card = new NumberCard(Color.Blue, 4); // fake card for testing purposes for now
+			Guid playerId = data.id;
+			var card = new Card(data.color, data.type);
 
 			var game = Game.GetInstance();
 
@@ -183,7 +190,7 @@ namespace UNO_Server.Controllers
 					message = "Player doesn't exist or quit"
 				});
 			}
-			else if (game.activePlayer != playerId)
+			else if (game.players[game.activePlayer].id != playerId)
 			{
 				return new JsonResult(new
 				{
@@ -218,10 +225,10 @@ namespace UNO_Server.Controllers
 		}
 
 		// POST api/game/draw
-		[HttpPost("/draw")]
-		public ActionResult Draw() // player draws a card
+		[HttpPost("draw")]
+		public ActionResult Draw(PlayerData data) // player draws a card
 		{
-			int playerId = 5; // fake id for testing purposes for now
+			Guid playerId = data.id;
 
 			var game = Game.GetInstance();
 
@@ -244,7 +251,7 @@ namespace UNO_Server.Controllers
 					message = "Player doesn't exist or quit"
 				});
 			}
-			else if (game.activePlayer != playerId)
+			else if (game.players[game.activePlayer].id != playerId)
 			{
 				return new JsonResult(new
 				{
@@ -253,25 +260,15 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			else if (!game.CanPlayerPlayAnyOn(player))
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You can't play a card you don't have in your hand, you cheater"
-				});
-			}
-
 			//game.DrawCard();
 			return new JsonResult(new { success = true });
 		}
 
 		// POST api/game/uno
-		[HttpPost("/uno")]
-		public ActionResult Uno() // player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
+		[HttpPost("uno")]
+		public ActionResult Uno(PlayerData data) // player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
 		{
-			int playerId = 5; // fake id for testing purposes for now
-			//var card = new NumberCard(Color.Blue, 4); // fake card for testing purposes for now
+			Guid playerId = data.id;
 
 			var game = Game.GetInstance();
 
@@ -295,7 +292,7 @@ namespace UNO_Server.Controllers
 				});
 			}
 			/*
-			else if (game.activePlayer != playerId) // TODO: figure this out
+			else if (game.activePlayer != playerId)
 			{
 				return new JsonResult(new
 				{

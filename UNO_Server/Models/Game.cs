@@ -1,10 +1,16 @@
 ﻿using System;
+using UNO_Server.Utility;
 
 namespace UNO.Models
 {
 	public enum GamePhase
 	{
 		WaitingForPlayers, Playing, Finished
+	}
+
+	public enum ExpectedPlayerAction
+	{
+		DrawCard, PlayCard, SayUNO
 	}
 
 	public class Game
@@ -19,7 +25,9 @@ namespace UNO.Models
 
 		public Player[] players;
 		public int numPlayers;
+
 		public int activePlayer; // player whose turn it is
+		public ExpectedPlayerAction expectedAction;
 
         private static readonly Game instance = new Game();
 
@@ -38,26 +46,37 @@ namespace UNO.Models
 
 		// player methods
 
-		public void AddPlayer(string name)
+		public Guid AddPlayer(string name)
 		{
 			int index = numPlayers;
-			players[index] = new Player(index, name);
+			players[index] = new Player(name);
 			numPlayers++;
+			return players[index].id;
 		}
 
-		public void DeletePlayer(int index)
+		private int GetPlayerIdByUUID(Guid id)
 		{
+			for (int i = 0; i < players.Length; i++)
+			{
+				if (players[i].id == id) return i;
+			}
+			return -1;
+		}
+
+		public void DeletePlayer(Guid id)
+		{
+			var index = GetPlayerIdByUUID(id);
 			if (index < 0 || index > numPlayers) return;
 
 			var temp = players[numPlayers];
-			temp.id = index;
 			players[index] = temp;
 			players[numPlayers] = null;
 			numPlayers--;
 		}
 
-		public void EliminatePlayer(int index)
+		public void EliminatePlayer(Guid id)
 		{
+			var index = GetPlayerIdByUUID(id);
 			if (index < 0 || index > numPlayers) return;
 
 			var player = players[numPlayers];
@@ -65,10 +84,10 @@ namespace UNO.Models
 			// TODO: check if it's that player's turn (also check if it's game over)
 		}
 
-		public Player GetPlayerById(int id)
+		public Player GetPlayerById(Guid id)
 		{
-			if (id < 0 || id > numPlayers) return null;
-			if (players[id].isPlaying) return players[id];
+			foreach (var player in players)
+				if (player != null && player.id == id) return player;
 			return null;
 		}
 
@@ -77,7 +96,7 @@ namespace UNO.Models
 			int count = 0;
 			for (int i = 0; i < numPlayers; i++)
 			{
-				if (players[i].isPlaying)
+				if (phase != GamePhase.Playing || players[i].isPlaying)
 					count++;
 			}
 			return count;
@@ -90,7 +109,7 @@ namespace UNO.Models
 			var activeCard = discardPile.PeekBottomCard();
 			for (int i = 0; i < player.hand.Count(); i++)
 			{
-				var playerCard = player.hand.getCard(i);
+				var playerCard = player.hand.GetCard(i);
 				if (CanCardBePlayed(activeCard, playerCard)) return true;
 			}
 			return false;
@@ -155,8 +174,10 @@ namespace UNO.Models
 			phase = GamePhase.Playing;
 			activePlayer = 0;
 
+			var builder = new DeckBuilder();
+			if (onlyNumbers) builder.setActionCards(0);
+			drawPile = builder.build();
 			discardPile = new Deck();
-			drawPile = new Deck(); // use builder here to create deck
 
 			for (int j = 0; j < numPlayers; j++)
 			{

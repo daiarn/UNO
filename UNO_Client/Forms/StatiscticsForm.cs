@@ -22,6 +22,11 @@ namespace UNO_Client.Forms
             //go back to menu
         }
 
+        private void StatiscticsForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
         //Metodas kuris getina žaidėjo statistiką ir priskiria laukams. Neturim klasės kuri saugotų statistiką.
     }
 }

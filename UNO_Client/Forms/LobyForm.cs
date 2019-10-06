@@ -16,5 +16,10 @@ namespace UNO_Client.Forms
         {
             InitializeComponent();
         }
+
+        private void LobyForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

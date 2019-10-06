@@ -112,6 +112,7 @@
             this.Controls.Add(this.BackStatistics);
             this.Name = "StatiscticsForm";
             this.Text = "StatiscticsForm";
+            this.Load += new System.EventHandler(this.StatiscticsForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

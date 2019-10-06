@@ -42,5 +42,10 @@ namespace UNO_Client.Forms
         {
             this.Color = "Yellow";
         }
+
+        private void ColorChooserForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -36,5 +36,10 @@ namespace UNO_Client
         {
             this.Close();
         }
+
+        private void MenuForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

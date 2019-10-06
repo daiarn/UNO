@@ -24,5 +24,12 @@ namespace UNO_Client.Forms
 
             //form.ShowDialog();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            GameForm form = new GameForm();
+            this.Close();
+            form.Show();
+        }
     }
 }

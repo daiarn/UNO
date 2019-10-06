@@ -35,9 +35,10 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(248, 243);
+            this.button1.Location = new System.Drawing.Point(186, 197);
+            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(161, 54);
+            this.button1.Size = new System.Drawing.Size(121, 44);
             this.button1.TabIndex = 0;
             this.button1.Text = "PLAY";
             this.button1.UseVisualStyleBackColor = true;
@@ -45,9 +46,10 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(248, 313);
+            this.button4.Location = new System.Drawing.Point(186, 254);
+            this.button4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(161, 54);
+            this.button4.Size = new System.Drawing.Size(121, 44);
             this.button4.TabIndex = 3;
             this.button4.Text = "CHECK STATISTICS";
             this.button4.UseVisualStyleBackColor = true;
@@ -55,9 +57,10 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(248, 483);
+            this.button5.Location = new System.Drawing.Point(186, 392);
+            this.button5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(161, 54);
+            this.button5.Size = new System.Drawing.Size(121, 44);
             this.button5.TabIndex = 4;
             this.button5.Text = "EXIT";
             this.button5.UseVisualStyleBackColor = true;
@@ -65,14 +68,16 @@
             // 
             // MenuForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(655, 572);
+            this.ClientSize = new System.Drawing.Size(491, 465);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "MenuForm";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.MenuForm_Load);
             this.ResumeLayout(false);
 
         }

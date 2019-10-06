@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Http;
 using UNO_Client.Models;
+using Newtonsoft.Json;
 
 namespace UNO_Client.Forms
 {
@@ -19,19 +20,25 @@ namespace UNO_Client.Forms
 
 
         private static readonly HttpClient client = new HttpClient();
-        private Game game;
-        private Player currentPlayer;
+        private Game Game;
+        private Player CurrentPlayer;
 
         public GameForm()
         {
             InitializeComponent();
+            CurrentPlayer = new Player();
+            CurrentPlayer.Cards = new List<Card>
+            {
+                new Card("b", "0", "b0.png"),
+                new Card("g", "7", "g7.png")
+            };
         }
 
         private async void Draw_ClickAsync(object sender, EventArgs e)
         {
             var values = new Dictionary<string, string>
             {
-                { "playerId", currentPlayer.playerId.ToString() },
+                { "playerId", CurrentPlayer.PlayerId.ToString() },
                 { "somehting", "something" }
             };
 
@@ -44,7 +51,7 @@ namespace UNO_Client.Forms
         {
             var values = new Dictionary<string, string>
             {
-                { "playerId", currentPlayer.playerId.ToString() },
+                { "playerId", CurrentPlayer.PlayerId.ToString() },
                 { "somehting", "something" }
             };
 
@@ -57,7 +64,7 @@ namespace UNO_Client.Forms
         {
             var values = new Dictionary<string, string>
             {
-                { "playerId", currentPlayer.playerId.ToString() },
+                { "playerId", CurrentPlayer.PlayerId.ToString() },
                 { "somehting", "something" }
             };
 
@@ -70,7 +77,7 @@ namespace UNO_Client.Forms
         {
             var values = new Dictionary<string, string>
             {
-                { "playerId", currentPlayer.playerId.ToString() },
+                { "playerId", CurrentPlayer.PlayerId.ToString() },
                 { "somehting", "something" }
             };
 
@@ -84,12 +91,12 @@ namespace UNO_Client.Forms
         private void HandPanel_Paint(object sender, PaintEventArgs e)
         {
             var widthPerCard = HandCardWidth / 2;
-            var handCount = currentPlayer.cards.Count;
+            var handCount = CurrentPlayer.Cards.Count;
 
             var graphics = e.Graphics;
             float movePosition = 0f;
             xyImage = new float[handCount, 2];
-            
+
             float width = (float)handPanel.Width;
             float height = (float)handPanel.Height;
             float middlePoint = width / 4f;
@@ -98,7 +105,7 @@ namespace UNO_Client.Forms
             {
                 middlePoint = width - (handCount * widthPerCard);
 
-                if(middlePoint < 0)
+                if (middlePoint < 0)
                 {
                     middlePoint = 0;
                     widthPerCard = width / handCount;
@@ -107,8 +114,8 @@ namespace UNO_Client.Forms
 
             for (int i = 0; i < handCount; i++)
             {
-                var card = currentPlayer.cards[i];
-                var img = card.GetImage(); 
+                var card = CurrentPlayer.Cards[i];
+                var img = card.GetImage();
 
                 xyImage[i, 0] = middlePoint + movePosition;
                 xyImage[i, 1] = 15f; //Recommended cards
@@ -126,7 +133,7 @@ namespace UNO_Client.Forms
             int bild = HitTestCard(e.Location);
             if (bild != -1)
             {
-                var card = currentPlayer.cards[bild];
+                var card = CurrentPlayer.Cards[bild];
                 var color = card.Color;
 
                 if (color == "black")
@@ -151,9 +158,9 @@ namespace UNO_Client.Forms
             var y = loc.Y;
 
             int bild = -1;
-            for (int i = 0; i < currentPlayer.cards.Count; i++)
+            for (int i = 0; i < CurrentPlayer.Cards.Count; i++)
             {
-                var img = currentPlayer.cards[i].GetImage();
+                var img = CurrentPlayer.Cards[i].GetImage();
 
                 var dblFac = HandCardWidth / (float)img.Width;
                 var dblHeight = dblFac * img.Height;
@@ -173,7 +180,7 @@ namespace UNO_Client.Forms
         public const double TAU = 2 * Math.PI;
         Font playerFont = SystemFonts.CaptionFont;
         Font activePlayerFont;
-        Bitmap blankCardImage = new Bitmap("kaks"); //TODO: FIX IT
+        Bitmap blankCardImage = new Bitmap("..//..//CardImages//r0.png"); //TODO: FIX IT FIXED but it is not blank
 
         private void MainPanel_Paint(object sender, PaintEventArgs e)
         {
@@ -188,57 +195,57 @@ namespace UNO_Client.Forms
             var middlePointX = width / 2f;
             var middlePointY = height / 2f;
 
-            var img = game.topCard.GetImage();
+            //var img = Game.TopCard.GetImage();
 
             float dbWidth = 80f;
-            float dbFac = dbWidth / (float)img.Width;
-            var dbHeight = dbFac * img.Height;
+            float dbFac = dbWidth / (float)blankCardImage.Width;
+            var dbHeight = dbFac * blankCardImage.Height;
 
-            graphics.DrawImage(img, new RectangleF(middlePointX - dbWidth / 2f, (middlePointY + dbHeight) < height ? middlePointY : (height - dbHeight), dbWidth, dbHeight));
+            graphics.DrawImage(blankCardImage, new RectangleF(middlePointX - dbWidth / 2f, (middlePointY + dbHeight) < height ? middlePointY : (height - dbHeight), dbWidth, dbHeight));
 
-            var gama = Math.Acos(1.0 - (Math.Pow(width, 2) / (2.0 * Math.Pow(middlePointY, 2.0) + 0.5 * Math.Pow(width, 2.0))));
+            //var gama = Math.Acos(1.0 - (Math.Pow(width, 2) / (2.0 * Math.Pow(middlePointY, 2.0) + 0.5 * Math.Pow(width, 2.0))));
 
-            var numOtherPlayers = game.players.Count;
-            var distance = (TAU - gama) / (double)numOtherPlayers;
+            //var numOtherPlayers = Game.Players.Count;
+            //var distance = (TAU - gama) / (double)numOtherPlayers;
 
-            var radius = Math.Min(middlePointX, middlePointY);
-            var phase = -Math.PI / 2 + gama / 2;
+            //var radius = Math.Min(middlePointX, middlePointY);
+            //var phase = -Math.PI / 2 + gama / 2;
 
-            dbWidth = 60f;
-            dbFac = dbWidth / (float)img.Width;
-            dbHeight = dbFac * img.Height;
+            //dbWidth = 60f;
+            //dbFac = dbWidth / (float)img.Width;
+            //dbHeight = dbFac * img.Height;
 
-            for (int i = 1; i < numOtherPlayers; i++)
-            {
-                Player player = game.players[i];
-                if (player.playerId == currentPlayer.playerId)
-                {
-                    i++;
-                    player = game.players[i];
-                }
+            //for (int i = 1; i < numOtherPlayers; i++)
+            //{
+            //    Player player = Game.Players[i];
+            //    if (player.PlayerId == CurrentPlayer.PlayerId)
+            //    {
+            //        i++;
+            //        player = Game.Players[i];
+            //    }
 
-                var p_X = middlePointX + radius * (float)Math.Cos(distance * i + phase);
-                var p_Y = middlePointY - radius * (float)Math.Sin(distance * i + phase);
+            //    var p_X = middlePointX + radius * (float)Math.Cos(distance * i + phase);
+            //    var p_Y = middlePointY - radius * (float)Math.Sin(distance * i + phase);
 
-                var font = player.playerId == currentPlayer.playerId ? activePlayerFont : playerFont;
-                var size = graphics.MeasureString(player.nick, font);
-                graphics.DrawString(player.nick, font, Brushes.Black, p_X - size.Width / 2, p_Y);
+            //    var font = player.PlayerId == CurrentPlayer.PlayerId ? activePlayerFont : playerFont;
+            //    var size = graphics.MeasureString(player.Nick, font);
+            //    graphics.DrawString(player.Nick, font, Brushes.Black, p_X - size.Width / 2, p_Y);
 
-                graphics.DrawImage(blankCardImage, p_X - dbWidth / 2, p_Y += size.Height, dbWidth, dbHeight);
+            //    graphics.DrawImage(blankCardImage, p_X - dbWidth / 2, p_Y += size.Height, dbWidth, dbHeight);
 
-                var numString = player.cards.Count.ToString();
+            //    var numString = player.Cards.Count.ToString();
 
-                size = graphics.MeasureString(numString, font);
+            //    size = graphics.MeasureString(numString, font);
 
-                graphics.DrawString(numString, font, Brushes.Black, p_X - size.Width / 2, p_Y + dbHeight / 2 - size.Height / 2);
-            }
+            //    graphics.DrawString(numString, font, Brushes.Black, p_X - size.Width / 2, p_Y + dbHeight / 2 - size.Height / 2);
+            //}
         }
 
         private async void putCard(Card card, string Color)
         {
             var values = new Dictionary<string, string>
             {
-                { "playerId", currentPlayer.playerId.ToString() },
+                { "playerId", CurrentPlayer.PlayerId.ToString() },
                 { "color", card.Color },
                 { "value", card.Value }
             };
@@ -252,12 +259,20 @@ namespace UNO_Client.Forms
         {
             var responseString = await client.GetStringAsync(BASE_URL + "/playername");
             //json serializer to Player object and set it globaly
+            CurrentPlayer = JsonConvert.DeserializeObject<Player>(responseString);
+
         }
 
         private async void SetGame()
         {
             var respondeString = await client.GetStringAsync(BASE_URL);
             //json serializer to Game object and set it globaly
+            Game = JsonConvert.DeserializeObject<Game>(respondeString);
+        }
+
+        private void GameForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

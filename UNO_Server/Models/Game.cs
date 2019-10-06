@@ -27,6 +27,7 @@ namespace UNO.Models
 		public int numPlayers;
 
 		public int activePlayer; // player whose turn it is
+        public Player nextPlayer;
 		public ExpectedPlayerAction expectedAction;
 
         private static readonly Game instance = new Game();
@@ -187,6 +188,11 @@ namespace UNO.Models
 					break;
 			}
 		}
+
+        public void SkipAction()
+        {
+            throw new NotImplementedException();
+        }
 
 		public void DrawCard(Player player)
 		{

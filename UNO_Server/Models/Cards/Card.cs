@@ -16,11 +16,13 @@ namespace UNO.Models
     {
 		public CardColor color;
 		public CardType type;
+        public ICardStrategy strategy;
 
-		public Card(CardColor color, CardType type)
+		public Card(CardColor color, CardType type, ICardStrategy strategy = null)
         {
             this.color = color;
             this.type = type;
+            this.strategy = strategy;
         }
 
 		public int getScore()

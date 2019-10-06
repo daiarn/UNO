@@ -2,11 +2,11 @@
 
 namespace UNO.Models
 {
-	class SkipStrategy : ICardStrategy
-	{
-		public void Action()
-		{
-			throw new NotImplementedException();
-		}
-	}
+    class SkipStrategy : ICardStrategy
+    {
+        public void Action()
+        {
+            Game.GetInstance().SkipAction();
+        }
+    }
 }

@@ -2,11 +2,11 @@
 
 namespace UNO.Models
 {
-	class ReverseStrategy : ICardStrategy
-	{
-		public void Action()
-		{
-			throw new NotImplementedException();
-		}
-	}
+    class ReverseStrategy : ICardStrategy
+    {
+        public void Action()
+        {
+            Game.GetInstance().flowClockWise = !Game.GetInstance().flowClockWise;
+        }
+    }
 }

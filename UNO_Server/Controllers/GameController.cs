@@ -22,7 +22,7 @@ namespace UNO_Server.Controllers
 					discardPile = new
 					{
 						count = 2,
-						activeCard = new { color = Color.Blue, value = "5" }
+						activeCard = new { color = CardColor.Blue, value = "5" }
 					},
 					drawPile = new { count = 15 },
 					activePlayer = 1,
@@ -49,7 +49,7 @@ namespace UNO_Server.Controllers
 					discardPile = new
 					{
 						count = 2,
-						activeCard = new { color = Color.Blue, value = "5" }
+						activeCard = new { color = CardColor.Blue, value = "5" }
 					},
 					drawPile = new { count = 15 },
 					activePlayer = 1,
@@ -62,8 +62,8 @@ namespace UNO_Server.Controllers
 					},
 					hand = new[]
 					{
-						new { color = Color.Blue, value = "5" },
-						new { color = Color.Green, value = "skip" }
+						new { color = CardColor.Blue, value = "5" },
+						new { color = CardColor.Green, value = "skip" }
 					}
 				}
 			});
@@ -160,7 +160,7 @@ namespace UNO_Server.Controllers
 		public ActionResult Play() // player plays a card
 		{
 			int playerId = 5; // fake id for testing purposes for now
-			var card = new NumberCard(Color.Blue, 4); // fake card for testing purposes for now
+			var card = new Card(CardColor.Blue, CardType.Five); // fake card for testing purposes for now
 
 			var game = Game.GetInstance();
 
@@ -183,7 +183,7 @@ namespace UNO_Server.Controllers
 					message = "Player doesn't exist or quit"
 				});
 			}
-			else if (game.activePlayer != playerId)
+			else if (game.activePlayer.id != playerId)
 			{
 				return new JsonResult(new
 				{
@@ -244,7 +244,7 @@ namespace UNO_Server.Controllers
 					message = "Player doesn't exist or quit"
 				});
 			}
-			else if (game.activePlayer != playerId)
+			else if (game.activePlayer.id != playerId)
 			{
 				return new JsonResult(new
 				{

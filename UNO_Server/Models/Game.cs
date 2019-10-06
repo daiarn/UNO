@@ -35,7 +35,10 @@ namespace UNO.Models
         {
 			phase = GamePhase.WaitingForPlayers;
 			players = new Player[10];
+			numPlayers = 0;
 
+			discardPile = new Deck();
+			drawPile = new Deck();
 			// something?
         }
 
@@ -157,14 +160,43 @@ namespace UNO.Models
 			}
 		}
 
-		public void PlayCard(Card card)
+		public void PlayCard(Player player, Card card)
 		{
-			throw new NotImplementedException();
+			player.hand.Remove(card);
+			discardPile.AddToBottom(card);
+
+			switch (card.type)
+			{
+				case CardType.Skip:
+					throw new NotImplementedException();
+					break;
+				case CardType.Reverse:
+					throw new NotImplementedException();
+					break;
+				case CardType.Draw2:
+					throw new NotImplementedException();
+					break;
+				case CardType.Wild:
+					throw new NotImplementedException();
+					break;
+				case CardType.Draw4:
+					throw new NotImplementedException();
+					break;
+				default:// regular number card
+					// TODO: give turn to next player (if player doesn't need to say uno)
+					break;
+			}
 		}
 
-		public void DrawCard()
+		public void DrawCard(Player player)
 		{
-			throw new NotImplementedException();
+			var card = FromDrawPile();
+			if (card == null)
+				GameOver();
+			else
+				player.hand.Add(card);
+
+			// TODO: give turn to next player (if card cannot be played)
 		}
 
 		// other gameplay methods
@@ -179,15 +211,20 @@ namespace UNO.Models
 			drawPile = builder.build();
 			discardPile = new Deck();
 
-			for (int j = 0; j < numPlayers; j++)
+			for (int i = 0; i < numPlayers; i++)
 			{
-				for (int i = 0; i < 7; i++) // each player draws 7 cards
+				for (int j = 0; j < 7; j++) // each player draws 7 cards
 				{
 					players[i].hand.Add(FromDrawPile());
 				}
 			}
 
 			discardPile.AddToBottom(FromDrawPile());
+		}
+
+		public void GameOver()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

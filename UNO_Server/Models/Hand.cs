@@ -5,7 +5,7 @@ namespace UNO.Models
 {
 	public class Hand
 	{
-		private List<Card> cards { get; set; }
+		public List<Card> cards { get; set; }
 
 		public Hand()
 		{
@@ -30,6 +30,15 @@ namespace UNO.Models
 		public bool Contains(Card card)
 		{
 			return cards.Contains(card);
+			/*
+			foreach (var item in cards)
+			{
+				if (item.Equals(card))
+				{
+					return true;
+				}
+			}
+			return false;//*/
 		}
 
 		public Card GetCard(int i)

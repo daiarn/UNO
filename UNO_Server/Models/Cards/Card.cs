@@ -12,7 +12,7 @@ namespace UNO.Models
 		Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Skip, Reverse, Draw2, Wild, Draw4
 	}
 
-    public class Card
+    public class Card : IEquatable<Card>
     {
 		public CardColor color;
 		public CardType type;
@@ -22,6 +22,11 @@ namespace UNO.Models
             this.color = color;
             this.type = type;
         }
+
+		public bool Equals(Card other)
+		{
+			return color == other.color && type == other.type;
+		}
 
 		public int getScore()
 		{

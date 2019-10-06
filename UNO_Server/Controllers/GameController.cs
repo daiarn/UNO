@@ -29,6 +29,7 @@ namespace UNO_Server.Controllers
 			return new JsonResult(new
 			{
 				success = true,
+				num = game.numPlayers,
 				gamestate = new
 				{
 					discardPile = new
@@ -45,8 +46,18 @@ namespace UNO_Server.Controllers
 
 		// GET api/game/5
 		[HttpGet("{id}")]
-		public ActionResult Get(PlayerData data) // get gamestate of player
+		public ActionResult Get(Guid id) // get gamestate of player
 		{
+			var game = Game.GetInstance();
+
+			List<object> allPlayerData = new List<object>();
+			foreach (var item in game.players)
+			{
+				if (item == null) break;
+				allPlayerData.Add(new { name = item.name, count = item.hand.Count(), isPlaying = item.isPlaying });
+			}
+
+			Player player = game.GetPlayerById(id);
 
 			return new JsonResult(new
 			{
@@ -55,24 +66,13 @@ namespace UNO_Server.Controllers
 				{
 					discardPile = new
 					{
-						count = 2,
-						activeCard = new { color = CardColor.Blue, type = CardType.Five }
+						count = game.discardPile.GetCount(),
+						activeCard = game.discardPile.PeekBottomCard()
 					},
-					drawPile = new { count = 15 },
-					activePlayer = 1,
-					players = new[]
-					{
-						new { name = "alpha", count = 4, isPlaying = true },
-						new { name = "bravo", count = 5, isPlaying = true },
-						new { name = "charlie", count = 2, isPlaying = true },
-						new { name = "delta", count = 4, isPlaying = true }
-					},
-					hand = new[]
-					{
-						new { color = CardColor.Blue, type = CardType.Four },
-						new { color = CardColor.Green, type = CardType.Skip }
-					},
-					player = Game.GetInstance().GetPlayerById(data.id)
+					drawPile = new { count = game.drawPile.GetCount() },
+					activePlayer = game.activePlayer,
+					players = allPlayerData,
+					hand = player.hand.cards
 				}
 			});
 		}
@@ -170,7 +170,7 @@ namespace UNO_Server.Controllers
 			var card = new Card(data.color, data.type);
 
 			var game = Game.GetInstance();
-
+			/*
 			if (game.phase != GamePhase.Playing)
 			{
 				return new JsonResult(new
@@ -178,7 +178,7 @@ namespace UNO_Server.Controllers
 					success = false,
 					message = "Game isn't started"
 				});
-			}
+			}//*/
 
 			Player player = game.GetPlayerById(playerId);
 
@@ -187,9 +187,9 @@ namespace UNO_Server.Controllers
 				return new JsonResult(new
 				{
 					success = false,
-					message = "Player doesn't exist or quit"
+					message = "You don't exist or quit"
 				});
-			}
+			}/*
 			else if (game.players[game.activePlayer].id != playerId)
 			{
 				return new JsonResult(new
@@ -197,7 +197,7 @@ namespace UNO_Server.Controllers
 					success = false,
 					message = "Not your turn"
 				});
-			}
+			}//*/
 			else if (!player.hand.Contains(card))
 			{
 				return new JsonResult(new
@@ -215,12 +215,14 @@ namespace UNO_Server.Controllers
 				});
 			}
 
+
+
 			// TODO: check if player has to say uno
 
 			// looks good, go ahead
 
 
-			//game.PlayCard(card);
+			game.PlayCard(player, card);
 			return new JsonResult(new { success = true });
 		}
 
@@ -228,10 +230,11 @@ namespace UNO_Server.Controllers
 		[HttpPost("draw")]
 		public ActionResult Draw(PlayerData data) // player draws a card
 		{
-			Guid playerId = data.id;
-
 			var game = Game.GetInstance();
+			Player player = game.GetPlayerById(data.id);
 
+			// TODO: uncomment checks after testing
+			/*
 			if (game.phase != GamePhase.Playing)
 			{
 				return new JsonResult(new
@@ -239,9 +242,7 @@ namespace UNO_Server.Controllers
 					success = false,
 					message = "Game isn't started"
 				});
-			}
-
-			Player player = game.GetPlayerById(playerId);
+			}//*/
 
 			if (player == null)
 			{
@@ -250,8 +251,8 @@ namespace UNO_Server.Controllers
 					success = false,
 					message = "Player doesn't exist or quit"
 				});
-			}
-			else if (game.players[game.activePlayer].id != playerId)
+			}/*
+			else if (game.players[game.activePlayer] != player)
 			{
 				return new JsonResult(new
 				{
@@ -260,7 +261,9 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			//game.DrawCard();
+			//*/
+
+			game.DrawCard(player);
 			return new JsonResult(new { success = true });
 		}
 

@@ -10,11 +10,9 @@ namespace UNO_Client.Models
     {
         int playerId;
         string nick;
-        internal List<Card> Cards { get => cards; set => cards = value; }
+        List<Card> cards;
+        public List<Card> Cards { get => cards; set => cards = value; }
         public string Nick { get => nick; set => nick = value; }
         public int PlayerId { get => playerId; set => playerId = value; }
-
-        List<Card> cards;
-
     }
 }

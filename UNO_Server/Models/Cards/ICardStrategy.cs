@@ -2,7 +2,7 @@ using System;
 
 namespace UNO.Models
 {
-	interface ICardAction
+	interface ICardStrategy
     {
         void Action();
     }

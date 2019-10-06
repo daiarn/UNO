@@ -101,10 +101,10 @@ namespace UNO.Models
 		public static bool CanCardBePlayed(Card activeCard, Card playerCard)
 		{
 			if (activeCard == null) return true; // wait, what? how did this happen? we're smarter than this
-			if (playerCard.color == Color.Black) return true;
+			if (playerCard.color == CardColor.Black) return true;
 
 			if (activeCard.color == playerCard.color) return true;
-			//if (activeCard.color == card.color) return true; // TODO: check card action/number
+			if (activeCard.type == playerCard.type) return true;
 
 			return false;
 		}

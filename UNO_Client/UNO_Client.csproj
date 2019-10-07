@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,14 +49,74 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="Forms\ColorChooserForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Forms\ColorChooserForm.Designer.cs">
+      <DependentUpon>ColorChooserForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\GameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\GameForm.Designer.cs">
+      <DependentUpon>GameForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LobyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LobyForm.Designer.cs">
+      <DependentUpon>LobyForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MenuForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MenuForm.Designer.cs">
+      <DependentUpon>MenuForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NameForm.Designer.cs">
+      <DependentUpon>NameForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PlayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PlayForm.Designer.cs">
+      <DependentUpon>PlayForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\StatiscticsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\StatiscticsForm.Designer.cs">
+      <DependentUpon>StatiscticsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Card.cs" />
+    <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\ColorChooserForm.resx">
+      <DependentUpon>ColorChooserForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\GameForm.resx">
+      <DependentUpon>GameForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LobyForm.resx">
+      <DependentUpon>LobyForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MenuForm.resx">
+      <DependentUpon>MenuForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NameForm.resx">
+      <DependentUpon>NameForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PlayForm.resx">
+      <DependentUpon>PlayForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\StatiscticsForm.resx">
+      <DependentUpon>StatiscticsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -63,6 +126,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -75,6 +139,64 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="CardImages\b0.png" />
+    <Content Include="CardImages\b1.png" />
+    <Content Include="CardImages\b2.png" />
+    <Content Include="CardImages\b3.png" />
+    <Content Include="CardImages\b4.png" />
+    <Content Include="CardImages\b5.png" />
+    <Content Include="CardImages\b6.png" />
+    <Content Include="CardImages\b7.png" />
+    <Content Include="CardImages\b8.png" />
+    <Content Include="CardImages\b9.png" />
+    <Content Include="CardImages\bp.png" />
+    <Content Include="CardImages\br.png" />
+    <Content Include="CardImages\bs.png" />
+    <Content Include="CardImages\c.png" />
+    <Content Include="CardImages\g0.png" />
+    <Content Include="CardImages\g1.png" />
+    <Content Include="CardImages\g2.png" />
+    <Content Include="CardImages\g3.png" />
+    <Content Include="CardImages\g4.png" />
+    <Content Include="CardImages\g5.png" />
+    <Content Include="CardImages\g6.png" />
+    <Content Include="CardImages\g7.png" />
+    <Content Include="CardImages\g8.png" />
+    <Content Include="CardImages\g9.png" />
+    <Content Include="CardImages\gp.png" />
+    <Content Include="CardImages\gr.png" />
+    <Content Include="CardImages\gs.png" />
+    <Content Include="CardImages\p4.png" />
+    <Content Include="CardImages\r0.png" />
+    <Content Include="CardImages\r1.png" />
+    <Content Include="CardImages\r2.png" />
+    <Content Include="CardImages\r3.png" />
+    <Content Include="CardImages\r4.png" />
+    <Content Include="CardImages\r5.png" />
+    <Content Include="CardImages\r6.png" />
+    <Content Include="CardImages\r7.png" />
+    <Content Include="CardImages\r8.png" />
+    <Content Include="CardImages\r9.png" />
+    <Content Include="CardImages\rp.png" />
+    <Content Include="CardImages\rr.png" />
+    <Content Include="CardImages\rs.png" />
+    <Content Include="CardImages\UNO_Logo.png" />
+    <Content Include="CardImages\y0.png" />
+    <Content Include="CardImages\y1.png" />
+    <Content Include="CardImages\y2.png" />
+    <Content Include="CardImages\y3.png" />
+    <Content Include="CardImages\y4.png" />
+    <Content Include="CardImages\y5.png" />
+    <Content Include="CardImages\y6.png" />
+    <Content Include="CardImages\y7.png" />
+    <Content Include="CardImages\y8.png" />
+    <Content Include="CardImages\y9.png" />
+    <Content Include="CardImages\yp.png" />
+    <Content Include="CardImages\yr.png" />
+    <Content Include="CardImages\ys.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

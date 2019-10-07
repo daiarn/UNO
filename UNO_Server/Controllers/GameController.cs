@@ -23,21 +23,17 @@ namespace UNO_Server.Controllers
 			foreach (var player in game.players)
 			{
 				if (player == null) break;
-				allPlayerData.Add(new { name = player.name, count = player.hand.Count(), isPlaying = player.isPlaying });
+				allPlayerData.Add(new { player.name, count = player.hand.Count(), player.isPlaying });
 			}
 
 			return new JsonResult(new
 			{
 				success = true,
-				num = game.numPlayers,
 				gamestate = new
 				{
-					discardPile = new
-					{
-						count = game.discardPile.GetCount(),
-						activeCard = game.discardPile.PeekBottomCard()
-					},
-					drawPile = new { count = game.drawPile.GetCount() },
+					discardPile = game.discardPile.GetCount(),
+					activeCard = game.discardPile.PeekBottomCard(),
+					drawPile = game.drawPile.GetCount(),
 					activePlayer = game.activePlayer,
 					players = allPlayerData
 				}
@@ -64,12 +60,9 @@ namespace UNO_Server.Controllers
 				success = true,
 				gamestate = new
 				{
-					discardPile = new
-					{
-						count = game.discardPile.GetCount(),
-						activeCard = game.discardPile.PeekBottomCard()
-					},
-					drawPile = new { count = game.drawPile.GetCount() },
+					discardPile = game.discardPile.GetCount(),
+					activeCard = game.discardPile.PeekBottomCard(),
+					drawPile = game.drawPile.GetCount(),
 					activePlayer = game.activePlayer,
 					players = allPlayerData,
 					hand = player.hand.cards

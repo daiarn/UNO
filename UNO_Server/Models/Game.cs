@@ -27,12 +27,13 @@ namespace UNO.Models
 		public int numPlayers;
 
 		public int activePlayer; // player whose turn it is
+
         public Player nextPlayer;
 		public ExpectedPlayerAction expectedAction;
 
         private static readonly Game instance = new Game();
-
-        private Game()
+		private static readonly Factory cardActionFactory = new CardActionFactory();
+		private Game()
         {
 			phase = GamePhase.WaitingForPlayers;
 			players = new Player[10];
@@ -40,7 +41,7 @@ namespace UNO.Models
 
 			discardPile = new Deck();
 			drawPile = new Deck();
-			// something?
+			// more?
         }
 
         public static Game GetInstance()
@@ -106,7 +107,7 @@ namespace UNO.Models
 			return count;
 		}
 
-		// player & card method
+		// player & card methods
 
 		public bool CanPlayerPlayAnyOn(Player player)
 		{
@@ -119,16 +120,13 @@ namespace UNO.Models
 			return false;
 		}
 
-		// card related methods
-
 		public static bool CanCardBePlayed(Card activeCard, Card playerCard)
 		{
-			if (activeCard == null) return true; // wait, what? how did this happen? we're smarter than this
-			if (playerCard.color == CardColor.Black) return true;
-
+			//if (activeCard == null) return true; // wait, what? how did this happen? we're smarter than this
 			if (activeCard.color == playerCard.color) return true;
 			if (activeCard.type == playerCard.type) return true;
 
+			if (playerCard.type == CardType.Wild || playerCard.type == CardType.Draw4) return true;
 			return false;
 		}
 
@@ -166,27 +164,8 @@ namespace UNO.Models
 			player.hand.Remove(card);
 			discardPile.AddToBottom(card);
 
-			switch (card.type)
-			{
-				case CardType.Skip:
-					throw new NotImplementedException();
-					break;
-				case CardType.Reverse:
-					throw new NotImplementedException();
-					break;
-				case CardType.Draw2:
-					throw new NotImplementedException();
-					break;
-				case CardType.Wild:
-					throw new NotImplementedException();
-					break;
-				case CardType.Draw4:
-					throw new NotImplementedException();
-					break;
-				default:// regular number card
-					// TODO: give turn to next player (if player doesn't need to say uno)
-					break;
-			}
+			ICardStrategy action = cardActionFactory.CreateAction(card.type);
+			if (action != null) action.Action();
 		}
 
         public void SkipAction()

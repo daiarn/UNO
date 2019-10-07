@@ -27,10 +27,12 @@ namespace UNO.Models
 
 		public bool Equals(Card other)
 		{
+			if (type == CardType.Wild && other.type == CardType.Wild) return true;
+			if (type == CardType.Draw4 && other.type == CardType.Draw4) return true;
 			return color == other.color && type == other.type;
 		}
 
-		public int getScore()
+		public int GetScore()
 		{
 			switch (type)
 			{

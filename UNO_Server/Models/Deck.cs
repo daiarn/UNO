@@ -13,7 +13,7 @@ namespace UNO.Models
 			cards = new List<Card>();
 		}
 
-		public void shuffle()
+		public void Shuffle()
 		{
 			var arr = cards.ToArray();
 			var rand = new Random();
@@ -30,12 +30,12 @@ namespace UNO.Models
 			cards = arr.ToList();
 		}
 
-		public void addToBottom(Card card)
+		public void AddToBottom(Card card)
 		{
 			cards.Add(card);
 		}
 
-		public Card drawTopCard() // removes card from deck and returns said card
+		public Card DrawTopCard()
 		{
 			if (cards.Count > 0)
 			{
@@ -47,7 +47,7 @@ namespace UNO.Models
 				return null;
 		}
 
-		public Card drawBottomCard() // removes card from deck and returns said card
+		public Card DrawBottomCard()
 		{
 			if (cards.Count > 0)
 			{
@@ -59,7 +59,12 @@ namespace UNO.Models
 				return null;
 		}
 
-		public int getCount()
+		public Card PeekBottomCard()
+		{
+			return cards.LastOrDefault();
+		}
+
+		public int GetCount()
 		{
 			return cards.Count;
 		}

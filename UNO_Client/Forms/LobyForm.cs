@@ -8,13 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace UNO_Client
+namespace UNO_Client.Forms
 {
-    public partial class Form1 : Form
+    public partial class LobyForm : Form
     {
-        public Form1()
+        public LobyForm()
         {
             InitializeComponent();
+        }
+
+        private void LobyForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UNO_Server.Utility;
 
 namespace UNO.Models
@@ -30,6 +31,7 @@ namespace UNO.Models
 
         public Player nextPlayer;
 		public ExpectedPlayerAction expectedAction;
+		public List<Observer> observers;
 
         private static readonly Game instance = new Game();
 		private static readonly Factory cardActionFactory = new CardActionFactory();
@@ -139,7 +141,9 @@ namespace UNO.Models
 		{
 			if (drawPile.GetCount() > 0)
 			{
-				return drawPile.DrawTopCard();
+				var card = drawPile.DrawTopCard();
+				NotifyAll(card);
+				return card;
 			}
 			else
 			{
@@ -152,10 +156,20 @@ namespace UNO.Models
 					discardPile = new Deck();
 					discardPile.AddToBottom(activeCard);
 
-					return drawPile.DrawTopCard();
+					var card = drawPile.DrawTopCard();
+					NotifyAll(card);
+					return card;
 				}
 				else
 					return null;
+			}
+		}
+
+		private void NotifyAll(Card card)
+		{
+			foreach (var item in observers)
+			{
+				item.Notify(card);
 			}
 		}
 
@@ -204,7 +218,13 @@ namespace UNO.Models
 				}
 			}
 
-			discardPile.AddToBottom(FromDrawPile());
+			observers = new List<Observer>
+			{
+				new ZeroCounter(),
+				new WildCounter()
+			};
+
+			discardPile.AddToBottom(FromDrawPile()); // TODO: check what card
 		}
 
 		public void GameOver()

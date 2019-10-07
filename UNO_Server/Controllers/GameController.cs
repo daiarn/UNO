@@ -31,6 +31,8 @@ namespace UNO_Server.Controllers
 				success = true,
 				gamestate = new
 				{
+					zeroCounter = game.observers[0].Counter,
+					wildCounter = game.observers[1].Counter,
 					discardPile = game.discardPile.GetCount(),
 					activeCard = game.discardPile.PeekBottomCard(),
 					drawPile = game.drawPile.GetCount(),
@@ -60,6 +62,8 @@ namespace UNO_Server.Controllers
 				success = true,
 				gamestate = new
 				{
+					zeroCounter = game.observers[0].Counter,
+					wildCounter = game.observers[1].Counter,
 					discardPile = game.discardPile.GetCount(),
 					activeCard = game.discardPile.PeekBottomCard(),
 					drawPile = game.drawPile.GetCount(),

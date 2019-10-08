@@ -43,8 +43,14 @@ namespace UNO.Models
 
 			discardPile = new Deck();
 			drawPile = new Deck();
+
+			observers = new List<Observer>
+			{
+				new ZeroCounter(),
+				new WildCounter()
+			};
 			// more?
-        }
+		}
 
         public static Game GetInstance()
         {
@@ -202,6 +208,7 @@ namespace UNO.Models
 
 		public void StartGame(bool finiteDeck = false, bool onlyNumbers = false)
 		{
+			this.finiteDeck = finiteDeck;
 			phase = GamePhase.Playing;
 			activePlayer = 0;
 
@@ -210,6 +217,8 @@ namespace UNO.Models
 			drawPile = builder.build();
 			discardPile = new Deck();
 
+			//drawPile.Shuffle();
+
 			for (int i = 0; i < numPlayers; i++)
 			{
 				for (int j = 0; j < 7; j++) // each player draws 7 cards
@@ -217,12 +226,6 @@ namespace UNO.Models
 					players[i].hand.Add(FromDrawPile());
 				}
 			}
-
-			observers = new List<Observer>
-			{
-				new ZeroCounter(),
-				new WildCounter()
-			};
 
 			discardPile.AddToBottom(FromDrawPile()); // TODO: check what card
 		}

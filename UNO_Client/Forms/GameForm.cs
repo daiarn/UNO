@@ -288,15 +288,28 @@ namespace UNO_Client.Forms
             SetPlayer();
         }
 
-        private void GameForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void StartGame_Click(object sender, EventArgs e)
         {
             //Start game
             StartGame.Visible = false;
+        }
+
+        private string[] FormatPlayersInformation()
+        {
+            int count = Game.Players.Count;
+            string[] infomration = new string[count];
+            for (int i = 0; i < count; i++)
+            {
+                var player = Game.Players[i];
+                string line = player.Nick + " " + player.Cards.Count;
+                infomration[i] = line;
+            }
+            return infomration;
+        }
+
+        private void GameForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

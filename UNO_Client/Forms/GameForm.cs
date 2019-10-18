@@ -292,5 +292,11 @@ namespace UNO_Client.Forms
         {
 
         }
+
+        private void StartGame_Click(object sender, EventArgs e)
+        {
+            //Start game
+            StartGame.Visible = false;
+        }
     }
 }

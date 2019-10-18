@@ -19,7 +19,8 @@ namespace UNO_Client.Forms
         public float[,] xyImage;
         private const string BASE_URL = "api/game";
 
-        private static System.Timers.Timer aTimer;
+        private static System.Timers.Timer PlayerTimer;
+        private static System.Timers.Timer GameTimer;
         private static readonly HttpClient client = new HttpClient();
         private Game Game;
         private Player CurrentPlayer;
@@ -271,21 +272,37 @@ namespace UNO_Client.Forms
             var respondeString = await client.GetStringAsync(BASE_URL);
             //json serializer to Game object and set it globaly
             Game = JsonConvert.DeserializeObject<Game>(respondeString);
+            ShowPlayersInformation();
         }
 
-        private void SetTimer()
+        private void SetPlayerTimer()
         {
             // Create a timer with a two second interval.
-            aTimer = new System.Timers.Timer(2000);
+            PlayerTimer = new System.Timers.Timer(2000);
             // Hook up the Elapsed event for the timer. 
-            aTimer.Elapsed += OnTimedEvent;
-            aTimer.AutoReset = true;
-            aTimer.Enabled = true;
+            PlayerTimer.Elapsed += OnTimedEvent;
+            PlayerTimer.AutoReset = true;
+            PlayerTimer.Enabled = true;
+        }
+        private void SetGameTimer()
+        {
+            // Create a timer with a two second interval.
+            GameTimer = new System.Timers.Timer(2000);
+            // Hook up the Elapsed event for the timer. 
+            PlayerTimer.Elapsed += OnTimedGameEvent;
+            PlayerTimer.AutoReset = true;
+            PlayerTimer.Enabled = true;
         }
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             //Fetch user data
             SetPlayer();
+        }
+
+        private void OnTimedGameEvent(Object source, ElapsedEventArgs e)
+        {
+            //Fetch game data
+            SetGame();          
         }
 
         private void StartGame_Click(object sender, EventArgs e)
@@ -305,6 +322,11 @@ namespace UNO_Client.Forms
                 infomration[i] = line;
             }
             return infomration;
+        }
+        private void ShowPlayersInformation()
+        {
+            var info = FormatPlayersInformation();
+            PlayersInfo.Lines = info;
         }
 
         private void GameForm_Load(object sender, EventArgs e)

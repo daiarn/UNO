@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Net.Http;
 using UNO_Client.Models;
 using Newtonsoft.Json;
+using System.Timers;
 
 namespace UNO_Client.Forms
 {
@@ -18,7 +19,7 @@ namespace UNO_Client.Forms
         public float[,] xyImage;
         private const string BASE_URL = "api/game";
 
-
+        private static System.Timers.Timer aTimer;
         private static readonly HttpClient client = new HttpClient();
         private Game Game;
         private Player CurrentPlayer;
@@ -26,6 +27,8 @@ namespace UNO_Client.Forms
         public GameForm()
         {
             InitializeComponent();
+            //current player should be result of SetPlayer()
+            //Probably setup timer here
             CurrentPlayer = new Player();
             CurrentPlayer.Cards = new List<Card>
             {
@@ -268,6 +271,21 @@ namespace UNO_Client.Forms
             var respondeString = await client.GetStringAsync(BASE_URL);
             //json serializer to Game object and set it globaly
             Game = JsonConvert.DeserializeObject<Game>(respondeString);
+        }
+
+        private void SetTimer()
+        {
+            // Create a timer with a two second interval.
+            aTimer = new System.Timers.Timer(2000);
+            // Hook up the Elapsed event for the timer. 
+            aTimer.Elapsed += OnTimedEvent;
+            aTimer.AutoReset = true;
+            aTimer.Enabled = true;
+        }
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            //Fetch user data
+            SetPlayer();
         }
 
         private void GameForm_Load(object sender, EventArgs e)

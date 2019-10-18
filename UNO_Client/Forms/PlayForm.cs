@@ -34,9 +34,14 @@ namespace UNO_Client.Forms
         //Join Game
         private void button3_Click(object sender, EventArgs e)
         {
-            LobyForm form = new LobyForm();
-            this.Close();
-            form.Show();
+            //LobyForm form = new LobyForm();
+            //this.Close();
+            //form.Show();
+        }
+
+        private void PlayForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

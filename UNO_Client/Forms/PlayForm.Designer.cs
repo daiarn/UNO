@@ -77,6 +77,7 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "PlayForm";
             this.Text = "PlayForm";
+            this.Load += new System.EventHandler(this.PlayForm_Load);
             this.ResumeLayout(false);
 
         }

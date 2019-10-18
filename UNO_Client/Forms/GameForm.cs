@@ -264,7 +264,7 @@ namespace UNO_Client.Forms
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             //Fetch user data
-            SetPlayer();
+            //SetPlayer();
         }
 
         private void OnTimedGameEvent(Object source, ElapsedEventArgs e)
@@ -281,12 +281,12 @@ namespace UNO_Client.Forms
 
         private string[] FormatPlayersInformation()
         {
-            int count = Game.Players.Count;
+            int count = Game.Gamestate.Players.Count;
             string[] infomration = new string[count];
             for (int i = 0; i < count; i++)
             {
-                var player = Game.Players[i];
-                string line = player.Nick + " " + player.Cards.Count;
+                var player = Game.Gamestate.Players[i];
+                string line = player.Name + " " + player.Count;
                 infomration[i] = line;
             }
             return infomration;

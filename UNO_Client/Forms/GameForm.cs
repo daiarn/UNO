@@ -28,7 +28,7 @@ namespace UNO_Client.Forms
         public GameForm()
         {
             CurrentPlayer = new Player();
-            CurrentPlayer.Id = "2cfac84b-9fe9-48f1-bf92-289c8d7ba5ae"; //Player id for testing
+            CurrentPlayer.Id = "4a737078-e065-489a-a15f-64ab6eae959e"; //Player id for testing
             SetGame();
 
             
@@ -39,6 +39,13 @@ namespace UNO_Client.Forms
             //    new Card("g", "7", "g7.png"),
             //    new Card("b", "5", "b5.png")
             //};
+        }
+
+        public GameForm(JoinPost joinPost)
+        {
+            CurrentPlayer = new Player();
+            CurrentPlayer.Id = joinPost.Id;
+            SetGame();
         }
 
         private async void Draw_ClickAsync(object sender, EventArgs e)
@@ -273,9 +280,12 @@ namespace UNO_Client.Forms
             SetGame();          
         }
 
-        private void StartGame_Click(object sender, EventArgs e)
+        private async void StartGame_Click(object sender, EventArgs e)
         {
             //Start game
+            string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\"}";
+            var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(BASE_URL + "/start", content);
             StartGame.Visible = false;
         }
 

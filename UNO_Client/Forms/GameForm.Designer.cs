@@ -41,7 +41,7 @@
             // 
             // Draw
             // 
-            this.Draw.Location = new System.Drawing.Point(376, 46);
+            this.Draw.Location = new System.Drawing.Point(618, 30);
             this.Draw.Margin = new System.Windows.Forms.Padding(2);
             this.Draw.Name = "Draw";
             this.Draw.Size = new System.Drawing.Size(90, 48);
@@ -52,7 +52,7 @@
             // 
             // GiveUp
             // 
-            this.GiveUp.Location = new System.Drawing.Point(376, 88);
+            this.GiveUp.Location = new System.Drawing.Point(618, 80);
             this.GiveUp.Margin = new System.Windows.Forms.Padding(2);
             this.GiveUp.Name = "GiveUp";
             this.GiveUp.Size = new System.Drawing.Size(90, 48);
@@ -63,7 +63,7 @@
             // 
             // UNO
             // 
-            this.UNO.Location = new System.Drawing.Point(376, 130);
+            this.UNO.Location = new System.Drawing.Point(618, 132);
             this.UNO.Margin = new System.Windows.Forms.Padding(2);
             this.UNO.Name = "UNO";
             this.UNO.Size = new System.Drawing.Size(90, 48);
@@ -74,7 +74,7 @@
             // 
             // Exit
             // 
-            this.Exit.Location = new System.Drawing.Point(376, 266);
+            this.Exit.Location = new System.Drawing.Point(618, 295);
             this.Exit.Margin = new System.Windows.Forms.Padding(2);
             this.Exit.Name = "Exit";
             this.Exit.Size = new System.Drawing.Size(90, 28);
@@ -85,7 +85,7 @@
             // 
             // mainPanel
             // 
-            this.mainPanel.Location = new System.Drawing.Point(8, 9);
+            this.mainPanel.Location = new System.Drawing.Point(11, 11);
             this.mainPanel.Margin = new System.Windows.Forms.Padding(2);
             this.mainPanel.Name = "mainPanel";
             this.mainPanel.Size = new System.Drawing.Size(603, 314);
@@ -94,7 +94,7 @@
             // 
             // handPanel
             // 
-            this.handPanel.Location = new System.Drawing.Point(8, 156);
+            this.handPanel.Location = new System.Drawing.Point(10, 158);
             this.handPanel.Margin = new System.Windows.Forms.Padding(2);
             this.handPanel.Name = "handPanel";
             this.handPanel.Size = new System.Drawing.Size(604, 165);
@@ -105,7 +105,7 @@
             // 
             // PlayersInfo
             // 
-            this.PlayersInfo.Location = new System.Drawing.Point(461, 46);
+            this.PlayersInfo.Location = new System.Drawing.Point(712, 182);
             this.PlayersInfo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.PlayersInfo.Multiline = true;
             this.PlayersInfo.Name = "PlayersInfo";
@@ -116,7 +116,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(461, 30);
+            this.label1.Location = new System.Drawing.Point(712, 167);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(95, 13);
@@ -125,10 +125,10 @@
             // 
             // StartGame
             // 
-            this.StartGame.Location = new System.Drawing.Point(376, 173);
+            this.StartGame.Location = new System.Drawing.Point(618, 184);
             this.StartGame.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.StartGame.Name = "StartGame";
-            this.StartGame.Size = new System.Drawing.Size(68, 39);
+            this.StartGame.Size = new System.Drawing.Size(90, 48);
             this.StartGame.TabIndex = 8;
             this.StartGame.Text = "Start game";
             this.StartGame.UseVisualStyleBackColor = true;
@@ -138,11 +138,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(643, 297);
+            this.ClientSize = new System.Drawing.Size(890, 329);
+            this.Controls.Add(this.handPanel);
             this.Controls.Add(this.StartGame);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.PlayersInfo);
-            this.Controls.Add(this.handPanel);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.Exit);
             this.Controls.Add(this.UNO);

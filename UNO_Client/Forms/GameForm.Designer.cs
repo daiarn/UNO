@@ -108,6 +108,7 @@
             this.PlayersInfo.Location = new System.Drawing.Point(615, 56);
             this.PlayersInfo.Multiline = true;
             this.PlayersInfo.Name = "PlayersInfo";
+            this.PlayersInfo.ReadOnly = true;
             this.PlayersInfo.Size = new System.Drawing.Size(227, 173);
             this.PlayersInfo.TabIndex = 6;
             // 

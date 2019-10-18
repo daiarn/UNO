@@ -11,24 +11,24 @@ namespace UNO_Client.Models
     class Card
     {
         string color;
-        string value;
+        string type;
         string image;
 
         public Card(string color, string value, string image)
         {
             this.color = color;
-            this.value = value;
+            this.type = value;
             this.image = image;
         }
 
         public string Color { get => color; set => color = value; }
-        public string Value { get => value; set => this.value = value; }
+        public string Value { get => type; set => this.type = value; }
         public string Image { get => image; set => image = value; }
 
         public Bitmap GetImage()
         {
             //return (Bitmap) Resources.ResourceManager.GetObject(this.Color + this.Value);
-            return new Bitmap("..//..//CardImages//" + Image);
+            return new Bitmap("..//..//CardImages//" + Image + ".png");
         }
     }
 }

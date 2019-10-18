@@ -8,12 +8,10 @@ namespace UNO_Client.Models
 {
     class Game
     {
-        List<Player> players;
-        Player currentPlayerMove;
-        Card topCard;
+        bool success;
+        GameState gamestate;
 
-        public List<Player> Players { get => players; set => players = value; }
-        public Player CurrentPlayerMove { get => currentPlayerMove; set => currentPlayerMove = value; }
-        public Card TopCard { get => topCard; set => topCard = value; }
+        public bool Success { get => success; set => success = value; }
+        public GameState Gamestate { get => gamestate; set => gamestate = value; }
     }
 }

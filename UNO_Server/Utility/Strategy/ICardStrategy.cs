@@ -1,6 +1,4 @@
-using System;
-
-namespace UNO.Models
+namespace UNO_Server.Utility.Strategy
 {
 	public interface ICardStrategy
     {

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace UNO_Server.Models
 {
@@ -12,7 +13,8 @@ namespace UNO_Server.Models
 		Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Skip, Reverse, Draw2, Wild, Draw4
 	}
 
-    public class Card : IEquatable<Card>
+	[DebuggerDisplay("{color} {type}")]
+	public class Card : IEquatable<Card>
     {
 		public CardColor color;
 		public CardType type;

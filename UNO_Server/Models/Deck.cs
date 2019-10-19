@@ -18,11 +18,11 @@ namespace UNO_Server.Models
 			var arr = cards.ToArray();
 			var rand = new Random();
 
-			for (int i = arr.Length - 1; i > 0; i--)
+			for (int i = 0; i < arr.Length - 2; i++)
 			{
-				int j = rand.Next(i + 1);
+				int j = i + rand.Next(arr.Length - i);
 
-				var temp = arr[j];
+				var temp = arr[i];
 				arr[i] = arr[j];
 				arr[j] = temp;
 			}

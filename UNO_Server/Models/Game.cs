@@ -82,7 +82,7 @@ namespace UNO_Server.Models
 
 		private int GetPlayerIndexByUUID(Guid id)
 		{
-			for (int i = 0; i < players.Length; i++)
+			for (int i = 0; i < numPlayers; i++)
 			{
 				if (players[i].id == id) return i;
 			}
@@ -94,9 +94,9 @@ namespace UNO_Server.Models
 			var index = GetPlayerIndexByUUID(id);
 			if (index < 0 || index > numPlayers) return;
 
-			var temp = players[numPlayers];
-			players[index] = temp;
-			players[numPlayers] = null;
+			var last = players[numPlayers - 1];
+			players[index] = last;
+			players[numPlayers - 1] = null;
 			numPlayers--;
 		}
 
@@ -105,7 +105,7 @@ namespace UNO_Server.Models
 			var index = GetPlayerIndexByUUID(id);
 			if (index < 0 || index > numPlayers) return;
 
-			var player = players[numPlayers];
+			var player = players[index];
 			player.isPlaying = false;
 			// TODO: check if it's that player's turn (also check if it's game over)
 		}
@@ -229,7 +229,7 @@ namespace UNO_Server.Models
 
 		public void PlayerSaysUNO()
 		{
-			var player = players[activePlayerIndex];
+			//var player = players[activePlayerIndex];
 
 			// TODO: avoid card draw penalty
 
@@ -244,16 +244,16 @@ namespace UNO_Server.Models
 				if (flowClockWise)
 				{
 					nextPlayerIndex++;
-					if (nextPlayerIndex >= players.Length)
+					if (nextPlayerIndex >= numPlayers)
 						nextPlayerIndex = 0;
 				}
 				else
 				{
 					nextPlayerIndex--;
 					if (nextPlayerIndex < 0)
-						nextPlayerIndex = players.Length - 1;
+						nextPlayerIndex = numPlayers - 1;
 				}
-			} while (!players[nextPlayerIndex].isPlaying);
+			} while (!players[nextPlayerIndex].isPlaying && nextPlayerIndex != playerIndex);
 
 			return nextPlayerIndex;
 		}
@@ -324,6 +324,7 @@ namespace UNO_Server.Models
 				{
 					players[i].hand.Add(FromDrawPile());
 				}
+				players[i].isPlaying = true;
 			}
 
 
@@ -332,15 +333,15 @@ namespace UNO_Server.Models
 				CardType.Zero, CardType.One, CardType.Two, CardType.Three, CardType.Four, CardType.Five, CardType.Six, CardType.Seven, CardType.Eight, CardType.Nine
 			};
 
-			for (int i = 0; i < discardPile.GetCount(); i++)
+			for (int i = 0; i < drawPile.GetCount(); i++)
 			{
-				var aCard = discardPile.DrawTopCard();
+				var aCard = drawPile.DrawTopCard();
 				if (allowedFirstCardTypes.Contains(aCard.type))
 				{
 					firstCard = aCard;
 					break;
 				}
-				discardPile.AddToBottom(aCard);
+				drawPile.AddToBottom(aCard);
 			}
 
 			if (firstCard == null) // panic mode

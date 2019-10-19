@@ -47,6 +47,16 @@ namespace UNO_Server.Controllers
 		public ActionResult Get(Guid id) // get gamestate of player
 		{
 			var game = Game.GetInstance();
+			var player = game.GetPlayerByUUID(id);
+
+			if (player == null)
+			{
+				return new JsonResult(new
+				{
+					success = false,
+					message = "You are not in the game"
+				});
+			}
 
 			List<object> allPlayerData = new List<object>();
 			foreach (var item in game.players)
@@ -55,7 +65,6 @@ namespace UNO_Server.Controllers
 				allPlayerData.Add(new { name = item.name, count = item.hand.Count(), isPlaying = item.isPlaying });
 			}
 
-			Player player = game.GetPlayerByUUID(id);
 
 			return new JsonResult(new
 			{
@@ -81,19 +90,16 @@ namespace UNO_Server.Controllers
 		[HttpPost("leave")]
 		public ActionResult Leave(PlayerData data) // player leaves/surrenders
 		{
-			Guid playerId = data.id;
-
 			var game = Game.GetInstance();
-
 			if (game.phase != GamePhase.Playing)
 			{
-				game.DeletePlayer(playerId);
+				game.DeletePlayer(data.id);
 				return new JsonResult(new { success = true });
 			}
 
-			// TODO: more checks when game is playing
+			// TODO: add more checks when game is in progress
 
-			game.EliminatePlayer(playerId);
+			game.EliminatePlayer(data.id);
 			return new JsonResult(new { success = true, message = "You were in an in-progress game, but left anyway" });
 		}
 
@@ -103,11 +109,9 @@ namespace UNO_Server.Controllers
 
 		// POST api/game/join
 		[HttpPost("join")]
-		public ActionResult Join(JoinData dta) // new player joins the game
+		public ActionResult Join(JoinData data) // new player joins the game
 		{
-			var name = dta.name;
 			var game = Game.GetInstance();
-
 			if (game.phase != GamePhase.WaitingForPlayers)
 			{
 				return new JsonResult(new
@@ -125,7 +129,7 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			Guid id = game.AddPlayer(name);
+			Guid id = game.AddPlayer(data.name);
 			return new JsonResult(new { success = true, id = id });
 		}
 
@@ -134,7 +138,6 @@ namespace UNO_Server.Controllers
 		public ActionResult Start(StartData data) // a player decides to start the game
 		{
 			var game = Game.GetInstance();
-
 			if (game.phase != GamePhase.WaitingForPlayers)
 			{
 				return new JsonResult(new
@@ -152,6 +155,16 @@ namespace UNO_Server.Controllers
 				});
 			}
 
+			var player = game.GetPlayerByUUID(data.id);
+			if (player == null)
+			{
+				return new JsonResult(new
+				{
+					success = false,
+					message = "You are not in the game"
+				});
+			}
+
 			// that's probably enough checks
 
 			game.StartGame(data.finiteDeck, data.onlyNumbers);
@@ -166,9 +179,6 @@ namespace UNO_Server.Controllers
 		[HttpPost("play")]
 		public ActionResult Play(PlayData data) // player plays a card
 		{
-			Guid playerId = data.id;
-			var card = new Card(data.color, data.type);
-
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.Playing)
 			{
@@ -179,17 +189,16 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			Player player = game.GetPlayerByUUID(playerId);
-
+			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
 			{
 				return new JsonResult(new
 				{
 					success = false,
-					message = "You don't exist or quit"
+					message = "You are not in the game"
 				});
 			}
-			else if (game.players[game.activePlayerIndex].id != playerId)
+			else if (game.players[game.activePlayerIndex].id != data.id)
 			{
 				return new JsonResult(new
 				{
@@ -197,12 +206,22 @@ namespace UNO_Server.Controllers
 					message = "Not your turn"
 				});
 			}
-			else if (!player.hand.Contains(card))
+			else if (game.expectedAction != ExpectedPlayerAction.PlayCard)
 			{
 				return new JsonResult(new
 				{
 					success = false,
-					message = "You can't play a card you don't have in your hand, you cheater"
+					message = "You can't play a card" // maybe have another way of checking
+				});
+			}
+
+			var card = new Card(data.color, data.type);
+			if (!player.hand.Contains(card))
+			{
+				return new JsonResult(new
+				{
+					success = false,
+					message = "You can't play that card"
 				});
 			}
 			else if (!game.CanCardBePlayed(card))
@@ -214,11 +233,7 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-
 			// TODO: check if player has to say uno
-
-			// looks good, go ahead
-
 
 			game.PlayerPlaysCard(card);
 			return new JsonResult(new { success = true });
@@ -229,9 +244,6 @@ namespace UNO_Server.Controllers
 		public ActionResult Draw(PlayerData data) // player draws a card
 		{
 			var game = Game.GetInstance();
-			Player player = game.GetPlayerByUUID(data.id);
-
-			// TODO: uncomment checks after testing
 			if (game.phase != GamePhase.Playing)
 			{
 				return new JsonResult(new
@@ -241,12 +253,13 @@ namespace UNO_Server.Controllers
 				});
 			}
 
+			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
 			{
 				return new JsonResult(new
 				{
 					success = false,
-					message = "Player doesn't exist or quit"
+					message = "You are not in the game"
 				});
 			}
 			else if (game.players[game.activePlayerIndex] != player)
@@ -257,8 +270,14 @@ namespace UNO_Server.Controllers
 					message = "Not your turn"
 				});
 			}
-
-			// TODO: check if player has playable card
+			else if (game.expectedAction != ExpectedPlayerAction.DrawCard)
+			{
+				return new JsonResult(new
+				{
+					success = false,
+					message = "You can't draw a card"
+				});
+			}
 
 			game.PlayerDrawsCard();
 			return new JsonResult(new { success = true });
@@ -268,10 +287,7 @@ namespace UNO_Server.Controllers
 		[HttpPost("uno")]
 		public ActionResult Uno(PlayerData data) // player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
 		{
-			Guid playerId = data.id;
-
 			var game = Game.GetInstance();
-
 			if (game.phase != GamePhase.Playing)
 			{
 				return new JsonResult(new
@@ -281,14 +297,13 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			Player player = game.GetPlayerByUUID(playerId);
-
+			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
 			{
 				return new JsonResult(new
 				{
 					success = false,
-					message = "Player doesn't exist or quit"
+					message = "You are not in the game"
 				});
 			}
 
@@ -303,13 +318,11 @@ namespace UNO_Server.Controllers
 			}
 			//*/
 
-
 			game.PlayerSaysUNO();
 			return new JsonResult(new { success = true });
 		}
 
 		#endregion
-
 
 	}
 }

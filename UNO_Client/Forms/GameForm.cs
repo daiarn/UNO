@@ -30,6 +30,7 @@ namespace UNO_Client.Forms
             CurrentPlayer = new Player();
             CurrentPlayer.Id = joinPost.Id;
             SetGame();
+            SetGameTimer();
         }
 
         private async void Draw_ClickAsync(object sender, EventArgs e)
@@ -211,9 +212,9 @@ namespace UNO_Client.Forms
             // Create a timer with a two second interval.
             GameTimer = new System.Timers.Timer(2000);
             // Hook up the Elapsed event for the timer. 
-            PlayerTimer.Elapsed += OnTimedGameEvent;
-            PlayerTimer.AutoReset = true;
-            PlayerTimer.Enabled = true;
+            GameTimer.Elapsed += OnTimedGameEvent;
+            GameTimer.AutoReset = true;
+            GameTimer.Enabled = true;
         }
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {

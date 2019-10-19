@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace UNO.Models
+namespace UNO_Server.Models
 {
-    public class Player
+	public class Player
 	{
 		public Guid id;
         public string name { get; set; }

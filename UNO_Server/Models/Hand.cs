@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace UNO.Models
+namespace UNO_Server.Models
 {
 	public class Hand
 	{

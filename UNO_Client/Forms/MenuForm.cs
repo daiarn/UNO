@@ -39,15 +39,15 @@ namespace UNO_Client
             JoinPost joinPost = JsonConvert.DeserializeObject<JoinPost>(message);
 
             LobyForm form = new LobyForm(joinPost);
-            this.Close();
             form.Show();
+            this.Hide();
         }
 
         private void Statistics_Click(object sender, EventArgs e)
         {
             StatiscticsForm form = new StatiscticsForm();
             form.ShowDialog();
-            this.Close();
+            this.Hide();
         }
 
         private void Exit_Click(object sender, EventArgs e)

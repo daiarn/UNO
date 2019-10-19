@@ -23,7 +23,6 @@ namespace UNO_Client.Forms
         {
             this.joinPost = joinPost;
             SetGame();
-            //ShowPlayersInformation();
         }
 
         private void LobyForm_Load(object sender, EventArgs e)
@@ -36,9 +35,7 @@ namespace UNO_Client.Forms
             bool isOnlyNumbers = gameOptions.GetItemChecked(0);
             bool isFiniteDeck = gameOptions.GetItemChecked(1);
             //Start game
-            string JsonString = "{\"finiteDeck\":\"" + isFiniteDeck +
-                "\"onlyNumbers\":\"" + isOnlyNumbers +
-                "\"}";
+            string JsonString = "{\"finiteDeck\":\"" + isFiniteDeck + "\",\"onlyNumbers\":\"" + isOnlyNumbers +"\"}";
             var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(BASE_URL + "/start", content);
             GameForm form = new GameForm(joinPost);
@@ -57,6 +54,7 @@ namespace UNO_Client.Forms
             //json serializer to Game object and set it globaly
             Game = JsonConvert.DeserializeObject<Game>(respondeString);
             InitializeComponent();
+            ShowPlayersInformation();
         }
         private string[] FormatPlayersInformation()
         {

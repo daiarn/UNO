@@ -25,22 +25,6 @@ namespace UNO_Client.Forms
         private Game Game;
         private Player CurrentPlayer;
 
-        public GameForm()
-        {
-            CurrentPlayer = new Player();
-            CurrentPlayer.Id = "4a737078-e065-489a-a15f-64ab6eae959e"; //Player id for testing
-            SetGame();
-
-            
-           
-            //CurrentPlayer.Cards = new List<Card>
-            //{
-            //    new Card("b", "0", "b0.png"),
-            //    new Card("g", "7", "g7.png"),
-            //    new Card("b", "5", "b5.png")
-            //};
-        }
-
         public GameForm(JoinPost joinPost)
         {
             CurrentPlayer = new Player();
@@ -173,7 +157,7 @@ namespace UNO_Client.Forms
         public const double TAU = 2 * Math.PI;
         Font playerFont = SystemFonts.CaptionFont;
         Font activePlayerFont;
-        Bitmap blankCardImage = new Bitmap("..//..//CardImages//r0.png"); //TODO: FIX IT FIXED but it is not blank
+        Bitmap blankCardImage = new Bitmap("..//..//CardImages//r0.png");
 
         private void MainPanel_Paint(object sender, PaintEventArgs e)
         {
@@ -194,44 +178,7 @@ namespace UNO_Client.Forms
             float dbFac = dbWidth / (float)blankCardImage.Width;
             var dbHeight = dbFac * blankCardImage.Height;
 
-            graphics.DrawImage(Game.Gamestate.ActiveCard.GetImage(), new RectangleF(middlePointX - dbWidth / 2f, (middlePointY + dbHeight) < height ? middlePointY : (height - dbHeight), dbWidth, dbHeight));
-
-            //var gama = Math.Acos(1.0 - (Math.Pow(width, 2) / (2.0 * Math.Pow(middlePointY, 2.0) + 0.5 * Math.Pow(width, 2.0))));
-
-            //var numOtherPlayers = Game.Players.Count;
-            //var distance = (TAU - gama) / (double)numOtherPlayers;
-
-            //var radius = Math.Min(middlePointX, middlePointY);
-            //var phase = -Math.PI / 2 + gama / 2;
-
-            //dbWidth = 60f;
-            //dbFac = dbWidth / (float)img.Width;
-            //dbHeight = dbFac * img.Height;
-
-            //for (int i = 1; i < numOtherPlayers; i++)
-            //{
-            //    Player player = Game.Players[i];
-            //    if (player.PlayerId == CurrentPlayer.PlayerId)
-            //    {
-            //        i++;
-            //        player = Game.Players[i];
-            //    }
-
-            //    var p_X = middlePointX + radius * (float)Math.Cos(distance * i + phase);
-            //    var p_Y = middlePointY - radius * (float)Math.Sin(distance * i + phase);
-
-            //    var font = player.PlayerId == CurrentPlayer.PlayerId ? activePlayerFont : playerFont;
-            //    var size = graphics.MeasureString(player.Nick, font);
-            //    graphics.DrawString(player.Nick, font, Brushes.Black, p_X - size.Width / 2, p_Y);
-
-            //    graphics.DrawImage(blankCardImage, p_X - dbWidth / 2, p_Y += size.Height, dbWidth, dbHeight);
-
-            //    var numString = player.Cards.Count.ToString();
-
-            //    size = graphics.MeasureString(numString, font);
-
-            //    graphics.DrawString(numString, font, Brushes.Black, p_X - size.Width / 2, p_Y + dbHeight / 2 - size.Height / 2);
-            //}
+            graphics.DrawImage(Game.Gamestate.ActiveCard.GetImage(), new RectangleF(middlePointX - (dbWidth/2), middlePointY - dbHeight - (dbHeight/4), dbWidth, dbHeight));
         }
 
         private async void putCard(Card card, string Color)
@@ -278,15 +225,6 @@ namespace UNO_Client.Forms
         {
             //Fetch game data
             SetGame();          
-        }
-
-        private async void StartGame_Click(object sender, EventArgs e)
-        {
-            //Start game
-            string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\"}";
-            var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(BASE_URL + "/start", content);
-            StartGame.Visible = false;
         }
 
         private string[] FormatPlayersInformation()

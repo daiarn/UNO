@@ -6,7 +6,11 @@ namespace UNO_Server.Utility.Strategy
     {
         public void Action()
 		{
-			Game.GetInstance().ReverseAction();
+			var game = Game.GetInstance();
+			if (game.GetActivePlayerCount() <= 2)
+				game.NextPlayerSkipsTurn();
+			else
+				game.ReverseFlow();
 		}
     }
 }

@@ -7,11 +7,12 @@ namespace UNO_Server.Utility.Strategy
         public void Action()
 		{
 			var game = Game.GetInstance();
+			var targetPlayer = game.GetNextPlayer();
+
 			for (int i = 0; i < 4; i++)
-            {
-				game.nextPlayer.hand.Add(game.FromDrawPile());
-            }
-			game.NextPlayerTurn();
-        }
+				targetPlayer.hand.Add(game.FromDrawPile());
+
+			game.NextPlayerSkipsTurn();
+		}
     }
 }

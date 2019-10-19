@@ -29,9 +29,10 @@ namespace UNO_Server.Models
 		public Player[] players;
 		public int numPlayers;
 
-		public int activePlayerIndex; // player whose turn it is
-
 		public ExpectedPlayerAction expectedAction;
+		public int activePlayerIndex;
+		public int nextPlayerIndex;
+
 		public List<Observer> observers;
 
         private static readonly Game instance = new Game();
@@ -44,7 +45,8 @@ namespace UNO_Server.Models
 				new WildCounter()
 			};
 
-			NewGame();
+			NewGamePrep();
+
 			// more?
 		}
 
@@ -154,7 +156,7 @@ namespace UNO_Server.Models
 			return CanCardBePlayed(discardPile.PeekBottomCard(), playerCard);
 		}
 
-		public Card FromDrawPile() // draws from the draw pile following the reset rules
+		public Card FromDrawPile() // draws from the draw pile according to the deck finite-ness rules
 		{
 			if (drawPile.GetCount() > 0)
 			{
@@ -190,33 +192,48 @@ namespace UNO_Server.Models
 			}
 		}
 
-		public void PlayerDrawsCard(Player player)
+		// player turn/action methods
+
+		public void PlayerDrawsCard()
 		{
+			var player = players[activePlayerIndex];
 			var card = FromDrawPile();
+
 			if (card == null)
 				GameOver();
 			else
 				player.hand.Add(card);
 
-			// TODO: give turn to next player (if card cannot be played)
+			if (CanCardBePlayed(card))
+				expectedAction = ExpectedPlayerAction.PlayCard;
+			else
+				NextPlayerTurn();
 		}
 
-		public void PlayerPlaysCard(Player player, Card card)
+		public void PlayerPlaysCard(Card card)
 		{
+			var player = players[activePlayerIndex];
+
 			player.hand.Remove(card);
 			discardPile.AddToBottom(card);
+
+			// TODO: check if player needs to say UNO
 
 			ICardStrategy action = cardActionFactory.CreateAction(card.type);
 			if (action != null) action.Action();
 
-			// TODO: give turn to next player (if card cannot be played)
+			// TODO: check if player has won
+
+			NextPlayerTurn();
 		}
 
-		public void PlayerSaysUNO(Player player)
+		public void PlayerSaysUNO()
 		{
-			throw new NotImplementedException();
+			var player = players[activePlayerIndex];
 
-			// TODO: give turn to next player (if card cannot be played)
+			// TODO: avoid card draw penalty
+
+			NextPlayerTurn();
 		}
 
 		private int GetNextPlayerIndexAfter(int playerIndex)
@@ -241,32 +258,46 @@ namespace UNO_Server.Models
 			return nextPlayerIndex;
 		}
 
-		public Player GetNextPlayerAfter(int playerIndex)
+		public Player GetNextPlayer()
 		{
-			return players[GetNextPlayerIndexAfter(playerIndex)];
+			return players[GetNextPlayerIndexAfter(activePlayerIndex)];
+		}
+
+		public void NextPlayerSkipsTurn()
+		{
+			nextPlayerIndex = GetNextPlayerIndexAfter(nextPlayerIndex);
 		}
 
 		public void NextPlayerTurn()
 		{
-			throw new NotImplementedException();
+			int nextNextPlayer = GetNextPlayerIndexAfter(nextPlayerIndex);
+			activePlayerIndex = nextPlayerIndex;
+			nextPlayerIndex = nextNextPlayer;
+
+			Player player = players[activePlayerIndex];
+			if (CanPlayerPlayAnyOn(player))
+				expectedAction = ExpectedPlayerAction.PlayCard;
+			else
+				expectedAction = ExpectedPlayerAction.DrawCard;
+
 		}
 
-
-		public void ReverseAction()
+		public void ReverseFlow()
 		{
 			flowClockWise = !flowClockWise;
 		}
 
 		// other gameplay methods
 
-		public void NewGame()
+		public void NewGamePrep()
 		{
 			phase = GamePhase.WaitingForPlayers;
-			players = new Player[10];
-			numPlayers = 0;
 
 			discardPile = new Deck();
 			drawPile = new Deck();
+
+			players = new Player[10];
+			numPlayers = 0;
 
 			foreach (var item in observers)
 				item.Counter = 0;
@@ -274,16 +305,18 @@ namespace UNO_Server.Models
 
 		public void StartGame(bool finiteDeck = false, bool onlyNumbers = false)
 		{
-			this.finiteDeck = finiteDeck;
 			phase = GamePhase.Playing;
-			activePlayerIndex = 0;
+			this.finiteDeck = finiteDeck;
 
+			flowClockWise = true;
+			discardPile = new Deck();
 			var builder = new DeckBuilder();
 			if (onlyNumbers) builder.setActionCards(0);
 			drawPile = builder.build();
-			discardPile = new Deck();
-
 			drawPile.Shuffle();
+
+			activePlayerIndex = 0;
+			nextPlayerIndex = 0;
 
 			for (int i = 0; i < numPlayers; i++)
 			{

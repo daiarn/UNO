@@ -220,7 +220,7 @@ namespace UNO_Server.Controllers
 			// looks good, go ahead
 
 
-			game.PlayerPlaysCard(player, card);
+			game.PlayerPlaysCard(card);
 			return new JsonResult(new { success = true });
 		}
 
@@ -260,7 +260,7 @@ namespace UNO_Server.Controllers
 
 			// TODO: check if player has playable card
 
-			game.PlayerDrawsCard(player);
+			game.PlayerDrawsCard();
 			return new JsonResult(new { success = true });
 		}
 
@@ -293,7 +293,7 @@ namespace UNO_Server.Controllers
 			}
 
 			/*
-			else if (game.activePlayer != playerId)
+			else if (game.expectedAction != ExpectedPlayerAction.SayUNO)
 			{
 				return new JsonResult(new
 				{
@@ -304,7 +304,7 @@ namespace UNO_Server.Controllers
 			//*/
 
 
-			//game.sayUNO();
+			game.PlayerSaysUNO();
 			return new JsonResult(new { success = true });
 		}
 

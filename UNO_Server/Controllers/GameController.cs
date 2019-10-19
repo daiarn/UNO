@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Microsoft.AspNetCore.Mvc;
-using UNO.Models;
 using UNO_Server.Models;
 
 namespace UNO_Server.Controllers

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using UNO_Server.Utility;
+using UNO_Server.Utility.Strategy;
 
-namespace UNO.Models
+namespace UNO_Server.Models
 {
 	public enum GamePhase
 	{

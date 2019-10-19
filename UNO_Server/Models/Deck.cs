@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UNO.Models
+namespace UNO_Server.Models
 {
 	public class Deck
 	{

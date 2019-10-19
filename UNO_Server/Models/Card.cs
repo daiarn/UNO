@@ -1,6 +1,6 @@
 using System;
 
-namespace UNO.Models
+namespace UNO_Server.Models
 {
 	public enum CardColor
 	{

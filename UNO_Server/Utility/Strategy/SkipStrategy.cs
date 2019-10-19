@@ -1,8 +1,8 @@
-﻿using System;
+﻿using UNO_Server.Models;
 
-namespace UNO.Models
+namespace UNO_Server.Utility.Strategy
 {
-    class SkipStrategy : ICardStrategy
+	class SkipStrategy : ICardStrategy
     {
         public void Action()
         {

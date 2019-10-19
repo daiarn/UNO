@@ -5,12 +5,13 @@ namespace UNO_Server.Utility.Strategy
 	class Draw4Strategy : ICardStrategy
     {
         public void Action()
-        {
-            for (int i = 0; i < 4; i++)
+		{
+			var game = Game.GetInstance();
+			for (int i = 0; i < 4; i++)
             {
-                Game.GetInstance().nextPlayer.hand.Add(Game.GetInstance().FromDrawPile());
+				game.nextPlayer.hand.Add(game.FromDrawPile());
             }
-            Game.GetInstance().SkipAction();
+			game.NextPlayerTurn();
         }
     }
 }

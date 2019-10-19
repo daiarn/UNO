@@ -6,11 +6,13 @@ namespace UNO_Server.Utility.Strategy
     {
         public void Action()
         {
-            for (int i = 0; i < 2; i++)
-            {
-                Game.GetInstance().nextPlayer.hand.Add(Game.GetInstance().FromDrawPile());
-            }
-            Game.GetInstance().SkipAction();
-        }
+			var game = Game.GetInstance();
+
+			var victimPlayer = game.GetNextPlayerAfter(game.activePlayerIndex);
+			victimPlayer.hand.Add(game.FromDrawPile());
+			victimPlayer.hand.Add(game.FromDrawPile());
+
+			game.NextPlayerTurn();
+		}
     }
 }

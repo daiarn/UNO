@@ -6,7 +6,7 @@ namespace UNO_Server.Utility.Strategy
     {
         public void Action()
         {
-            Game.GetInstance().SkipAction();
+            Game.GetInstance().NextPlayerTurn();
         }
     }
 }

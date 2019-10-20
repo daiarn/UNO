@@ -11,6 +11,7 @@ using System.Net.Http;
 using UNO_Client.Models;
 using Newtonsoft.Json;
 using System.Timers;
+using System.Threading;
 
 namespace UNO_Client.Forms
 {
@@ -19,8 +20,7 @@ namespace UNO_Client.Forms
         public float[,] xyImage;
         private const string BASE_URL = "https://localhost:44331/api/game"; //TODO: change this
 
-        private static System.Timers.Timer PlayerTimer;
-        private static System.Timers.Timer GameTimer;
+        private static System.Windows.Forms.Timer GameTimer;
         private static readonly HttpClient client = new HttpClient();
         private Game Game;
         private Player CurrentPlayer;
@@ -30,7 +30,9 @@ namespace UNO_Client.Forms
             CurrentPlayer = new Player();
             CurrentPlayer.Id = joinPost.Id;
             SetGame();
-            //SetGameTimer();
+            Thread.Sleep(1000);
+            InitializeComponent();
+            SetGameTimer();
         }
 
         private async void Draw_ClickAsync(object sender, EventArgs e)
@@ -198,39 +200,29 @@ namespace UNO_Client.Forms
             var respondeString = await client.GetStringAsync(BASE_URL + "/" + CurrentPlayer.Id);
             //json serializer to Game object and set it globaly
             Game = JsonConvert.DeserializeObject<Game>(respondeString);
-            InitializeComponent();
             ShowPlayersInformation();
             Update();
-        }
-
-        private void SetPlayerTimer()
-        {
-            // Create a timer with a two second interval.
-            PlayerTimer = new System.Timers.Timer(2000);
-            // Hook up the Elapsed event for the timer. 
-            PlayerTimer.Elapsed += OnTimedEvent;
-            PlayerTimer.AutoReset = true;
-            PlayerTimer.Enabled = true;
+            mainPanel.Refresh();
+            Thread.Sleep(1000);
+            handPanel.Refresh();
+            Thread.Sleep(1000);
         }
         private void SetGameTimer()
         {
             // Create a timer with a two second interval.
-            GameTimer = new System.Timers.Timer(2000);
+            GameTimer = new System.Windows.Forms.Timer();
+            GameTimer.Tick += new EventHandler(OnTimedGameEvent);
             // Hook up the Elapsed event for the timer. 
-            GameTimer.Elapsed += OnTimedGameEvent;
-            GameTimer.AutoReset = true;
-            GameTimer.Enabled = true;
-        }
-        private void OnTimedEvent(Object source, ElapsedEventArgs e)
-        {
-            //Fetch user data
-            //SetPlayer();
+            GameTimer.Interval = 2000;
+            GameTimer.Start();
         }
 
-        private void OnTimedGameEvent(Object source, ElapsedEventArgs e)
+        private void OnTimedGameEvent(Object myObject, EventArgs myEventArgs)
         {
+            GameTimer.Stop();
             //Fetch game data
-            SetGame();          
+            SetGame();
+            GameTimer.Enabled = true;
         }
 
         private string[] FormatPlayersInformation()

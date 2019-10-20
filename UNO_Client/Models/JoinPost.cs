@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace UNO_Client.Models
 {
-    class Game
+    public class JoinPost
     {
         bool success;
-        GameState gamestate;
+        string id;
 
         public bool Success { get => success; set => success = value; }
-        public GameState Gamestate { get => gamestate; set => gamestate = value; }
+        public string Id { get => id; set => id = value; }
     }
 }

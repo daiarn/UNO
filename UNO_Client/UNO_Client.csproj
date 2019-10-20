@@ -79,12 +79,6 @@
     <Compile Include="Forms\NameForm.Designer.cs">
       <DependentUpon>NameForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\PlayForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PlayForm.Designer.cs">
-      <DependentUpon>PlayForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\StatiscticsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -93,6 +87,8 @@
     </Compile>
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\GameState.cs" />
+    <Compile Include="Models\JoinPost.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -110,9 +106,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\NameForm.resx">
       <DependentUpon>NameForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PlayForm.resx">
-      <DependentUpon>PlayForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\StatiscticsForm.resx">
       <DependentUpon>StatiscticsForm.cs</DependentUpon>

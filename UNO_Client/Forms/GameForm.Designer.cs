@@ -34,14 +34,16 @@
             this.Exit = new System.Windows.Forms.Button();
             this.mainPanel = new System.Windows.Forms.Panel();
             this.handPanel = new System.Windows.Forms.Panel();
+            this.PlayersInfo = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // Draw
             // 
-            this.Draw.Location = new System.Drawing.Point(501, 56);
-            this.Draw.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Draw.Location = new System.Drawing.Point(824, 37);
+            this.Draw.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Draw.Name = "Draw";
-            this.Draw.Size = new System.Drawing.Size(90, 48);
+            this.Draw.Size = new System.Drawing.Size(120, 59);
             this.Draw.TabIndex = 0;
             this.Draw.Text = "Draw card";
             this.Draw.UseVisualStyleBackColor = true;
@@ -49,10 +51,10 @@
             // 
             // GiveUp
             // 
-            this.GiveUp.Location = new System.Drawing.Point(501, 118);
-            this.GiveUp.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.GiveUp.Location = new System.Drawing.Point(824, 98);
+            this.GiveUp.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GiveUp.Name = "GiveUp";
-            this.GiveUp.Size = new System.Drawing.Size(90, 48);
+            this.GiveUp.Size = new System.Drawing.Size(120, 59);
             this.GiveUp.TabIndex = 1;
             this.GiveUp.Text = "Give up";
             this.GiveUp.UseVisualStyleBackColor = true;
@@ -60,10 +62,10 @@
             // 
             // UNO
             // 
-            this.UNO.Location = new System.Drawing.Point(501, 181);
-            this.UNO.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.UNO.Location = new System.Drawing.Point(824, 162);
+            this.UNO.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.UNO.Name = "UNO";
-            this.UNO.Size = new System.Drawing.Size(90, 48);
+            this.UNO.Size = new System.Drawing.Size(120, 59);
             this.UNO.TabIndex = 2;
             this.UNO.Text = "UNO";
             this.UNO.UseVisualStyleBackColor = true;
@@ -71,10 +73,10 @@
             // 
             // Exit
             // 
-            this.Exit.Location = new System.Drawing.Point(501, 327);
-            this.Exit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Exit.Location = new System.Drawing.Point(824, 363);
+            this.Exit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Exit.Name = "Exit";
-            this.Exit.Size = new System.Drawing.Size(90, 28);
+            this.Exit.Size = new System.Drawing.Size(120, 34);
             this.Exit.TabIndex = 3;
             this.Exit.Text = "Exit";
             this.Exit.UseVisualStyleBackColor = true;
@@ -82,40 +84,62 @@
             // 
             // mainPanel
             // 
-            this.mainPanel.Location = new System.Drawing.Point(10, 11);
-            this.mainPanel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.mainPanel.Location = new System.Drawing.Point(15, 14);
+            this.mainPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(487, 176);
+            this.mainPanel.Size = new System.Drawing.Size(804, 386);
             this.mainPanel.TabIndex = 4;
             this.mainPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.MainPanel_Paint);
             // 
             // handPanel
             // 
-            this.handPanel.Location = new System.Drawing.Point(10, 192);
-            this.handPanel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.handPanel.Location = new System.Drawing.Point(13, 194);
+            this.handPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.handPanel.Name = "handPanel";
-            this.handPanel.Size = new System.Drawing.Size(487, 162);
+            this.handPanel.Size = new System.Drawing.Size(805, 203);
             this.handPanel.TabIndex = 5;
             this.handPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.HandPanel_Paint);
             this.handPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.handPanel_MouseClick);
             this.handPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.handPanel_MouseMove);
             // 
+            // PlayersInfo
+            // 
+            this.PlayersInfo.Location = new System.Drawing.Point(949, 224);
+            this.PlayersInfo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.PlayersInfo.Multiline = true;
+            this.PlayersInfo.Name = "PlayersInfo";
+            this.PlayersInfo.ReadOnly = true;
+            this.PlayersInfo.Size = new System.Drawing.Size(227, 173);
+            this.PlayersInfo.TabIndex = 6;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(949, 206);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(129, 17);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Players information";
+            // 
             // GameForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(600, 366);
+            this.ClientSize = new System.Drawing.Size(1187, 405);
             this.Controls.Add(this.handPanel);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.PlayersInfo);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.Exit);
             this.Controls.Add(this.UNO);
             this.Controls.Add(this.GiveUp);
             this.Controls.Add(this.Draw);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "GameForm";
             this.Text = "GameForm";
             this.Load += new System.EventHandler(this.GameForm_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -127,5 +151,7 @@
         private System.Windows.Forms.Button Exit;
         private System.Windows.Forms.Panel mainPanel;
         private System.Windows.Forms.Panel handPanel;
+        private System.Windows.Forms.TextBox PlayersInfo;
+        private System.Windows.Forms.Label label1;
     }
 }

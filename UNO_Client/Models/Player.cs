@@ -8,11 +8,14 @@ namespace UNO_Client.Models
 {
     class Player
     {
-        int playerId;
-        string nick;
-        List<Card> cards;
-        public List<Card> Cards { get => cards; set => cards = value; }
-        public string Nick { get => nick; set => nick = value; }
-        public int PlayerId { get => playerId; set => playerId = value; }
+        string name;
+        int count;
+        bool isPlaying;
+
+        public string Name { get => name; set => name = value; }
+        public int Count { get => count; set => count = value; }
+        public bool IsPlaying { get => isPlaying; set => isPlaying = value; }
+
+        public string Id { get; set; }
     }
 }

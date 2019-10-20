@@ -7,7 +7,9 @@ using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Forms;
 using UNO_Client.Models;
 
@@ -17,12 +19,16 @@ namespace UNO_Client.Forms
     {
         private const string BASE_URL = "https://localhost:44331/api/game"; //TODO: change this
         private static readonly HttpClient client = new HttpClient();
+        private static System.Windows.Forms.Timer GameTimer;
         private JoinPost joinPost;
         private Game Game;
         public LobyForm(JoinPost joinPost)
         {
             this.joinPost = joinPost;
             SetGame();
+            Thread.Sleep(1000);
+            InitializeComponent();
+            SetGameTimer();
         }
 
         private void LobyForm_Load(object sender, EventArgs e)
@@ -52,8 +58,7 @@ namespace UNO_Client.Forms
         {
             var respondeString = await client.GetStringAsync(BASE_URL + "/" + joinPost.Id);
             //json serializer to Game object and set it globaly
-            Game = JsonConvert.DeserializeObject<Game>(respondeString);
-            InitializeComponent();
+            Game = JsonConvert.DeserializeObject<Game>(respondeString);           
             ShowPlayersInformation();
         }
         private string[] FormatPlayersInformation()
@@ -71,6 +76,22 @@ namespace UNO_Client.Forms
         {
             var info = FormatPlayersInformation();
             Players.Lines = info;
+        }
+        private void SetGameTimer()
+        {
+            // Create a timer with a two second interval.
+            GameTimer = new System.Windows.Forms.Timer();
+            GameTimer.Tick += new EventHandler(OnTimedGameEvent);
+            // Hook up the Elapsed event for the timer. 
+            GameTimer.Interval = 2000;
+            GameTimer.Start();
+        }
+        private void OnTimedGameEvent(Object myObject, EventArgs myEventArgs)
+        {
+            GameTimer.Stop();
+            //Fetch game data
+            SetGame();
+            GameTimer.Enabled = true;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace UNO_Client.Forms
             CurrentPlayer = new Player();
             CurrentPlayer.Id = joinPost.Id;
             SetGame();
-            SetGameTimer();
+            //SetGameTimer();
         }
 
         private async void Draw_ClickAsync(object sender, EventArgs e)
@@ -38,6 +38,7 @@ namespace UNO_Client.Forms
             string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\"}";
             var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(BASE_URL + "/draw", content);
+            SetGame();
         }
 
         private async void GiveUp_Click(object sender, EventArgs e)
@@ -45,6 +46,7 @@ namespace UNO_Client.Forms
             string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\"}";
             var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(BASE_URL + "/leave", content);
+            SetGame();
         }
 
         private async void UNO_Click(object sender, EventArgs e)
@@ -52,6 +54,7 @@ namespace UNO_Client.Forms
             string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\"}";
             var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(BASE_URL + "/uno", content);
+            SetGame();
         }
 
         private async void Exit_Click(object sender, EventArgs e)

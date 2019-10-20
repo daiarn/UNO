@@ -35,7 +35,7 @@ namespace UNO_Client.Forms
             bool isOnlyNumbers = gameOptions.GetItemChecked(0);
             bool isFiniteDeck = gameOptions.GetItemChecked(1);
             //Start game
-            string JsonString = "{\"finiteDeck\":\"" + isFiniteDeck + "\",\"onlyNumbers\":\"" + isOnlyNumbers +"\"}";
+            string JsonString = "{\"id\":\"" + joinPost.Id + "\",\"finiteDeck\":\"" + isFiniteDeck + "\",\"onlyNumbers\":\"" + isOnlyNumbers +"\"}";
             var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(BASE_URL + "/start", content);
             GameForm form = new GameForm(joinPost);

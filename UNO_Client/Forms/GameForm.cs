@@ -187,9 +187,10 @@ namespace UNO_Client.Forms
 
         private async void putCard(Card card, string Color)
         {
-            string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\", \"color\":\"" + card.Color + "\",\"type\":\"" + card.Value + "\"}";
+            string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\", \"color\":" + card.Color + ",\"type\":" + card.Type + "}";
             var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(BASE_URL + "/play", content);
+            SetGame();
         }
 
         private async void SetGame()
@@ -199,6 +200,7 @@ namespace UNO_Client.Forms
             Game = JsonConvert.DeserializeObject<Game>(respondeString);
             InitializeComponent();
             ShowPlayersInformation();
+            Update();
         }
 
         private void SetPlayerTimer()

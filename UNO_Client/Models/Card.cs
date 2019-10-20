@@ -22,7 +22,7 @@ namespace UNO_Client.Models
         }
 
         public string Color { get => color; set => color = value; }
-        public string Value { get => type; set => this.type = value; }
+        public string Type { get => type; set => this.type = value; }
         public string Image { get => image; set => image = value; }
 
         public Bitmap GetImage()

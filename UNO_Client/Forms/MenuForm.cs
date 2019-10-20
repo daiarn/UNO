@@ -26,17 +26,14 @@ namespace UNO_Client
 
         private async void Play_Click(object sender, EventArgs e)
         {
-            //PlayForm form = new PlayForm();
-            //this.Hide();
-            //form.ShowDialog();
             string name = NametextBox.Text;
             string JsonString = "{\"Name\":\"" + name + "\"}";
             var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await client.PostAsync(BASE_URL + "/join", content);
-            //Stream receiveStream = response.GetResponseStream();
-            //StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
             string message = await response.Content.ReadAsStringAsync();
             JoinPost joinPost = JsonConvert.DeserializeObject<JoinPost>(message);
+            //JoinPost joinPost = new JoinPost();
+            //joinPost.Id = "2a12fe31-a06c-49dd-916f-3a566aefbb06";
 
             LobyForm form = new LobyForm(joinPost);
             form.Show();

@@ -209,6 +209,7 @@ namespace UNO_Server.Models
 			if (action != null) action.Action();
 
 			// TODO: check if player has won
+			GameOver();
 
 			NextPlayerTurn();
 		}
@@ -350,7 +351,7 @@ namespace UNO_Server.Models
 		{
 			phase = GamePhase.Finished;
 
-			throw new NotImplementedException();
+			throw new NotImplementedException("Game over, go home");
 		}
 	}
 }

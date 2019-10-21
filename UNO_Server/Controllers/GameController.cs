@@ -264,6 +264,11 @@ namespace UNO_Server.Controllers
 
 			// TODO: check if player has to say uno
 
+			if (card.type == CardType.Wild || card.type == CardType.Draw4)// TODO: temp fix for #1
+			{
+				card.color = CardColor.Red;
+			}
+
 			game.PlayerPlaysCard(card);
 			return new JsonResult(new { success = true });
 		}

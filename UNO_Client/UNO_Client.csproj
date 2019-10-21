@@ -91,6 +91,7 @@
     <Compile Include="Models\JoinPost.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Other\HttpAdapter.cs" />
+    <Compile Include="Other\SoundAdapter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\ColorChooserForm.resx">
@@ -191,6 +192,7 @@
     <Content Include="CardImages\yp.png" />
     <Content Include="CardImages\yr.png" />
     <Content Include="CardImages\ys.png" />
+    <Content Include="Sounds\fireworks.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

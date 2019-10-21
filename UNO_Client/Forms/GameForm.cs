@@ -5,6 +5,7 @@ using UNO_Client.Models;
 using Newtonsoft.Json;
 using System.Threading;
 using UNO_Client.Other;
+using UNO_Client.Utility;
 
 namespace UNO_Client.Forms
 {
@@ -170,7 +171,12 @@ namespace UNO_Client.Forms
             float dbFac = dbWidth / (float)blankCardImage.Width;
             var dbHeight = dbFac * blankCardImage.Height;
 
-            graphics.DrawImage(Game.Gamestate.ActiveCard.GetImage(), new RectangleF(middlePointX - (dbWidth/2), middlePointY - dbHeight - (dbHeight/4), dbWidth, dbHeight));
+            RectangleF rect = new RectangleF(middlePointX - (dbWidth / 2), middlePointY - dbHeight - (dbHeight / 4), dbWidth, dbHeight);
+            RectangleF rectToDecorate = new RectangleF(middlePointX - (dbWidth / 2) - 5, middlePointY - dbHeight - (dbHeight / 4), dbWidth + 10, dbHeight);
+            Rect simpleRect = new DiagonalDecorator(new BorderDecorator(new BackgroundDecorator(new SimpleRect(rectToDecorate, graphics))));
+            simpleRect.Draw();
+            graphics.DrawImage(Game.Gamestate.ActiveCard.GetImage(), rect);
+
         }
 
         private async void putCard(Card card, string Color)

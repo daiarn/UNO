@@ -132,6 +132,7 @@ namespace UNO_Server.Models
                 case CardType.Nine:
                     img += "9";
                     break;
+
                 case CardType.Skip:
                     img += "s";
                     break;
@@ -141,11 +142,12 @@ namespace UNO_Server.Models
                 case CardType.Draw2:
                     img += "p";
                     break;
+
                 case CardType.Wild:
-                    img += "c";
+                    img = "c";
                     break;
                 case CardType.Draw4:
-                    img += "p4";
+                    img = "p4";
                     break;
             }
 

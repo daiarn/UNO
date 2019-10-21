@@ -16,7 +16,7 @@ namespace UNO_Server.Models
 			cards.Add(card);
 		}
 
-		public int Count()
+		public int GetCount()
 		{
 			return cards.Count;
 		}

@@ -13,5 +13,18 @@
 		//public var players;
 
 		//public Card[] hand;
+
+		public GameState(Game game)
+		{
+			zeroCounter = game.observers[0].Counter;
+			wildCounter = game.observers[1].Counter;
+
+			discardPileCount = game.discardPile.GetCount();
+			drawPileCount = game.drawPile.GetCount();
+			activeCard = game.discardPile.PeekBottomCard();
+
+			activePlayer = game.activePlayerIndex;
+			//players = ...;
+		}
 	}
 }

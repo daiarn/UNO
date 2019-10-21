@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace UNO_Server.Models
@@ -13,19 +14,29 @@ namespace UNO_Server.Models
 		Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Skip, Reverse, Draw2, Wild, Draw4
 	}
 
-	[DebuggerDisplay("{color} {type}")]
+	[DebuggerDisplay("{color}   {type}")]
 	public class Card : IEquatable<Card>
     {
 		public CardColor color;
 		public CardType type;
         public string image;
 
+		public static readonly List<CardType> numberCardTypes = new List<CardType> {
+				CardType.Zero, CardType.One, CardType.Two, CardType.Three, CardType.Four, CardType.Five, CardType.Six, CardType.Seven, CardType.Eight, CardType.Nine
+			};
+
 		public Card(CardColor color, CardType type)
-        {
-            this.color = color;
-            this.type = type;
-            this.image = buildImageString(color, type);
-        }
+		{
+			this.color = color;
+			this.type = type;
+			this.image = buildImageString(color, type);
+		}
+		public Card(Card other)
+		{
+			this.color = other.color;
+			this.type = other.type;
+			this.image = other.image;
+		}
 
 		public bool Equals(Card other)
 		{
@@ -121,6 +132,7 @@ namespace UNO_Server.Models
                 case CardType.Nine:
                     img += "9";
                     break;
+
                 case CardType.Skip:
                     img += "s";
                     break;
@@ -130,11 +142,12 @@ namespace UNO_Server.Models
                 case CardType.Draw2:
                     img += "p";
                     break;
+
                 case CardType.Wild:
-                    img += "c";
+                    img = "c";
                     break;
                 case CardType.Draw4:
-                    img += "p4";
+                    img = "p4";
                     break;
             }
 

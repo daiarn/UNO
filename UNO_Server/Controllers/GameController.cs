@@ -10,14 +10,18 @@ namespace UNO_Server.Controllers
     [ApiController]
     public class GameController : ControllerBase
 	{
-        DrawCard drawCard = new DrawCard();
-        Uno uno = new Uno();
+    DrawCard drawCard = new DrawCard();
+    Uno uno = new Uno();
 
-        #region UNIVERSAL
+    #region UNIVERSAL
 
-		// GET api/game
+		/// <summary>
+		/// GET api/game
+		/// Gets the state of the game from a spectator's point of view
+		/// </summary>
+		/// <returns>Game state</returns>
 		[HttpGet]
-		public ActionResult Get() // for spectators maybe
+		public ActionResult Get()
 		{
 			var game = Game.GetInstance();
 
@@ -25,7 +29,7 @@ namespace UNO_Server.Controllers
 			foreach (var player in game.players)
 			{
 				if (player == null) break;
-				allPlayerData.Add(new { player.name, count = player.hand.Count(), player.isPlaying });
+				allPlayerData.Add(new { player.name, count = player.hand.GetCount(), player.isPlaying });
 			}
 
 			return new JsonResult(new
@@ -46,9 +50,14 @@ namespace UNO_Server.Controllers
 			});
 		}
 
-		// GET api/game/5
+		/// <summary>
+		/// GET api/game/5
+		/// Gets the state of the game from a player's point of view
+		/// </summary>
+		/// <param name="id">Player authentification identifier</param>
+		/// <returns>Game state</returns>
 		[HttpGet("{id}")]
-		public ActionResult Get(Guid id) // get gamestate of player
+		public ActionResult Get(Guid id)
 		{
 			var game = Game.GetInstance();
 			var player = game.GetPlayerByUUID(id);
@@ -66,7 +75,7 @@ namespace UNO_Server.Controllers
 			foreach (var item in game.players)
 			{
 				if (item == null) break;
-				allPlayerData.Add(new { name = item.name, count = item.hand.Count(), isPlaying = item.isPlaying });
+				allPlayerData.Add(new { name = item.name, count = item.hand.GetCount(), isPlaying = item.isPlaying });
 			}
 
 
@@ -90,30 +99,18 @@ namespace UNO_Server.Controllers
 			});
 		}
 
-		// POST api/game/leave
-		[HttpPost("leave")]
-		public ActionResult Leave(PlayerData data) // player leaves/surrenders
-		{
-			var game = Game.GetInstance();
-			if (game.phase != GamePhase.Playing)
-			{
-				game.DeletePlayer(data.id);
-				return new JsonResult(new { success = true });
-			}
-
-			// TODO: add more checks when game is in progress
-
-			game.EliminatePlayer(data.id);
-			return new JsonResult(new { success = true, message = "You were in an in-progress game, but left anyway" });
-		}
-
 		#endregion
 
-		#region PRE-GAME PHASE
-
-		// POST api/game/join
+		#region NON-GAMEPLAY
+		
+		/// <summary>
+		/// POST api/game/join
+		/// A new player attempts to join the game
+		/// </summary>
+		/// <param name="data">Player information</param>
+		/// <returns>Response message</returns>
 		[HttpPost("join")]
-		public ActionResult Join(JoinData data) // new player joins the game
+		public ActionResult Join(JoinData data)
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.WaitingForPlayers)
@@ -137,9 +134,36 @@ namespace UNO_Server.Controllers
 			return new JsonResult(new { success = true, id = id });
 		}
 
-		// POST api/game/start
+		/// <summary>
+		/// POST api/game/leave
+		/// Player leaves or surrenders
+		/// </summary>
+		/// <param name="data">Player authentification identifier</param>
+		/// <returns>Response message</returns>
+		[HttpPost("leave")]
+		public ActionResult Leave(PlayerData data) 
+		{
+			var game = Game.GetInstance();
+			if (game.phase != GamePhase.Playing)
+			{
+				game.DeletePlayer(data.id);
+				return new JsonResult(new { success = true });
+			}
+
+			// TODO: add more checks when game is in progress
+
+			game.EliminatePlayer(data.id);
+			return new JsonResult(new { success = true, message = "You were in an in-progress game, but left anyway" });
+		}
+
+		/// <summary>
+		/// POST api/game/start
+		/// Player attempts to start the game
+		/// </summary>
+		/// <param name="data">Game rule information</param>
+		/// <returns>Response message</returns>
 		[HttpPost("start")]
-		public ActionResult Start(StartData data) // a player decides to start the game
+		public ActionResult Start(StartData data) 
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.WaitingForPlayers)
@@ -177,11 +201,16 @@ namespace UNO_Server.Controllers
 
 		#endregion
 
-		#region GAMEPLAY PHASE
+		#region GAMEPLAY
 
-		// POST api/game/play
+		/// <summary>
+		/// POST api/game/play
+		/// Player plays a card
+		/// </summary>
+		/// <param name="data">Player and card information</param>
+		/// <returns>Response message</returns>
 		[HttpPost("play")]
-		public ActionResult Play(PlayData data) // player plays a card
+		public ActionResult Play(PlayData data) 
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.Playing)
@@ -239,13 +268,23 @@ namespace UNO_Server.Controllers
 
 			// TODO: check if player has to say uno
 
+			if (card.type == CardType.Wild || card.type == CardType.Draw4)// TODO: temp fix for #1
+			{
+				card.color = CardColor.Red;
+			}
+
 			game.PlayerPlaysCard(card);
 			return new JsonResult(new { success = true });
 		}
 
-		// POST api/game/draw
+		/// <summary>
+		/// POST api/game/draw
+		/// Player draws a card
+		/// </summary>
+		/// <param name="data">Player authentification identifier</param>
+		/// <returns>Response message</returns>
 		[HttpPost("draw")]
-		public ActionResult Draw(PlayerData data) // player draws a card
+		public ActionResult Draw(PlayerData data)
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.Playing)
@@ -286,18 +325,23 @@ namespace UNO_Server.Controllers
             drawCard.Execute();
 			return new JsonResult(new { success = true });
 		}
+    
+    // POST api/game/draw/undo
+    [HttpPost("draw/undo")]
+    public ActionResult UndoDraw() // player draws a card
+    {
+      drawCard.Undo();
+      return new JsonResult(new { success = true });
+    }
 
-        // POST api/game/draw/undo
-        [HttpPost("draw/undo")]
-        public ActionResult UndoDraw() // player draws a card
-        {
-            drawCard.Undo();
-            return new JsonResult(new { success = true });
-        }
-
-        // POST api/game/uno
-        [HttpPost("uno")]
-		public ActionResult Uno(PlayerData data) // player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
+    /// <summary>
+		/// POST api/game/uno
+		/// Player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
+		/// </summary>
+		/// <param name="data">Player authentification identifier</param>
+		/// <returns>Response message</returns>
+		[HttpPost("uno")]
+		public ActionResult Uno(PlayerData data) // 
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.Playing)
@@ -345,4 +389,4 @@ namespace UNO_Server.Controllers
         #endregion
 
     }
-}
+}    

@@ -37,6 +37,7 @@ namespace UNO_Server.Models
 
         private static readonly Game instance = new Game();
 		private static readonly Factory cardActionFactory = new CardActionFactory();
+		private readonly Deck perfectDeck;
 		private Game()
         {
 			observers = new List<Observer>
@@ -47,7 +48,8 @@ namespace UNO_Server.Models
 
 			NewGamePrep();
 
-			// more?
+			var builder = new DeckBuilder();
+			perfectDeck = builder.build();
 		}
 
 		public static Game GetInstance()
@@ -55,23 +57,7 @@ namespace UNO_Server.Models
 			return instance;
 		}
 
-		public GameState GetState()
-		{
-			return new GameState
-			{
-				zeroCounter = observers[0].Counter,
-				wildCounter = observers[1].Counter,
-
-				discardPileCount = discardPile.GetCount(),
-				drawPileCount = drawPile.GetCount(),
-				activeCard = discardPile.PeekBottomCard(),
-
-				activePlayer = activePlayerIndex,
-			};
-		}
-
 		// player methods
-
 		public Guid AddPlayer(string name)
 		{
 			int index = numPlayers;
@@ -80,12 +66,10 @@ namespace UNO_Server.Models
 			return players[index].id;
 		}
 
-		private int GetPlayerIndexByUUID(Guid id)
+		public int GetPlayerIndexByUUID(Guid id)
 		{
 			for (int i = 0; i < numPlayers; i++)
-			{
 				if (players[i].id == id) return i;
-			}
 			return -1;
 		}
 
@@ -128,12 +112,12 @@ namespace UNO_Server.Models
 			return count;
 		}
 
-		// player & card methods
+		// card methods
 
 		public bool CanPlayerPlayAnyOn(Player player)
 		{
 			var activeCard = discardPile.PeekBottomCard();
-			for (int i = 0; i < player.hand.Count(); i++)
+			for (int i = 0; i < player.hand.GetCount(); i++)
 			{
 				var playerCard = player.hand.GetCard(i);
 				if (CanCardBePlayed(activeCard, playerCard)) return true;
@@ -176,7 +160,9 @@ namespace UNO_Server.Models
 					discardPile.AddToBottom(activeCard);
 
 					var card = drawPile.DrawTopCard();
-					NotifyAllObservers(card);
+					if (card != null)
+						NotifyAllObservers(card);
+
 					return card;
 				}
 				else
@@ -192,7 +178,7 @@ namespace UNO_Server.Models
 			}
 		}
 
-		// player turn/action methods
+		// player action methods
 
 		public void PlayerDrawsCard()
 		{
@@ -235,6 +221,8 @@ namespace UNO_Server.Models
 
 			NextPlayerTurn();
 		}
+
+		// player turn logic
 
 		private int GetNextPlayerIndexAfter(int playerIndex)
 		{
@@ -287,7 +275,7 @@ namespace UNO_Server.Models
 			flowClockWise = !flowClockWise;
 		}
 
-		// other gameplay methods
+		// game progress methods
 
 		public void NewGamePrep()
 		{
@@ -310,9 +298,19 @@ namespace UNO_Server.Models
 
 			flowClockWise = true;
 			discardPile = new Deck();
-			var builder = new DeckBuilder();
-			if (onlyNumbers) builder.setActionCards(0);
-			drawPile = builder.build();
+			//var builder = new DeckBuilder();
+			//if (onlyNumbers) builder.setActionCards(0);
+			//drawPile = builder.build();
+			if (onlyNumbers)
+			{
+				var builder = new DeckBuilder();
+				builder.setActionCards(0);
+				drawPile = builder.build();
+			}
+			else
+			{
+				drawPile = perfectDeck.MakeDeepCopy();
+			}
 			drawPile.Shuffle();
 
 			activePlayerIndex = 0;
@@ -329,14 +327,11 @@ namespace UNO_Server.Models
 
 
 			Card firstCard = null;
-			var allowedFirstCardTypes = new HashSet<CardType> { // efficient contains() method
-				CardType.Zero, CardType.One, CardType.Two, CardType.Three, CardType.Four, CardType.Five, CardType.Six, CardType.Seven, CardType.Eight, CardType.Nine
-			};
 
 			for (int i = 0; i < drawPile.GetCount(); i++)
 			{
 				var aCard = drawPile.DrawTopCard();
-				if (allowedFirstCardTypes.Contains(aCard.type))
+				if (Card.numberCardTypes.Contains(aCard.type))
 				{
 					firstCard = aCard;
 					break;

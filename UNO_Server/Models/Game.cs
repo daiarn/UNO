@@ -217,7 +217,7 @@ namespace UNO_Server.Models
 			if (action != null) action.Action();
 
 			// TODO: check if player has won
-			GameOver();
+			//GameOver();
 
 			NextPlayerTurn();
 		}

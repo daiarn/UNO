@@ -1,34 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net.Http;
 using UNO_Client.Models;
 using Newtonsoft.Json;
-using System.Timers;
 using System.Threading;
+using UNO_Client.Other;
+using System.Net.Http;
+using System.Text;
 
 namespace UNO_Client.Forms
 {
-    public partial class GameForm : Form
+	public partial class GameForm : Form
     {
         public float[,] xyImage;
-        private const string BASE_URL = "https://localhost:44331/api/game"; //TODO: change this
+        //private const string BASE_URL = "https://localhost:44331/api/game"; //TODO: change this
 
         private static System.Windows.Forms.Timer GameTimer;
-        private static readonly HttpClient client = new HttpClient();
-        private Game Game;
-        private Player CurrentPlayer;
+		//private static readonly HttpClient client = new HttpClient();
+		private static readonly HttpAdapter adaptor = new HttpAdapter();
+		private Game Game;
+		private string CurrentPlayerId;
 
-        public GameForm(JoinPost joinPost)
+		public GameForm(JoinPost joinPost)
         {
-            CurrentPlayer = new Player();
-            CurrentPlayer.Id = joinPost.Id;
+            CurrentPlayerId = joinPost.Id;
             SetGame();
             Thread.Sleep(1000);
             InitializeComponent();
@@ -37,34 +32,38 @@ namespace UNO_Client.Forms
 
         private async void Draw_ClickAsync(object sender, EventArgs e)
         {
-            string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\"}";
-            var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(BASE_URL + "/draw", content);
+			//string JsonString = "{\"id\":\"" + CurrentPlayerId + "\"}";
+			//var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+			//var response = await client.PostAsync(BASE_URL + "/draw", content);
+			var response = await adaptor.sendSimplePostAsync(CurrentPlayerId, "/draw");
             SetGame();
         }
 
         private async void GiveUp_Click(object sender, EventArgs e)
         {
-            string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\"}";
-            var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(BASE_URL + "/leave", content);
-            SetGame();
+            //string JsonString = "{\"id\":\"" + CurrentPlayerId + "\"}";
+            //var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+            //var response = await client.PostAsync(BASE_URL + "/leave", content);
+			var response = await adaptor.sendSimplePostAsync(CurrentPlayerId, "/leave");
+			SetGame();
         }
 
         private async void UNO_Click(object sender, EventArgs e)
         {
-            string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\"}";
-            var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(BASE_URL + "/uno", content);
-            SetGame();
+            //string JsonString = "{\"id\":\"" + CurrentPlayerId + "\"}";
+            //var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+            //var response = await client.PostAsync(BASE_URL + "/uno", content);
+			var response = await adaptor.sendSimplePostAsync(CurrentPlayerId, "/uno");
+			SetGame();
         }
 
         private async void Exit_Click(object sender, EventArgs e)
         {
-            string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\"}";
-            var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(BASE_URL + "/leave", content);
-        }
+			//string JsonString = "{\"id\":\"" + CurrentPlayerId + "\"}";
+			//var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+			//var response = await client.PostAsync(BASE_URL + "/leave", content);
+			var response = await adaptor.sendSimplePostAsync(CurrentPlayerId, "/leave");
+		}
 
         const float HandCardWidth = 80f;
 
@@ -189,23 +188,24 @@ namespace UNO_Client.Forms
 
         private async void putCard(Card card, string Color)
         {
-            string JsonString = "{\"id\":\"" + CurrentPlayer.Id + "\", \"color\":" + card.Color + ",\"type\":" + card.Type + "}";
-            var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(BASE_URL + "/play", content);
-            SetGame();
+            //string JsonString = "{\"id\":\"" + CurrentPlayerId + "\", \"color\":" + card.Color + ",\"type\":" + card.Type + "}";
+            //var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+            //var response = await client.PostAsync(BASE_URL + "/play", content);
+			var response = await adaptor.sendAdvancedPostAsync(CurrentPlayerId, card, "/play");
+			SetGame();
         }
 
         private async void SetGame()
-        {
-            var respondeString = await client.GetStringAsync(BASE_URL + "/" + CurrentPlayer.Id);
-            //json serializer to Game object and set it globaly
-            Game = JsonConvert.DeserializeObject<Game>(respondeString);
+		{
+			//var respondeString = await client.GetStringAsync(BASE_URL + "/" + CurrentPlayerId);
+			var respondeString = await adaptor.SendGetAsync(CurrentPlayerId);
+
+			//json serializer to Game object and set it globaly
+			Game = JsonConvert.DeserializeObject<Game>(respondeString);
             ShowPlayersInformation();
             Update();
             mainPanel.Refresh();
-            Thread.Sleep(1000);
             handPanel.Refresh();
-            Thread.Sleep(1000);
         }
         private void SetGameTimer()
         {
@@ -250,17 +250,19 @@ namespace UNO_Client.Forms
 
         private async void Button2_ClickAsync(object sender, EventArgs e)
         {
-            string JsonString = "{}";
-            var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(BASE_URL + "/draw/undo", content);
-            //SetGame();
-        }
+            //string JsonString = "{}";
+            //var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+            //var response = await client.PostAsync(BASE_URL + "/draw/undo", content);
+			var response = await adaptor.sendEmptyPostAsync("/draw/undo");
+			//SetGame();
+		}
 
         private async void Button3_ClickAsync(object sender, EventArgs e)
         {
-            string JsonString = "{}";
-            var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(BASE_URL + "/uno/undo", content);
+            //string JsonString = "{}";
+            //var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+            //var response = await client.PostAsync(BASE_URL + "/uno/undo", content);
+			var response = await adaptor.sendEmptyPostAsync("/uno/undo");
             //SetGame();
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using UNO_Server.Models;
+using UNO_Server.Utility.Command;
 
 namespace UNO_Server.Controllers
 {
@@ -9,93 +10,96 @@ namespace UNO_Server.Controllers
     [ApiController]
     public class GameController : ControllerBase
 	{
-		#region INFORMATION
+        DrawCard drawCard = new DrawCard();
+        Uno uno = new Uno();
 
-		/// <summary>
-		/// GET api/game
-		/// Gets the state of the game from a spectator's point of view
-		/// </summary>
-		/// <returns>Game state</returns>
-		[HttpGet]
-		public ActionResult Get()
-		{
-			var game = Game.GetInstance();
+        #region UNIVERSAL
 
-			List<object> allPlayerData = new List<object>();
-			foreach (var player in game.players)
-			{
-				if (player == null) break;
-				allPlayerData.Add(new { player.name, count = player.hand.GetCount(), player.isPlaying });
-			}
+		    /// <summary>
+		    /// GET api/game
+		    /// Gets the state of the game from a spectator's point of view
+		    /// </summary>
+		    /// <returns>Game state</returns>
+		    [HttpGet]
+		    public ActionResult Get()
+		    {
+			    var game = Game.GetInstance();
 
-			return new JsonResult(new
-			{
-				success = true,
-				gamestate = new
-				{
-					zeroCounter = game.observers[0].Counter,
-					wildCounter = game.observers[1].Counter,
+			    List<object> allPlayerData = new List<object>();
+			    foreach (var player in game.players)
+			    {
+				    if (player == null) break;
+				    allPlayerData.Add(new { player.name, count = player.hand.GetCount(), player.isPlaying });
+			    }
 
-					discardPile = game.discardPile.GetCount(),
-					drawPile = game.drawPile.GetCount(),
-					activeCard = game.discardPile.PeekBottomCard(),
+			    return new JsonResult(new
+			    {
+				    success = true,
+				    gamestate = new
+				    {
+					    zeroCounter = game.observers[0].Counter,
+					    wildCounter = game.observers[1].Counter,
 
-					activePlayer = game.activePlayerIndex,
-					players = allPlayerData
-				}
-			});
-		}
+					    discardPile = game.discardPile.GetCount(),
+					    drawPile = game.drawPile.GetCount(),
+					    activeCard = game.discardPile.PeekBottomCard(),
 
-		/// <summary>
-		/// GET api/game/5
-		/// Gets the state of the game from a player's point of view
-		/// </summary>
-		/// <param name="id">Player authentification identifier</param>
-		/// <returns>Game state</returns>
-		[HttpGet("{id}")]
-		public ActionResult Get(Guid id)
-		{
-			var game = Game.GetInstance();
-			var player = game.GetPlayerByUUID(id);
+					    activePlayer = game.activePlayerIndex,
+					    players = allPlayerData
+				    }
+			    });
+		    }
 
-			if (player == null)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You are not in the game"
-				});
-			}
+		    /// <summary>
+		    /// GET api/game/5
+		    /// Gets the state of the game from a player's point of view
+		    /// </summary>
+		    /// <param name="id">Player authentification identifier</param>
+		    /// <returns>Game state</returns>
+		    [HttpGet("{id}")]
+		    public ActionResult Get(Guid id)
+		    {
+			    var game = Game.GetInstance();
+			    var player = game.GetPlayerByUUID(id);
 
-			List<object> allPlayerData = new List<object>();
-			foreach (var item in game.players)
-			{
-				if (item == null) break;
-				allPlayerData.Add(new { name = item.name, count = item.hand.GetCount(), isPlaying = item.isPlaying });
-			}
+			    if (player == null)
+			    {
+				    return new JsonResult(new
+				    {
+					    success = false,
+					    message = "You are not in the game"
+				    });
+			    }
+
+			    List<object> allPlayerData = new List<object>();
+			    foreach (var item in game.players)
+			    {
+				    if (item == null) break;
+				    allPlayerData.Add(new { name = item.name, count = item.hand.GetCount(), isPlaying = item.isPlaying });
+			    }
 
 
-			return new JsonResult(new
-			{
-				success = true,
-				gamestate = new
-				{
-					zeroCounter = game.observers[0].Counter,
-					wildCounter = game.observers[1].Counter,
+			    return new JsonResult(new
+			    {
+				    success = true,
+				    gamestate = new
+				    {
+					    zeroCounter = game.observers[0].Counter,
+					    wildCounter = game.observers[1].Counter,
 
-					discardPile = game.discardPile.GetCount(),
-					drawPile = game.drawPile.GetCount(),
-					activeCard = game.discardPile.PeekBottomCard(),
+					    discardPile = game.discardPile.GetCount(),
+					    drawPile = game.drawPile.GetCount(),
+					    activeCard = game.discardPile.PeekBottomCard(),
 
-					activePlayer = game.activePlayerIndex,
-					players = allPlayerData,
+					    activePlayer = game.activePlayerIndex,
+					    players = allPlayerData,
 
-					hand = player.hand.cards
-				}
-			});
-		}
+					    hand = player.hand.cards
+				    }
+			    });
+		    }
 
-		#endregion
+		    #endregion
 
 		#region NON-GAMEPLAY
 		
@@ -318,11 +322,19 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			game.PlayerDrawsCard();
+            drawCard.Execute();
 			return new JsonResult(new { success = true });
 		}
+    
+        // POST api/game/draw/undo
+        [HttpPost("draw/undo")]
+        public ActionResult UndoDraw() // player draws a card
+        {
+          drawCard.Undo();
+          return new JsonResult(new { success = true });
+        }
 
-		/// <summary>
+        /// <summary>
 		/// POST api/game/uno
 		/// Player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
 		/// </summary>
@@ -351,7 +363,7 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			/*
+            /*
 			else if (game.expectedAction != ExpectedPlayerAction.SayUNO)
 			{
 				return new JsonResult(new
@@ -362,11 +374,19 @@ namespace UNO_Server.Controllers
 			}
 			//*/
 
-			game.PlayerSaysUNO();
+            uno.Execute();
 			return new JsonResult(new { success = true });
 		}
 
-		#endregion
+        // POST api/game/uno/undo
+        [HttpPost("uno/undo")]
+        public ActionResult UndoUno() // player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
+        {
+            uno.Undo();
+            return new JsonResult(new { success = true });
+        }
 
-	}
-}
+        #endregion
+
+    }
+}    

@@ -21,7 +21,7 @@ namespace UNO_Server.Controllers
 			foreach (var player in game.players)
 			{
 				if (player == null) break;
-				allPlayerData.Add(new { player.name, count = player.hand.Count(), player.isPlaying });
+				allPlayerData.Add(new { player.name, count = player.hand.GetCount(), player.isPlaying });
 			}
 
 			return new JsonResult(new
@@ -62,7 +62,7 @@ namespace UNO_Server.Controllers
 			foreach (var item in game.players)
 			{
 				if (item == null) break;
-				allPlayerData.Add(new { name = item.name, count = item.hand.Count(), isPlaying = item.isPlaying });
+				allPlayerData.Add(new { name = item.name, count = item.hand.GetCount(), isPlaying = item.isPlaying });
 			}
 
 

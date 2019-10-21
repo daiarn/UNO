@@ -13,6 +13,26 @@ namespace UNO_Server.Models
 			cards = new List<Card>();
 		}
 
+		public Deck MakeShallowCopy()
+		{
+			Deck other = new Deck();
+			foreach (var card in cards)
+			{
+				other.AddToBottom(card);
+			}
+			return other;
+		}
+
+		public Deck MakeDeepCopy()
+		{
+			Deck other = new Deck();
+			foreach (var card in cards)
+			{
+				other.AddToBottom(new Card(card));
+			}
+			return other;
+		}
+
 		public void Shuffle()
 		{
 			var arr = cards.ToArray();

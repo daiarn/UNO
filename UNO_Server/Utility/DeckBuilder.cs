@@ -98,26 +98,9 @@ namespace UNO_Server.Utility
 
 			// number cards
 
-			for (int j = 0; j < numberCards[0]; j++)
-				addAllColors(deck, CardType.Zero);
-			for (int j = 0; j < numberCards[1]; j++)
-				addAllColors(deck, CardType.One);
-			for (int j = 0; j < numberCards[2]; j++)
-				addAllColors(deck, CardType.Two);
-			for (int j = 0; j < numberCards[3]; j++)
-				addAllColors(deck, CardType.Three);
-			for (int j = 0; j < numberCards[4]; j++)
-				addAllColors(deck, CardType.Four);
-			for (int j = 0; j < numberCards[5]; j++)
-				addAllColors(deck, CardType.Five);
-			for (int j = 0; j < numberCards[6]; j++)
-				addAllColors(deck, CardType.Six);
-			for (int j = 0; j < numberCards[7]; j++)
-				addAllColors(deck, CardType.Seven);
-			for (int j = 0; j < numberCards[8]; j++)
-				addAllColors(deck, CardType.Eight);
-			for (int j = 0; j < numberCards[9]; j++)
-				addAllColors(deck, CardType.Nine);
+			for (int i = 0; i < 10; i++)
+				for (int j = 0; j < numberCards[i]; j++)
+					addAllColors(deck, Card.numberCardTypes[i]);
 
 			// action cards
 

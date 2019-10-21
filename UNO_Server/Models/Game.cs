@@ -49,9 +49,16 @@ namespace UNO_Server.Models
 
 			NewGamePrep();
 
-			var builder = new DeckBuilder();
-			perfectDeck = builder.build();
-		}
+            perfectDeck = new DeckBuilderFacade()
+                .number
+                    .addNonZeroNumberCards(2)
+                    .addIndividualNumberCards(0, 1)
+                .action
+                    .addActionCards(2)
+                .wild
+                    .addBlackCards(4)
+                .build();
+        }
 
 		public static Game GetInstance()
 		{
@@ -300,19 +307,16 @@ namespace UNO_Server.Models
 
 			flowClockWise = true;
 			discardPile = new Deck();
-			//var builder = new DeckBuilder();
-			//if (onlyNumbers) builder.setActionCards(0);
-			//drawPile = builder.build();
 			if (onlyNumbers)
 			{
-				var builder = new DeckBuilder();
-				builder.setActionCards(0);
-				drawPile = builder.build();
-			}
+				drawPile = new DeckBuilderFacade()
+                .number
+                    .addNonZeroNumberCards(2)
+                    .addIndividualNumberCards(0, 1)
+                .build();
+            }
 			else
-			{
 				drawPile = perfectDeck.MakeDeepCopy();
-			}
 			drawPile.Shuffle();
 
 			activePlayerIndex = 0;

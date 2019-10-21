@@ -35,7 +35,7 @@ namespace UNO_Server.Models
 		{
 			this.color = other.color;
 			this.type = other.type;
-			//this.image = other.image;
+			this.image = other.image;
 		}
 
 		public bool Equals(Card other)

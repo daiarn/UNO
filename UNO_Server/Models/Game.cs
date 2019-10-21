@@ -160,7 +160,9 @@ namespace UNO_Server.Models
 					discardPile.AddToBottom(activeCard);
 
 					var card = drawPile.DrawTopCard();
-					NotifyAllObservers(card);
+					if (card != null)
+						NotifyAllObservers(card);
+
 					return card;
 				}
 				else
@@ -307,7 +309,7 @@ namespace UNO_Server.Models
 			}
 			else
 			{
-				//drawPile = perfectDeck.clone();
+				drawPile = perfectDeck.MakeDeepCopy();
 			}
 			drawPile.Shuffle();
 

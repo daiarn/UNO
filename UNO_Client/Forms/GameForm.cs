@@ -18,6 +18,7 @@ namespace UNO_Client.Forms
         private static System.Windows.Forms.Timer GameTimer;
 		//private static readonly HttpClient client = new HttpClient();
 		private static readonly HttpAdapter adaptor = new HttpAdapter();
+        private static readonly SoundAdapter soundAdaptor = new SoundAdapter();
 		private Game Game;
 		private string CurrentPlayerId;
 
@@ -54,6 +55,7 @@ namespace UNO_Client.Forms
             //var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
             //var response = await client.PostAsync(BASE_URL + "/uno", content);
 			var response = await adaptor.sendSimplePostAsync(CurrentPlayerId, "/uno");
+            soundAdaptor.turnOnSoundEffect();
 			SetGame();
         }
 

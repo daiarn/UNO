@@ -247,5 +247,21 @@ namespace UNO_Client.Forms
         {
 
         }
+
+        private async void Button2_ClickAsync(object sender, EventArgs e)
+        {
+            string JsonString = "{}";
+            var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(BASE_URL + "/draw/undo", content);
+            //SetGame();
+        }
+
+        private async void Button3_ClickAsync(object sender, EventArgs e)
+        {
+            string JsonString = "{}";
+            var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(BASE_URL + "/uno/undo", content);
+            //SetGame();
+        }
     }
 }

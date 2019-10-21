@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using UNO_Server.Models;
+using UNO_Server.Utility.Command;
 
 namespace UNO_Server.Controllers
 {
@@ -9,7 +10,10 @@ namespace UNO_Server.Controllers
     [ApiController]
     public class GameController : ControllerBase
 	{
-		#region UNIVERSAL
+        DrawCard drawCard = new DrawCard();
+        Uno uno = new Uno();
+
+        #region UNIVERSAL
 
 		// GET api/game
 		[HttpGet]
@@ -279,12 +283,20 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			game.PlayerDrawsCard();
+            drawCard.Execute();
 			return new JsonResult(new { success = true });
 		}
 
-		// POST api/game/uno
-		[HttpPost("uno")]
+        // POST api/game/draw/undo
+        [HttpPost("draw/undo")]
+        public ActionResult UndoDraw() // player draws a card
+        {
+            drawCard.Undo();
+            return new JsonResult(new { success = true });
+        }
+
+        // POST api/game/uno
+        [HttpPost("uno")]
 		public ActionResult Uno(PlayerData data) // player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
 		{
 			var game = Game.GetInstance();
@@ -307,7 +319,7 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			/*
+            /*
 			else if (game.expectedAction != ExpectedPlayerAction.SayUNO)
 			{
 				return new JsonResult(new
@@ -318,11 +330,19 @@ namespace UNO_Server.Controllers
 			}
 			//*/
 
-			game.PlayerSaysUNO();
+            uno.Execute();
 			return new JsonResult(new { success = true });
 		}
 
-		#endregion
+        // POST api/game/uno/undo
+        [HttpPost("uno/undo")]
+        public ActionResult UndoUno() // player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
+        {
+            uno.Undo();
+            return new JsonResult(new { success = true });
+        }
 
-	}
+        #endregion
+
+    }
 }

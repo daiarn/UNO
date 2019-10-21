@@ -36,14 +36,16 @@
             this.handPanel = new System.Windows.Forms.Panel();
             this.PlayersInfo = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Draw
             // 
-            this.Draw.Location = new System.Drawing.Point(824, 37);
-            this.Draw.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Draw.Location = new System.Drawing.Point(618, 30);
+            this.Draw.Margin = new System.Windows.Forms.Padding(2);
             this.Draw.Name = "Draw";
-            this.Draw.Size = new System.Drawing.Size(120, 59);
+            this.Draw.Size = new System.Drawing.Size(90, 48);
             this.Draw.TabIndex = 0;
             this.Draw.Text = "Draw card";
             this.Draw.UseVisualStyleBackColor = true;
@@ -51,10 +53,10 @@
             // 
             // GiveUp
             // 
-            this.GiveUp.Location = new System.Drawing.Point(824, 98);
-            this.GiveUp.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.GiveUp.Location = new System.Drawing.Point(618, 80);
+            this.GiveUp.Margin = new System.Windows.Forms.Padding(2);
             this.GiveUp.Name = "GiveUp";
-            this.GiveUp.Size = new System.Drawing.Size(120, 59);
+            this.GiveUp.Size = new System.Drawing.Size(90, 48);
             this.GiveUp.TabIndex = 1;
             this.GiveUp.Text = "Give up";
             this.GiveUp.UseVisualStyleBackColor = true;
@@ -62,10 +64,10 @@
             // 
             // UNO
             // 
-            this.UNO.Location = new System.Drawing.Point(824, 162);
-            this.UNO.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.UNO.Location = new System.Drawing.Point(618, 132);
+            this.UNO.Margin = new System.Windows.Forms.Padding(2);
             this.UNO.Name = "UNO";
-            this.UNO.Size = new System.Drawing.Size(120, 59);
+            this.UNO.Size = new System.Drawing.Size(90, 48);
             this.UNO.TabIndex = 2;
             this.UNO.Text = "UNO";
             this.UNO.UseVisualStyleBackColor = true;
@@ -73,10 +75,10 @@
             // 
             // Exit
             // 
-            this.Exit.Location = new System.Drawing.Point(824, 363);
-            this.Exit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Exit.Location = new System.Drawing.Point(618, 295);
+            this.Exit.Margin = new System.Windows.Forms.Padding(2);
             this.Exit.Name = "Exit";
-            this.Exit.Size = new System.Drawing.Size(120, 34);
+            this.Exit.Size = new System.Drawing.Size(90, 28);
             this.Exit.TabIndex = 3;
             this.Exit.Text = "Exit";
             this.Exit.UseVisualStyleBackColor = true;
@@ -84,19 +86,19 @@
             // 
             // mainPanel
             // 
-            this.mainPanel.Location = new System.Drawing.Point(15, 14);
-            this.mainPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.mainPanel.Location = new System.Drawing.Point(11, 11);
+            this.mainPanel.Margin = new System.Windows.Forms.Padding(2);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(804, 386);
+            this.mainPanel.Size = new System.Drawing.Size(603, 314);
             this.mainPanel.TabIndex = 4;
             this.mainPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.MainPanel_Paint);
             // 
             // handPanel
             // 
-            this.handPanel.Location = new System.Drawing.Point(13, 194);
-            this.handPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.handPanel.Location = new System.Drawing.Point(10, 158);
+            this.handPanel.Margin = new System.Windows.Forms.Padding(2);
             this.handPanel.Name = "handPanel";
-            this.handPanel.Size = new System.Drawing.Size(805, 203);
+            this.handPanel.Size = new System.Drawing.Size(604, 165);
             this.handPanel.TabIndex = 5;
             this.handPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.HandPanel_Paint);
             this.handPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.handPanel_MouseClick);
@@ -104,28 +106,51 @@
             // 
             // PlayersInfo
             // 
-            this.PlayersInfo.Location = new System.Drawing.Point(949, 224);
-            this.PlayersInfo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.PlayersInfo.Location = new System.Drawing.Point(712, 182);
+            this.PlayersInfo.Margin = new System.Windows.Forms.Padding(2);
             this.PlayersInfo.Multiline = true;
             this.PlayersInfo.Name = "PlayersInfo";
             this.PlayersInfo.ReadOnly = true;
-            this.PlayersInfo.Size = new System.Drawing.Size(227, 173);
+            this.PlayersInfo.Size = new System.Drawing.Size(171, 141);
             this.PlayersInfo.TabIndex = 6;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(949, 206);
+            this.label1.Location = new System.Drawing.Point(712, 167);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(129, 17);
+            this.label1.Size = new System.Drawing.Size(95, 13);
             this.label1.TabIndex = 7;
             this.label1.Text = "Players information";
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(618, 185);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(89, 23);
+            this.button2.TabIndex = 9;
+            this.button2.Text = "Undo Draw";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.Button2_ClickAsync);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(618, 214);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(89, 23);
+            this.button3.TabIndex = 10;
+            this.button3.Text = "Undo UNO";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.Button3_ClickAsync);
+            // 
             // GameForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1187, 405);
+            this.ClientSize = new System.Drawing.Size(890, 329);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.handPanel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.PlayersInfo);
@@ -134,7 +159,7 @@
             this.Controls.Add(this.UNO);
             this.Controls.Add(this.GiveUp);
             this.Controls.Add(this.Draw);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "GameForm";
             this.Text = "GameForm";
             this.Load += new System.EventHandler(this.GameForm_Load);
@@ -153,5 +178,7 @@
         private System.Windows.Forms.Panel handPanel;
         private System.Windows.Forms.TextBox PlayersInfo;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }

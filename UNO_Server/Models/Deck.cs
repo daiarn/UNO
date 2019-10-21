@@ -35,6 +35,11 @@ namespace UNO_Server.Models
 			cards.Add(card);
 		}
 
+        public void AddtoTop(Card card)
+        {
+            cards.Insert(0, card);
+        }
+
 		public Card DrawTopCard()
 		{
 			if (cards.Count > 0)

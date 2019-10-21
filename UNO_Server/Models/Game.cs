@@ -30,6 +30,7 @@ namespace UNO_Server.Models
 		public int numPlayers;
 
 		public ExpectedPlayerAction expectedAction;
+
 		public int activePlayerIndex;
 		public int nextPlayerIndex;
 
@@ -357,5 +358,21 @@ namespace UNO_Server.Models
 
 			throw new NotImplementedException();
 		}
-	}
+
+        public void UndoDrawCard(int playerIndex)
+        {
+            if(playerIndex != -1)
+            {
+                int index = players[playerIndex].hand.cards.Count - 1;
+                Card card = players[playerIndex].hand.cards[index];
+                players[playerIndex].hand.cards.Remove(card);
+                drawPile.AddtoTop(card);
+            }
+        }
+
+        public void UndoUno()
+        {
+            //do nothing for now
+        }
+    }
 }

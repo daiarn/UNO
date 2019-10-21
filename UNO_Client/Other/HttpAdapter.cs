@@ -14,21 +14,21 @@ namespace UNO_Client.Other
 			return await client.GetStringAsync(BASE_URL + "/" + playerId);
 		}
 
-		public async Task<HttpResponseMessage> sendEmptyPostAsync(string path)
+		public async Task<HttpResponseMessage> SendEmptyPostAsync(string path)
 		{
 			string JsonString = "{}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
 			return await client.PostAsync(BASE_URL + path, content);
 		}
 
-		public async Task<HttpResponseMessage> sendSimplePostAsync(string playerId, string path)
+		public async Task<HttpResponseMessage> SendSimplePostAsync(string playerId, string path)
 		{
 			string JsonString = "{\"id\":\"" + playerId + "\"}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
 			return await client.PostAsync(BASE_URL + path, content);
 		}
 
-		public async Task<HttpResponseMessage> sendAdvancedPostAsync(string playerId, Models.Card card, string path)
+		public async Task<HttpResponseMessage> SendAdvancedPostAsync(string playerId, Models.Card card, string path)
 		{
 			string JsonString = "{\"id\":\"" + playerId + "\", \"color\":" + card.Color + ",\"type\":" + card.Type + "}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");

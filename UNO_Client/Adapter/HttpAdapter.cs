@@ -1,15 +1,21 @@
 ﻿using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using UNO_Client.Models;
 
-namespace UNO_Client.Other
+namespace UNO_Client.Adapter
 {
-	class HttpAdapter
+	class HttpAdapter : ConnectionInterface
 	{
-		private const string BASE_URL = "https://localhost:44331/api/game"; //TODO: change this
+		private readonly string BASE_URL;
 		private static readonly HttpClient client = new HttpClient();
+
+		public HttpAdapter(string base_url)
+		{
+			this.BASE_URL = base_url;
+		}
 		
-		public async Task<string> SendGetAsync(string playerId)
+		public async Task<string> GetPlayerGameState(string playerId)
 		{
 			return await client.GetStringAsync(BASE_URL + "/" + playerId);
 		}
@@ -28,11 +34,43 @@ namespace UNO_Client.Other
 			return await client.PostAsync(BASE_URL + path, content);
 		}
 
-		public async Task<HttpResponseMessage> SendAdvancedPostAsync(string playerId, Models.Card card, string path)
+
+		public async Task<HttpResponseMessage> SendJoinGame(string iden)
 		{
-			string JsonString = "{\"id\":\"" + playerId + "\", \"color\":" + card.Color + ",\"type\":" + card.Type + "}";
+			throw new System.NotImplementedException();
+		}
+
+		public async Task<HttpResponseMessage> SendLeaveGame(string iden)
+		{
+			throw new System.NotImplementedException();
+		}
+
+
+		public async Task<HttpResponseMessage> SendDrawCard(string iden)
+		{
+			throw new System.NotImplementedException();
+		}
+		public async Task<HttpResponseMessage> SendPlayCard(string iden, Card card)
+		{
+			string JsonString = "{\"id\":\"" + iden + "\", \"color\":" + card.Color + ",\"type\":" + card.Type + "}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-			return await client.PostAsync(BASE_URL + path, content);
+			return await client.PostAsync(BASE_URL + "/play", content);
+		}
+
+		public async Task<HttpResponseMessage> SendSayUNO(string iden)
+		{
+			throw new System.NotImplementedException();
+		}
+
+
+		public async Task<HttpResponseMessage> SendUndoDraw()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public async Task<HttpResponseMessage> SendUndoUNO()
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

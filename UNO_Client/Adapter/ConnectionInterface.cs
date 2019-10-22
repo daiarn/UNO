@@ -6,14 +6,14 @@ namespace UNO_Client.Adapter
 {
 	interface ConnectionInterface
 	{
-		Task<string> GetPlayerGameState(string iden);
+		Task<string> GetPlayerGameState();
 
-		//Task<HttpResponseMessage> SendJoinGame(string iden);
-		Task<HttpResponseMessage> SendLeaveGame(string iden);
+		//Task<HttpResponseMessage> SendJoinGame(); // different parameters?
+		Task<HttpResponseMessage> SendLeaveGame();
 
-		Task<HttpResponseMessage> SendDrawCard(string iden);
-		Task<HttpResponseMessage> SendPlayCard(string iden, Card card);
-		Task<HttpResponseMessage> SendSayUNO(string iden);
+		Task<HttpResponseMessage> SendDrawCard();
+		Task<HttpResponseMessage> SendPlayCard(Card card);
+		Task<HttpResponseMessage> SendSayUNO();
 
 		Task<HttpResponseMessage> SendUndoDraw();
 		Task<HttpResponseMessage> SendUndoUNO();

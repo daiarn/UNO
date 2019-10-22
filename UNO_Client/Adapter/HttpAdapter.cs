@@ -7,12 +7,14 @@ namespace UNO_Client.Adapter
 {
 	class HttpAdapter : ConnectionInterface
 	{
-		private readonly string BASE_URL;
 		private static readonly HttpClient client = new HttpClient();
+		private readonly string BASE_URL;
+		//public string identity;
 
-		public HttpAdapter(string base_url)
+		public HttpAdapter(string base_url)//, string id)
 		{
 			this.BASE_URL = base_url;
+			//this.identity = id;
 		}
 		
 		public async Task<string> GetPlayerGameState(string playerId)
@@ -20,14 +22,8 @@ namespace UNO_Client.Adapter
 			return await client.GetStringAsync(BASE_URL + "/" + playerId);
 		}
 
-		public async Task<HttpResponseMessage> SendEmptyPostAsync(string path)
-		{
-			string JsonString = "{}";
-			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-			return await client.PostAsync(BASE_URL + path, content);
-		}
 
-		public async Task<HttpResponseMessage> SendSimplePostAsync(string playerId, string path)
+		private async Task<HttpResponseMessage> SimplePostAsync(string playerId, string path)
 		{
 			string JsonString = "{\"id\":\"" + playerId + "\"}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
@@ -35,20 +31,20 @@ namespace UNO_Client.Adapter
 		}
 
 
-		public async Task<HttpResponseMessage> SendJoinGame(string iden)
-		{
-			throw new System.NotImplementedException();
-		}
+		//public async Task<HttpResponseMessage> SendJoinGame(string iden)
+		//{
+		//	throw new System.NotImplementedException();
+		//}
 
 		public async Task<HttpResponseMessage> SendLeaveGame(string iden)
 		{
-			throw new System.NotImplementedException();
+			return await SimplePostAsync(iden, "/leave");
 		}
 
 
 		public async Task<HttpResponseMessage> SendDrawCard(string iden)
 		{
-			throw new System.NotImplementedException();
+			return await SimplePostAsync(iden, "/draw");
 		}
 		public async Task<HttpResponseMessage> SendPlayCard(string iden, Card card)
 		{
@@ -59,18 +55,20 @@ namespace UNO_Client.Adapter
 
 		public async Task<HttpResponseMessage> SendSayUNO(string iden)
 		{
-			throw new System.NotImplementedException();
+			return await SimplePostAsync(iden, "/uno");
 		}
 
 
 		public async Task<HttpResponseMessage> SendUndoDraw()
 		{
-			throw new System.NotImplementedException();
+			var content = new StringContent("{}", Encoding.UTF8, "application/json");
+			return await client.PostAsync(BASE_URL + "/draw/undo", content);
 		}
 
 		public async Task<HttpResponseMessage> SendUndoUNO()
 		{
-			throw new System.NotImplementedException();
+			var content = new StringContent("{}", Encoding.UTF8, "application/json");
+			return await client.PostAsync(BASE_URL + "/uno/undo", content);
 		}
 	}
 }

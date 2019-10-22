@@ -15,7 +15,7 @@ namespace UNO_Client.Forms
         public float[,] xyImage;
 
         private static System.Windows.Forms.Timer GameTimer;
-		private static readonly ConnectionInterface serverConnection = new HttpAdapter("https://localhost:44331/api/game"); // TODO: change this
+		private static readonly ConnectionInterface serverConnection = new HttpAdapter("https://localhost:44331/api/game");
         private static readonly SoundAdapter soundAdaptor = new SoundAdapter();
 		private Game Game;
 		private string CurrentPlayerId;
@@ -23,7 +23,8 @@ namespace UNO_Client.Forms
 		public GameForm(JoinPost joinPost)
         {
             CurrentPlayerId = joinPost.Id;
-            SetGame();
+			//serverConnection = new HttpAdapter("https://localhost:44331/api/game"); // TODO: change this
+			SetGame();
             Thread.Sleep(1000);
             InitializeComponent();
             SetGameTimer();
@@ -31,19 +32,19 @@ namespace UNO_Client.Forms
 
         private async void Draw_ClickAsync(object sender, EventArgs e)
         {
-			var response = await serverConnection.SendSimplePostAsync(CurrentPlayerId, "/draw");
+			var response = await serverConnection.SendDrawCard(CurrentPlayerId);
             SetGame();
         }
 
         private async void GiveUp_Click(object sender, EventArgs e)
         {
-			var response = await serverConnection.SendSimplePostAsync(CurrentPlayerId, "/leave");
+			var response = await serverConnection.SendLeaveGame(CurrentPlayerId);
 			SetGame();
         }
 
         private async void UNO_Click(object sender, EventArgs e)
         {
-			var response = await serverConnection.SendSimplePostAsync(CurrentPlayerId, "/uno");
+			var response = await serverConnection.SendSayUNO(CurrentPlayerId);
             soundAdaptor.turnOnSoundEffect();
 
 			SetGame();
@@ -51,7 +52,7 @@ namespace UNO_Client.Forms
 
         private async void Exit_Click(object sender, EventArgs e)
         {
-			var response = await serverConnection.SendSimplePostAsync(CurrentPlayerId, "/leave");
+			var response = await serverConnection.SendLeaveGame(CurrentPlayerId);
 		}
 
         const float HandCardWidth = 80f;
@@ -240,13 +241,13 @@ namespace UNO_Client.Forms
 
         private async void Button2_ClickAsync(object sender, EventArgs e)
         {
-			var response = await serverConnection.SendEmptyPostAsync("/draw/undo");
+			var response = await serverConnection.SendUndoDraw();
 			//SetGame();
 		}
 
         private async void Button3_ClickAsync(object sender, EventArgs e)
         {
-			var response = await serverConnection.SendEmptyPostAsync("/uno/undo");
+			var response = await serverConnection.SendUndoUNO();
             //SetGame();
         }
     }

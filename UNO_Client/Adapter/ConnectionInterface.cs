@@ -8,7 +8,7 @@ namespace UNO_Client.Adapter
 	{
 		Task<string> GetPlayerGameState(string iden);
 
-		Task<HttpResponseMessage> SendJoinGame(string iden);
+		//Task<HttpResponseMessage> SendJoinGame(string iden);
 		Task<HttpResponseMessage> SendLeaveGame(string iden);
 
 		Task<HttpResponseMessage> SendDrawCard(string iden);

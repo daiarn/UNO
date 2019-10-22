@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 
-namespace UNO_Client.Utility
+namespace UNO_Client.Decorator
 {
     public class BackgroundDecorator : RectDecorator
     {

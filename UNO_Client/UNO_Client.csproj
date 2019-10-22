@@ -94,12 +94,12 @@
     <Compile Include="Other\SoundAdapter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\BackgroundDecorator.cs" />
-    <Compile Include="Utility\BorderDecorator.cs" />
-    <Compile Include="Utility\DiagonalDecorator.cs" />
-    <Compile Include="Utility\RectDecorator.cs" />
-    <Compile Include="Utility\Rect.cs" />
-    <Compile Include="Utility\SimpleRect.cs" />
+    <Compile Include="Decorator\BackgroundDecorator.cs" />
+    <Compile Include="Decorator\BorderDecorator.cs" />
+    <Compile Include="Decorator\DiagonalDecorator.cs" />
+    <Compile Include="Decorator\RectDecorator.cs" />
+    <Compile Include="Decorator\Rect.cs" />
+    <Compile Include="Decorator\SimpleRect.cs" />
     <EmbeddedResource Include="Forms\ColorChooserForm.resx">
       <DependentUpon>ColorChooserForm.cs</DependentUpon>
     </EmbeddedResource>

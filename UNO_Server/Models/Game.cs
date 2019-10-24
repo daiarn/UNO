@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UNO_Server.Models.SendData;
 using UNO_Server.Utility;
+using UNO_Server.Utility.BuilderFacade;
 using UNO_Server.Utility.Strategy;
 
 namespace UNO_Server.Models
@@ -39,6 +40,7 @@ namespace UNO_Server.Models
         private static readonly Game instance = new Game();
 		private static readonly Factory cardActionFactory = new CardActionFactory();
 		private readonly Deck perfectDeck;
+		private readonly Deck semiPerfectDeck;
 		private Game()
         {
 			observers = new List<Observer>
@@ -49,16 +51,22 @@ namespace UNO_Server.Models
 
 			NewGamePrep();
 
-            perfectDeck = new DeckBuilderFacade()
-                .number
-                    .addNonZeroNumberCards(2)
-                    .addIndividualNumberCards(0, 1)
-                .action
-                    .addActionCards(2)
-                .wild
-                    .addBlackCards(4)
-                .build();
-        }
+			perfectDeck = new DeckBuilderFacade()
+				.number
+					.addNonZeroNumberCards(2)
+					.addIndividualNumberCards(0, 1)
+				.action
+					.addActionCards(2)
+				.wild
+					.addBlackCards(4)
+				.build();
+
+			semiPerfectDeck = new DeckBuilderFacade()
+				.number
+					.addNonZeroNumberCards(2)
+					.addIndividualNumberCards(0, 1)
+				.build();
+		}
 
 		public static Game GetInstance()
 		{
@@ -307,16 +315,8 @@ namespace UNO_Server.Models
 
 			flowClockWise = true;
 			discardPile = new Deck();
-			if (onlyNumbers)
-			{
-				drawPile = new DeckBuilderFacade()
-                .number
-                    .addNonZeroNumberCards(2)
-                    .addIndividualNumberCards(0, 1)
-                .build();
-            }
-			else
-				drawPile = perfectDeck.MakeDeepCopy();
+			if (onlyNumbers) drawPile = semiPerfectDeck.MakeDeepCopy();
+			else drawPile = perfectDeck.MakeDeepCopy();
 			drawPile.Shuffle();
 
 			activePlayerIndex = 0;

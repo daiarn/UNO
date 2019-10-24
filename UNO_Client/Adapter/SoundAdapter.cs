@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Media;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Media;
 
-namespace UNO_Client.Other
+namespace UNO_Client.Adapter
 {
-    class SoundAdapter
+	class SoundAdapter
     {
         public void turnOnSoundEffect()
         {

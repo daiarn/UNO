@@ -1,7 +1,7 @@
 ﻿using UNO_Server.Models;
 using UNO_Server.Utility.BuilderFacade;
 
-namespace UNO_Server.Utility
+namespace UNO_Server.Utility.BuilderFacade
 {
 	public class DeckBuilderFacade
 	{

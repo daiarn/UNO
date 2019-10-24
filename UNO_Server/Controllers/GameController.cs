@@ -174,6 +174,7 @@ namespace UNO_Server.Controllers
 					message = "Game already started"
 				});
 			}
+			/*
 			else if (game.GetActivePlayerCount() < 2)
 			{
 				return new JsonResult(new
@@ -181,7 +182,7 @@ namespace UNO_Server.Controllers
 					success = false,
 					message = "Game needs at least 2 players"
 				});
-			}
+			}//*/
 
 			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
@@ -325,14 +326,6 @@ namespace UNO_Server.Controllers
             drawCard.Execute();
 			return new JsonResult(new { success = true });
 		}
-    
-        // POST api/game/draw/undo
-        [HttpPost("draw/undo")]
-        public ActionResult UndoDraw() // player draws a card
-        {
-          drawCard.Undo();
-          return new JsonResult(new { success = true });
-        }
 
         /// <summary>
 		/// POST api/game/uno
@@ -378,9 +371,71 @@ namespace UNO_Server.Controllers
 			return new JsonResult(new { success = true });
 		}
 
-        // POST api/game/uno/undo
-        [HttpPost("uno/undo")]
-        public ActionResult UndoUno() // player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
+		#endregion
+
+		#region TESTING
+		[HttpPost("scenario/{scenario}")]
+		public ActionResult Scenario(int scenario)
+		{
+			var game = Game.GetInstance();
+			switch (scenario)
+			{
+				case 1: // Scenario 1: Generic 2 player game with few but diverse cards
+					if (game.GetActivePlayerCount() != 2)
+						return new JsonResult(new { success = false, message = "Exactly 2 players must be present" });
+
+					game.discardPile = new Deck();
+					game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.Zero));
+					game.drawPile = new UNO_Server.Utility.BuilderFacade.DeckBuilderFacade()
+						.number.addIndividualNumberCards(0, 1)
+						.action.addSkipCards(1)
+						.number.addIndividualNumberCards(1, 1)
+						.action.addSkipCards(1)
+						.wild.addWildCards(1)
+						.wild.addDraw4Cards(1)
+					.build();
+
+					var p1Hand = new Hand();
+					p1Hand.Add(new Card(CardColor.Red, CardType.Zero));
+					p1Hand.Add(new Card(CardColor.Red, CardType.Zero));
+					p1Hand.Add(new Card(CardColor.Red, CardType.One));
+					p1Hand.Add(new Card(CardColor.Yellow, CardType.Zero));
+					p1Hand.Add(new Card(CardColor.Red, CardType.Skip));
+					p1Hand.Add(new Card(CardColor.Red, CardType.Reverse));
+					p1Hand.Add(new Card(CardColor.Red, CardType.Draw2));
+					var p2Hand = new Hand();
+					p2Hand.Add(new Card(CardColor.Yellow, CardType.Zero));
+					p2Hand.Add(new Card(CardColor.Yellow, CardType.One));
+					p2Hand.Add(new Card(CardColor.Yellow, CardType.Skip));
+					p2Hand.Add(new Card(CardColor.Yellow, CardType.Reverse));
+					p2Hand.Add(new Card(CardColor.Yellow, CardType.Draw2));
+
+					game.players[game.activePlayerIndex].hand = p1Hand;
+					game.players[game.nextPlayerIndex].hand = p2Hand;
+					game.expectedAction = ExpectedPlayerAction.PlayCard;
+
+					return new JsonResult(new { success = true });
+
+				default:
+					return new JsonResult(new { success = false, message = "No such scenario" });
+			}
+
+		}
+		#endregion
+
+		#region QUESTIONABLE
+
+		// POST api/game/draw/undo
+		[HttpPost("draw/undo")]
+		public ActionResult UndoDraw()
+		{
+			drawCard.Undo();
+			return new JsonResult(new { success = true });
+		}
+
+		// POST api/game/uno/undo
+		[HttpPost("uno/undo")]
+        public ActionResult UndoUno()
         {
             uno.Undo();
             return new JsonResult(new { success = true });

@@ -30,7 +30,7 @@ namespace UNO_Server.Controllers
 			foreach (var player in game.players)
 			{
 				if (player == null) break;
-				allPlayerData.Add(new { player.name, count = player.hand.GetCount(), player.isPlaying });
+				allPlayerData.Add(new { player.name, count = player.hand.Count, player.isPlaying });
 			}
 
 			return new JsonResult(new
@@ -76,7 +76,7 @@ namespace UNO_Server.Controllers
 			foreach (var item in game.players)
 			{
 				if (item == null) break;
-				allPlayerData.Add(new { name = item.name, count = item.hand.GetCount(), isPlaying = item.isPlaying });
+				allPlayerData.Add(new { name = item.name, count = item.hand.Count, isPlaying = item.isPlaying });
 			}
 
 
@@ -95,7 +95,7 @@ namespace UNO_Server.Controllers
 					activePlayer = game.activePlayerIndex,
 					players = allPlayerData,
 
-					hand = player.hand.cards
+					hand = player.hand
 				}
 			});
 		}
@@ -402,7 +402,7 @@ namespace UNO_Server.Controllers
 						.wild.addDraw4Cards(1)
 					.build();
 
-					var p1Hand = new Hand();
+					var p1Hand = new List<Card>();
 					p1Hand.Add(new Card(CardColor.Red, CardType.Zero));
 					p1Hand.Add(new Card(CardColor.Red, CardType.Zero));
 					p1Hand.Add(new Card(CardColor.Red, CardType.One));
@@ -410,7 +410,7 @@ namespace UNO_Server.Controllers
 					p1Hand.Add(new Card(CardColor.Red, CardType.Skip));
 					p1Hand.Add(new Card(CardColor.Red, CardType.Reverse));
 					p1Hand.Add(new Card(CardColor.Red, CardType.Draw2));
-					var p2Hand = new Hand();
+					var p2Hand = new List<Card>();
 					p2Hand.Add(new Card(CardColor.Yellow, CardType.Zero));
 					p2Hand.Add(new Card(CardColor.Yellow, CardType.One));
 					p2Hand.Add(new Card(CardColor.Yellow, CardType.Skip));

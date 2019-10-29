@@ -9,7 +9,7 @@ namespace UNO_Server.Models.SendData
 
 		public GamePlayerState(Game game, Player player) : base(game)
 		{
-			hand = player.hand.cards;
+			hand = player.hand;
 			id = game.GetPlayerIndexByUUID(player.id);
 		}
 	}

@@ -142,9 +142,9 @@ namespace UNO_Server.Models
 		public bool CanPlayerPlayAnyOn(Player player)
 		{
 			var activeCard = discardPile.PeekBottomCard();
-			for (int i = 0; i < player.hand.GetCount(); i++)
+			for (int i = 0; i < player.hand.Count; i++)
 			{
-				var playerCard = player.hand.GetCard(i);
+				var playerCard = player.hand[i];
 				if (CanCardBePlayed(activeCard, playerCard)) return true;
 			}
 			return false;
@@ -372,9 +372,9 @@ namespace UNO_Server.Models
 		{
 			if (playerIndex != -1)
 			{
-				int index = players[playerIndex].hand.cards.Count - 1;
-				Card card = players[playerIndex].hand.cards[index];
-				players[playerIndex].hand.cards.Remove(card);
+				int index = players[playerIndex].hand.Count - 1;
+				Card card = players[playerIndex].hand[index];
+				players[playerIndex].hand.Remove(card);
 				drawPile.AddtoTop(card);
 			}
 		}

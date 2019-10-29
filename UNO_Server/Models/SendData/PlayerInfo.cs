@@ -9,7 +9,7 @@
 		public PlayerInfo(Player player)
 		{
 			name = player.name;
-			cardCount = player.hand.GetCount();
+			cardCount = player.hand.Count;
 			isPlaying = player.isPlaying;
 		}
 	}

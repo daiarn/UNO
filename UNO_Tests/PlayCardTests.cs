@@ -15,8 +15,6 @@ namespace UNO_Tests
 			var game = Game.ResetGame();
 			var control = new GameController();
 
-			//game.AddPlayer();
-
 			// ACT
 			var response = control.Play(new PlayData { id = new System.Guid(), color = CardColor.Red, type = CardType.Zero }) as JsonResult;
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
@@ -59,16 +57,16 @@ namespace UNO_Tests
 			var game = Game.ResetGame();
 			var control = new GameController();
 
-			game.AddPlayer("Player One");
-			game.AddPlayer("Player Two");
-
 			game.phase = GamePhase.Playing;
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
-			game.activePlayerIndex = 0;
+
+			var id = game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.activePlayerIndex = 1;
 
 			// ACT
-			var response = control.Play(new PlayData { id = game.players[1].id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
+			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
 
 			// ASSERT
@@ -86,17 +84,17 @@ namespace UNO_Tests
 			var game = Game.ResetGame();
 			var control = new GameController();
 
-			game.AddPlayer("Player One");
+			var id = game.AddPlayer("Player One");
 			game.AddPlayer("Player Two");
-
 			game.phase = GamePhase.Playing;
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.One));
 			game.activePlayerIndex = 0;
+
 			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
 
 			// ACT
-			var response = control.Play(new PlayData { id = game.players[0].id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
+			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
 
 			// ASSERT
@@ -114,9 +112,8 @@ namespace UNO_Tests
 			var game = Game.ResetGame();
 			var control = new GameController();
 
-			game.AddPlayer("Player One");
+			var id = game.AddPlayer("Player One");
 			game.AddPlayer("Player Two");
-
 			game.phase = GamePhase.Playing;
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.One));
@@ -126,7 +123,7 @@ namespace UNO_Tests
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Zero));
 
 			// ACT
-			var response = control.Play(new PlayData { id = game.players[0].id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
+			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
 
 			// ASSERT
@@ -146,7 +143,6 @@ namespace UNO_Tests
 
 			game.AddPlayer("Player One");
 			game.AddPlayer("Player Two");
-
 			game.phase = GamePhase.Playing;
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));

@@ -15,6 +15,7 @@ namespace UNO_Tests
         [TestMethod]
         public void TestJoinSuccess()
         {
+            Game game = Game.ResetGame();
             GameController control = new GameController();
 
             JoinData joinData = new JoinData
@@ -35,7 +36,7 @@ namespace UNO_Tests
         [TestMethod]
         public void TestJoinPhase1()
         {
-            Game game = Game.GetInstance();
+            Game game = Game.ResetGame();
             GameController control = new GameController();
 
             JoinData joinData = new JoinData

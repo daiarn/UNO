@@ -37,12 +37,14 @@ namespace UNO_Server.Models
 
 		public List<Observer> observers;
 
-        private static readonly Game instance = new Game();
+        private static Game instance = new Game();
 		private static readonly Factory cardActionFactory = new CardActionFactory();
 		private readonly Deck perfectDeck;
 		private readonly Deck semiPerfectDeck;
 		private Game()
         {
+			phase = GamePhase.WaitingForPlayers;
+
 			observers = new List<Observer>
 			{
 				new ZeroCounter(),
@@ -66,6 +68,12 @@ namespace UNO_Server.Models
 					.addNonZeroNumberCards(2)
 					.addIndividualNumberCards(0, 1)
 				.build();
+		}
+		
+		public static Game ResetGame()
+		{
+			instance = new Game();
+			return instance;
 		}
 
 		public static Game GetInstance()

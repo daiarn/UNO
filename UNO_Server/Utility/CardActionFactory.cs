@@ -15,8 +15,6 @@ namespace UNO_Server.Utility
 					return new ReverseStrategy();
 				case CardType.Draw2:
 					return new Draw2Strategy();
-				case CardType.Wild:
-					return new WildStrategy();
 				case CardType.Draw4:
 					return new Draw4Strategy();
 				default:

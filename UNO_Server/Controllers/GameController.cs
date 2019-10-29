@@ -240,12 +240,12 @@ namespace UNO_Server.Controllers
 					message = "Not your turn"
 				});
 			}
-			else if (game.expectedAction != ExpectedPlayerAction.PlayCard)
+			else if (game.expectedAction != ExpectedPlayerAction.PlayCard) // TODO: maybe have another way of checking
 			{
 				return new JsonResult(new
 				{
 					success = false,
-					message = "You can't play a card" // maybe have another way of checking
+					message = "You can't play a card"
 				});
 			}
 

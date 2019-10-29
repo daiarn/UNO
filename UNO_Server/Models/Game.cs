@@ -44,6 +44,7 @@ namespace UNO_Server.Models
 		private Game()
         {
 			phase = GamePhase.WaitingForPlayers;
+			flowClockWise = true;
 
 			observers = new List<Observer>
 			{
@@ -249,7 +250,7 @@ namespace UNO_Server.Models
 
 		// player turn logic
 
-		private int GetNextPlayerIndexAfter(int playerIndex)
+		public int GetNextPlayerIndexAfter(int playerIndex)
 		{
 			int nextPlayerIndex = playerIndex;
 			do
@@ -266,7 +267,7 @@ namespace UNO_Server.Models
 					if (nextPlayerIndex < 0)
 						nextPlayerIndex = numPlayers - 1;
 				}
-			} while (!players[nextPlayerIndex].isPlaying && nextPlayerIndex != playerIndex);
+			} while (!players[nextPlayerIndex].isPlaying);// && nextPlayerIndex != playerIndex); // if you get an infinite loop here you did something wrong
 
 			return nextPlayerIndex;
 		}

@@ -135,14 +135,16 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
-		public void TestSuccess()
+		public void TestSuccessNumberCard()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
 			var control = new GameController();
 
-			game.AddPlayer("Player One");
+			var id = game.AddPlayer("Player One");
 			game.AddPlayer("Player Two");
+			game.players[0].isPlaying = true;
+			game.players[1].isPlaying = true;
 			game.phase = GamePhase.Playing;
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
@@ -152,7 +154,7 @@ namespace UNO_Tests
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Zero));
 
 			// ACT
-			var response = control.Play(new PlayData { id = game.players[0].id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
+			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
 
 			// ASSERT
@@ -161,5 +163,148 @@ namespace UNO_Tests
 			var success = (bool) data["success"];
 			Assert.IsTrue(success);
 		}
+
+		[TestMethod]
+		public void TestSuccessSkipTwoPlayerGame()
+		{
+			// ARRANGE
+			var game = Game.ResetGame();
+			var control = new GameController();
+
+			var id = game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.players[0].isPlaying = true;
+			game.players[1].isPlaying = true;
+			game.phase = GamePhase.Playing;
+			game.discardPile = new Deck();
+			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
+			game.activePlayerIndex = 0;
+			game.nextPlayerIndex = 1; // TODO: fix this, in a future refactor
+			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
+
+			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Skip));
+
+			// ACT
+			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Skip }) as JsonResult;
+			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+
+			var success = (bool) data["success"];
+			Assert.IsTrue(success);
+
+			Assert.AreEqual(0, game.activePlayerIndex);
+		}
+
+		[TestMethod]
+		public void TestSuccessSkipThreePlayerGame()
+		{
+			// ARRANGE
+			var game = Game.ResetGame();
+			var control = new GameController();
+
+			var id = game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.AddPlayer("Player Three");
+			game.players[0].isPlaying = true;
+			game.players[1].isPlaying = true;
+			game.players[2].isPlaying = true;
+			game.phase = GamePhase.Playing;
+			game.discardPile = new Deck();
+			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
+			game.activePlayerIndex = 0;
+			game.nextPlayerIndex = 1; // TODO: fix this, in a future refactor
+			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
+
+			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Skip));
+
+			// ACT
+			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Skip }) as JsonResult;
+			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+
+			var success = (bool) data["success"];
+			Assert.IsTrue(success);
+
+			Assert.AreEqual(2, game.activePlayerIndex);
+		}
+
+		[TestMethod]
+		public void TestSuccessReverseTwoPlayerGame()
+		{
+			// ARRANGE
+			var game = Game.ResetGame();
+			var control = new GameController();
+
+			var id = game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.players[0].isPlaying = true;
+			game.players[1].isPlaying = true;
+			game.flowClockWise = true;
+			game.phase = GamePhase.Playing;
+			game.discardPile = new Deck();
+			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
+			game.activePlayerIndex = 0;
+			game.nextPlayerIndex = 1; // TODO: fix this, in a future refactor
+			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
+
+			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Reverse));
+
+			// ACT
+			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Reverse }) as JsonResult;
+			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+
+			var success = (bool) data["success"];
+			Assert.IsTrue(success);
+
+			Assert.AreEqual(true, game.flowClockWise);
+			Assert.AreEqual(0, game.activePlayerIndex);
+		}
+
+		[TestMethod]
+		public void TestSuccessReverseThreePlayerGame()
+		{
+			// ARRANGE
+			var game = Game.ResetGame();
+			var control = new GameController();
+
+			var id = game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.AddPlayer("Player Three");
+			game.players[0].isPlaying = true;
+			game.players[1].isPlaying = true;
+			game.players[2].isPlaying = true;
+			game.flowClockWise = true;
+			game.phase = GamePhase.Playing;
+			game.discardPile = new Deck();
+			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
+			game.activePlayerIndex = 0;
+			game.nextPlayerIndex = 1; // TODO: fix this, in a future refactor
+			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
+
+			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Reverse));
+
+			// ACT
+			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Reverse }) as JsonResult;
+			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+			System.Console.WriteLine(data["message"]);
+
+			var success = (bool) data["success"];
+			Assert.IsTrue(success);
+
+			Assert.AreNotEqual(true, game.flowClockWise);
+			Assert.AreEqual(2, game.activePlayerIndex);
+		}
+
+		// TODO: more tests for wild cards
 	}
 }

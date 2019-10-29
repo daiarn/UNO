@@ -10,7 +10,10 @@ namespace UNO_Server.Utility.Strategy
 			if (game.GetActivePlayerCount() <= 2)
 				game.NextPlayerSkipsTurn();
 			else
+			{
 				game.ReverseFlow();
+				game.nextPlayerIndex = game.GetNextPlayerIndexAfter(game.activePlayerIndex);
+			}
 		}
     }
 }

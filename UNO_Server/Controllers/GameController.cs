@@ -384,9 +384,13 @@ namespace UNO_Server.Controllers
 					if (game.GetActivePlayerCount() != 2)
 						return new JsonResult(new { success = false, message = "Exactly 2 players must be present" });
 
+					game.phase = GamePhase.Playing;
+					game.finiteDeck = false;
+					game.flowClockWise = true;
+
 					game.discardPile = new Deck();
 					game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.Zero));
-					game.drawPile = new UNO_Server.Utility.BuilderFacade.DeckBuilderFacade()
+					game.drawPile = new Utility.BuilderFacade.DeckBuilderFacade()
 						.number.addIndividualNumberCards(0, 1)
 						.action.addSkipCards(1)
 						.number.addIndividualNumberCards(1, 1)

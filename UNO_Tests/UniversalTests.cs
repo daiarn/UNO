@@ -77,6 +77,25 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
+		public void TestGetPlayerNotInGame()
+		{
+			// ARRANGE
+			var game = Game.ResetGame();
+			var control = new GameController();
+
+			// ACT
+			var response = control.Get(new System.Guid()) as JsonResult;
+			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+			System.Console.WriteLine(data["message"]);
+
+			var success = (bool) data["success"];
+			Assert.IsFalse(success);
+		}
+
+		[TestMethod]
 		public void TestGetPlayerTwoPlayerGame()
 		{
 			// ARRANGE
@@ -106,25 +125,6 @@ namespace UNO_Tests
 
 			Assert.IsNotNull(gamestate["activePlayer"]);
 			Assert.IsNotNull(gamestate["players"]);
-		}
-
-		[TestMethod]
-		public void TestGetPlayerNotInGame()
-		{
-			// ARRANGE
-			var game = Game.ResetGame();
-			var control = new GameController();
-
-			// ACT
-			var response = control.Get(new System.Guid()) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
-
-			// ASSERT
-			Assert.IsNotNull(response);
-			System.Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
 		}
 	}
 }

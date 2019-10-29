@@ -30,7 +30,6 @@ namespace UNO_Server.Models
 		public Player[] players;
 		public int numPlayers;
 
-		public ExpectedPlayerAction expectedAction;
 		public int activePlayerIndex;
 
 		public List<Observer> observers;
@@ -211,9 +210,7 @@ namespace UNO_Server.Models
 			else
 				player.hand.Add(card);
 
-			if (CanCardBePlayed(card))
-				expectedAction = ExpectedPlayerAction.PlayCard;
-			else
+			if (!CanCardBePlayed(card))
 				NextPlayerTurn();
 		}
 
@@ -275,23 +272,12 @@ namespace UNO_Server.Models
 
 		public void SkipNextPlayerTurn()
 		{
-			activePlayerIndex = GetNextPlayerIndexAfter(activePlayerIndex);
-			NextPlayerTurn();
+			activePlayerIndex = GetNextPlayerIndexAfter(GetNextPlayerIndexAfter(activePlayerIndex));
 		}
 
 		public void NextPlayerTurn()
 		{
-			//int nextNextPlayer = GetNextPlayerIndexAfter(nextPlayerIndex);
-			//activePlayerIndex = nextPlayerIndex;
-			//nextPlayerIndex = nextNextPlayer;
 			activePlayerIndex = GetNextPlayerIndexAfter(activePlayerIndex);
-
-			Player player = players[activePlayerIndex];
-			if (CanPlayerPlayAnyOn(player))
-				expectedAction = ExpectedPlayerAction.PlayCard;
-			else
-				expectedAction = ExpectedPlayerAction.DrawCard;
-
 		}
 
 		public void ReverseFlow()
@@ -327,7 +313,6 @@ namespace UNO_Server.Models
 			drawPile.Shuffle();
 
 			activePlayerIndex = 0;
-			//nextPlayerIndex = 0;
 
 			for (int i = 0; i < numPlayers; i++)
 			{

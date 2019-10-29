@@ -128,7 +128,7 @@ namespace UNO_Server.Controllers
 					success = false,
 					message = "Game already started"
 				});
-			}
+			} // TODO: enable this for live gameplay
 			/*
 			else if (game.GetActivePlayerCount() < 2)
 			{
@@ -193,14 +193,6 @@ namespace UNO_Server.Controllers
 				{
 					success = false,
 					message = "Not your turn"
-				});
-			}
-			else if (game.expectedAction != ExpectedPlayerAction.PlayCard) // TODO: maybe have another way of checking
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You can't play a card"
 				});
 			}
 
@@ -269,12 +261,12 @@ namespace UNO_Server.Controllers
 					message = "Not your turn"
 				});
 			}
-			else if (game.expectedAction != ExpectedPlayerAction.DrawCard)
+			else if (game.CanPlayerPlayAnyOn(player))
 			{
 				return new JsonResult(new
 				{
 					success = false,
-					message = "You can't draw a card"
+					message = "You can't draw a card right now"
 				});
 			}
 
@@ -313,17 +305,6 @@ namespace UNO_Server.Controllers
 			}
 			//*/
 
-			/*
-			else if (game.expectedAction != ExpectedPlayerAction.SayUNO)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You failed to say \"UNO!\""
-				});
-			}
-			//*/
-
 			uno.Execute();
 			return new JsonResult(new { success = true });
 		}
@@ -337,7 +318,7 @@ namespace UNO_Server.Controllers
 			var game = Game.GetInstance();
 			switch (scenario)
 			{
-				case 1: // Scenario 1: Generic 2 player game with few but diverse cards
+				case 1: // Scenario 1: Generic two player game with few but diverse cards
 					if (game.GetActivePlayerCount() != 2)
 						return new JsonResult(new { success = false, message = "Exactly 2 players must be present" });
 
@@ -373,7 +354,7 @@ namespace UNO_Server.Controllers
 
 					game.players[0].hand = p1Hand;
 					game.players[1].hand = p2Hand;
-					game.expectedAction = ExpectedPlayerAction.PlayCard;
+					game.players[1].hand = p2Hand;
 
 					return new JsonResult(new { success = true });
 

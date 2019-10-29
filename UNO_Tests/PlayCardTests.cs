@@ -92,8 +92,6 @@ namespace UNO_Tests
 			game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.One));
 			game.activePlayerIndex = 0;
 
-			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
-
 			// ACT
 			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
@@ -119,7 +117,6 @@ namespace UNO_Tests
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.One));
 			game.activePlayerIndex = 0;
-			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
 
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Zero));
 
@@ -150,7 +147,6 @@ namespace UNO_Tests
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
-			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
 
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Zero));
 
@@ -180,7 +176,6 @@ namespace UNO_Tests
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
-			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
 
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Skip));
 
@@ -214,7 +209,6 @@ namespace UNO_Tests
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
-			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
 
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Skip));
 
@@ -247,7 +241,6 @@ namespace UNO_Tests
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
-			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
 
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Reverse));
 
@@ -283,7 +276,6 @@ namespace UNO_Tests
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
-			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
 
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Reverse));
 

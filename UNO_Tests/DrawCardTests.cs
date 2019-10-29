@@ -15,13 +15,14 @@ namespace UNO_Tests
 			// ARRANGE
 			var game = Game.ResetGame();
 			var control = new GameController();
-			var pl = game.AddPlayer("Player one");
+
+			var id = game.AddPlayer("Player one");
 			game.phase = GamePhase.Playing;
 			game.drawPile = new Deck();
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 
 			// ACT
-			var response = control.Draw(new PlayerData { id = pl }) as JsonResult;
+			var response = control.Draw(new PlayerData { id = id }) as JsonResult;
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
 
 			// ASSERT
@@ -38,13 +39,12 @@ namespace UNO_Tests
 			// ARRANGE
 			var game = Game.ResetGame();
 			var control = new GameController();
-			var pl = game.AddPlayer("Player one");
+
+			var id = game.AddPlayer("Player one");
 			game.phase = GamePhase.WaitingForPlayers;
-			//game.drawPile = new Deck();
-			//game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 
 			// ACT
-			var response = control.Draw(new PlayerData { id = pl }) as JsonResult;
+			var response = control.Draw(new PlayerData { id = id }) as JsonResult;
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
 
 			// ASSERT
@@ -61,10 +61,10 @@ namespace UNO_Tests
 			// ARRANGE
 			var game = Game.ResetGame();
 			var control = new GameController();
-			var pl = game.AddPlayer("Player one");
+
+			game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
 			game.phase = GamePhase.Playing;
-			game.drawPile = new Deck();
-			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 
 			// ACT
 			var response = control.Draw(new PlayerData { id = new System.Guid() }) as JsonResult;
@@ -84,15 +84,16 @@ namespace UNO_Tests
 			// ARRANGE
 			var game = Game.ResetGame();
 			var control = new GameController();
-			var pl1 = game.AddPlayer("Player one");
-			var pl2 = game.AddPlayer("Player two");
-			game.activePlayerIndex = 0;
+
+			var id = game.AddPlayer("Player one");
+			game.AddPlayer("Player two");
 			game.phase = GamePhase.Playing;
 			game.drawPile = new Deck();
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
+			game.activePlayerIndex = 1;
 
 			// ACT
-			var response = control.Draw(new PlayerData { id = pl2 }) as JsonResult;
+			var response = control.Draw(new PlayerData { id = id }) as JsonResult;
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
 
 			// ASSERT
@@ -104,22 +105,23 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
-		public void TestCantDraw() // TODO: this test should probably change after ExpectedAction refactor
+		public void TestCantDraw()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
 			var control = new GameController();
-			var pl1 = game.AddPlayer("Player one");
-			var pl2 = game.AddPlayer("Player two");
 
-			game.activePlayerIndex = 1;
-			game.expectedAction = ExpectedPlayerAction.PlayCard;
+			var id = game.AddPlayer("Player one");
+			game.AddPlayer("Player two");
+
 			game.phase = GamePhase.Playing;
 			game.drawPile = new Deck();
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
+			game.activePlayerIndex = 0;
+			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Zero));
 
 			// ACT
-			var response = control.Draw(new PlayerData { id = pl2 }) as JsonResult;
+			var response = control.Draw(new PlayerData { id = id }) as JsonResult;
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
 
 			// ASSERT

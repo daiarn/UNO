@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
 using UNO_Server.Models.RecvData;
@@ -11,7 +9,7 @@ using UNO_Server.Models.RecvData;
 namespace UNO_Tests
 {
 	[TestClass]
-	public class NonGameplayUnitTests
+	public class NonGameplayTests
 	{
 		[TestMethod]
 		public void TestJoinSuccess()
@@ -19,10 +17,7 @@ namespace UNO_Tests
 			Game game = Game.ResetGame();
 			GameController control = new GameController();
 
-			JoinData joinData = new JoinData
-			{
-				name = "my name"
-			};
+			JoinData joinData = new JoinData { name = "My name" };
 
 			var response = control.Join(joinData) as JsonResult;
 			var data = new RouteValueDictionary(response.Value);
@@ -31,8 +26,9 @@ namespace UNO_Tests
 			Assert.IsNotNull(response);
 
 			var success = (bool) data["success"];
-
 			Assert.IsTrue(success);
+
+			Assert.AreEqual(1, game.GetActivePlayerCount());
 		}
 		[TestMethod]
 		public void TestJoinFailPhase1() // TODO: refactor for all phases
@@ -40,81 +36,83 @@ namespace UNO_Tests
 			Game game = Game.ResetGame();
 			GameController control = new GameController();
 
-			JoinData joinData = new JoinData
-			{
-				name = "my name"
-			};
-
+			JoinData joinData = new JoinData { name = "My name" };
 			game.phase = GamePhase.Playing;
+
 			var response = control.Join(joinData) as JsonResult;
 			var data = new RouteValueDictionary(response.Value);
-			Console.WriteLine(data["message"]);
+
 			// ASSERT
 			Assert.IsNotNull(response);
+			Console.WriteLine(data["message"]);
 
 			var success = (bool) data["success"];
-
 			Assert.IsFalse(success);
+
+			Assert.AreEqual(0, game.GetActivePlayerCount());
 		}
 
 		[TestMethod]
-		public void TestLeaveGame()
+		public void TestLeaveGame() // TODO: more than one scenario
 		{
 			Game game = Game.ResetGame();
 			GameController control = new GameController();
 
-			JoinData joinData = new JoinData
-			{
-				name = "my name"
-			};
-			var player = game.AddPlayer("Player one");
+			var player = game.AddPlayer("Player One");
 			game.phase = GamePhase.Playing;
+
 			var response = control.Leave(new PlayerData { id = player }) as JsonResult;
 			var data = new RouteValueDictionary(response.Value);
-			Console.WriteLine(data["message"]);
 
 			// ASSERT
 			Assert.IsNotNull(response);
+			Console.WriteLine(data["message"]);
 
 			var success = (bool) data["success"];
 			Assert.IsTrue(success);
+
+			Assert.AreEqual(0, game.GetActivePlayerCount());
 		}
 
 		[TestMethod]
-		public void TestStartGameAlreadyStarted()
+		public void TestStartAlreadyStarted()
 		{
 			Game game = Game.ResetGame();
 			GameController control = new GameController();
 
-			var player = game.AddPlayer("Player one");
+			var player = game.AddPlayer("Player One");
 			game.phase = GamePhase.Finished;
+
 			var response = control.Start(new StartData { id = player, finiteDeck = false, onlyNumbers = false }) as JsonResult;
 			var data = new RouteValueDictionary(response.Value);
-			Console.WriteLine(data["message"]);
 
 			// ASSERT
 			Assert.IsNotNull(response);
+			Console.WriteLine(data["message"]);
 
 			var success = (bool) data["success"];
 			Assert.IsFalse(success);
 		}
 
 		[TestMethod]
-		public void TestStartGameNotInTheGame()
+		public void TestStartNotInGame()
 		{
 			Game game = Game.ResetGame();
 			GameController control = new GameController();
 
 			game.phase = GamePhase.WaitingForPlayers;
-			var response = control.Start(new StartData { id = new System.Guid(), finiteDeck = false, onlyNumbers = false }) as JsonResult;
+
+			var response = control.Start(new StartData { id = new Guid(), finiteDeck = false, onlyNumbers = false }) as JsonResult;
 			var data = new RouteValueDictionary(response.Value);
-			Console.WriteLine(data["message"]);
 
 			// ASSERT
 			Assert.IsNotNull(response);
+			Console.WriteLine(data["message"]);
 
 			var success = (bool) data["success"];
 			Assert.IsFalse(success);
+
+			Assert.AreEqual(game.phase, GamePhase.WaitingForPlayers);
 		}
 	}
 }

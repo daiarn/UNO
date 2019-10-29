@@ -3,7 +3,7 @@ using UNO_Server.Utility.Strategy;
 
 namespace UNO_Server.Utility
 {
-	abstract public class Factory
+	abstract public class StrategyFactory
 	{
 		public abstract ICardStrategy CreateAction(CardType type);
 	}

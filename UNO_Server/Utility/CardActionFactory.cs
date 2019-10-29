@@ -3,7 +3,7 @@ using UNO_Server.Utility.Strategy;
 
 namespace UNO_Server.Utility
 {
-	public class CardActionFactory : Factory
+	public class CardActionFactory : StrategyFactory
 	{
 		public override ICardStrategy CreateAction(CardType type)
 		{

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UNO_Server.Models.SendData;
 using UNO_Server.Utility;
 using UNO_Server.Utility.BuilderFacade;
 using UNO_Server.Utility.Strategy;
@@ -10,11 +9,6 @@ namespace UNO_Server.Models
 	public enum GamePhase
 	{
 		WaitingForPlayers, Playing, Finished
-	}
-
-	public enum ExpectedPlayerAction
-	{
-		DrawCard, PlayCard, SayUNO
 	}
 
 	public class Game
@@ -35,7 +29,7 @@ namespace UNO_Server.Models
 		public List<Observer> observers;
 
 		private static Game instance = new Game();
-		private static readonly Factory cardActionFactory = new CardActionFactory();
+		private static readonly StrategyFactory cardActionFactory = new CardActionFactory();
 		private readonly Deck perfectDeck;
 		private readonly Deck semiPerfectDeck;
 		private Game()

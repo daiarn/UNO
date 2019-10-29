@@ -23,11 +23,13 @@ namespace UNO_Client.Adapter
 		}
 
 
-		private void SimplePostAsync(string playerId, string path)
+		private Task<HttpResponseMessage> SimplePostAsync(string playerId, string path)
 		{
 			string JsonString = "{\"id\":\"" + playerId + "\"}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-			client.PostAsync(BASE_URL + path, content);
+			var response = client.PostAsync(BASE_URL + path, content);
+
+			return response;
 		}
 
 
@@ -36,26 +38,30 @@ namespace UNO_Client.Adapter
 		//	throw new System.NotImplementedException();
 		//}
 
-		public void SendLeaveGame()
+		public bool SendLeaveGame()
 		{
-			SimplePostAsync(playerId, "/leave");
+			var response = SimplePostAsync(playerId, "/leave");
+			return true;
 		}
 
 
-		public void SendDrawCard()
+		public bool SendDrawCard()
 		{
-			SimplePostAsync(playerId, "/draw");
+			var response = SimplePostAsync(playerId, "/draw");
+			return true;
 		}
-		public void SendPlayCard(Card card)
+		public bool SendPlayCard(Card card)
 		{
 			string JsonString = "{\"id\":\"" + playerId + "\", \"color\":" + card.Color + ",\"type\":" + card.Type + "}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-			client.PostAsync(BASE_URL + "/play", content);
+			var response = client.PostAsync(BASE_URL + "/play", content);
+			return true;
 		}
 
-		public void SendSayUNO()
+		public bool SendSayUNO()
 		{
-			SimplePostAsync(playerId, "/uno");
+			var response = SimplePostAsync(playerId, "/uno");
+			return true;
 		}
 
 

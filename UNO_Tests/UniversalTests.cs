@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
+using UNO_Server.Models.SendData;
 
 namespace UNO_Tests
 {
@@ -16,7 +17,7 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
-		public void TestGetSpectatorEmptyGame()
+		public void TestSpectatorEmptyGame()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -30,23 +31,23 @@ namespace UNO_Tests
 			Assert.IsNotNull(response);
 
 			var success = (bool) data["success"];
-			var gamestate = new Microsoft.AspNetCore.Routing.RouteValueDictionary(data["gamestate"]);
-
-			//foreach (var key in gamestate.Keys)
-			//System.Console.WriteLine(key + ": " + gamestate[key]);
+			var gamestate = (GameSpectatorState) data["gamestate"];
 
 			Assert.IsTrue(success);
 			Assert.IsNotNull(gamestate);
 
-			Assert.IsNotNull(gamestate["discardPile"]);
-			Assert.IsNotNull(gamestate["drawPile"]);
+			//Assert.IsInstanceOfType(data["gamestate"], new GameSpectatorState(game).GetType());
 
-			Assert.IsNotNull(gamestate["activePlayer"]);
-			Assert.IsNotNull(gamestate["players"]);
+			// TODO: refactor these?
+			//Assert.IsNotNull(gamestate.discardPileCount);
+			//Assert.IsNotNull(gamestate.drawPileCount);
+
+			//Assert.IsNotNull(gamestate.activePlayer);
+			//Assert.IsNotNull(gamestate.players);
 		}
 
 		[TestMethod]
-		public void TestGetSpectatorTwoPlayerGame()
+		public void TestSpectatorTwoPlayerGame()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -63,23 +64,14 @@ namespace UNO_Tests
 			Assert.IsNotNull(response);
 
 			var success = (bool) data["success"];
-			var gamestate = new Microsoft.AspNetCore.Routing.RouteValueDictionary(data["gamestate"]);
+			var gamestate = (GameSpectatorState) data["gamestate"];
 
 			Assert.IsTrue(success);
-
-			//System.Console.WriteLine(data["gamestate"].ToString()); // TODO: refactor test, check relevant values?
 			Assert.IsNotNull(gamestate);
-
-			Assert.IsNotNull(gamestate["discardPile"]);
-			Assert.IsNotNull(gamestate["drawPile"]);
-			//Assert.IsNull(gamestate["activeCard"]); // no card in pre-game phase
-
-			Assert.IsNotNull(gamestate["activePlayer"]);
-			Assert.IsNotNull(gamestate["players"]);
 		}
 
 		[TestMethod]
-		public void TestGetPlayerNotInGame()
+		public void TestPlayerNotInGame()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -98,7 +90,7 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
-		public void TestGetPlayerTwoPlayerGame()
+		public void TestPlayerTwoPlayerGame()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -112,22 +104,16 @@ namespace UNO_Tests
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
 
 			// ASSERT
-			Assert.IsNotNull(response);
 
 			var success = (bool) data["success"];
-			var gamestate = new Microsoft.AspNetCore.Routing.RouteValueDictionary(data["gamestate"]);
+			var gamestate = (GamePlayerState) data["gamestate"];
 
 			Assert.IsTrue(success);
 			Assert.IsNotNull(gamestate);
-			//System.Console.WriteLine(data["gamestate"].ToString());
 
-			Assert.IsNotNull(gamestate["discardPile"]);
-			Assert.IsNotNull(gamestate["drawPile"]);
+			// maybe more gamestate checks?
 
-			Assert.IsNotNull(gamestate["activePlayer"]);
-			Assert.IsNotNull(gamestate["players"]);
-
-			var hand = (List<Card>) gamestate["hand"];
+			var hand = (List<Card>) gamestate.hand;
 			Assert.IsNotNull(hand);
 			System.Console.WriteLine(hand);
 			System.Console.WriteLine(hand.Count);

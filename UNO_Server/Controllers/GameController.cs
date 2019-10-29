@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using UNO_Server.Models;
 using UNO_Server.Models.RecvData;
+using UNO_Server.Models.SendData;
 using UNO_Server.Utility.Command;
 
 namespace UNO_Server.Controllers
@@ -26,29 +27,7 @@ namespace UNO_Server.Controllers
 		{
 			var game = Game.GetInstance();
 
-			List<object> allPlayerData = new List<object>();
-			foreach (var player in game.players)
-			{
-				if (player == null) break;
-				allPlayerData.Add(new { player.name, count = player.hand.Count, player.isPlaying });
-			}
-
-			return new JsonResult(new
-			{
-				success = true,
-				gamestate = new
-				{
-					zeroCounter = game.observers[0].Counter,
-					wildCounter = game.observers[1].Counter,
-
-					discardPile = game.discardPile.GetCount(),
-					drawPile = game.drawPile.GetCount(),
-					activeCard = game.discardPile.PeekBottomCard(),
-
-					activePlayer = game.activePlayerIndex,
-					players = allPlayerData
-				}
-			});
+			return new JsonResult(new { success = true, gamestate = new GameSpectatorState(game) });
 		}
 
 		/// <summary>
@@ -72,32 +51,7 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			List<object> allPlayerData = new List<object>();
-			foreach (var item in game.players)
-			{
-				if (item == null) break;
-				allPlayerData.Add(new { name = item.name, count = item.hand.Count, isPlaying = item.isPlaying });
-			}
-
-
-			return new JsonResult(new
-			{
-				success = true,
-				gamestate = new
-				{
-					zeroCounter = game.observers[0].Counter,
-					wildCounter = game.observers[1].Counter,
-
-					discardPile = game.discardPile.GetCount(),
-					drawPile = game.drawPile.GetCount(),
-					activeCard = game.discardPile.PeekBottomCard(),
-
-					activePlayer = game.activePlayerIndex,
-					players = allPlayerData,
-
-					hand = player.hand
-				}
-			});
+			return new JsonResult(new { success = true, gamestate = new GamePlayerState(game, player) });
 		}
 
 		#endregion

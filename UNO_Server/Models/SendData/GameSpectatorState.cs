@@ -1,6 +1,9 @@
-﻿namespace UNO_Server.Models.SendData
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace UNO_Server.Models.SendData
 {
-	public class GameState
+	public class GameSpectatorState
 	{
 		public int zeroCounter;
 		public int wildCounter;
@@ -10,11 +13,9 @@
 		public Card activeCard;
 
 		public int activePlayer;
-		//public var players;
+		public List<PlayerInfo> players;
 
-		//public Card[] hand;
-
-		public GameState(Game game)
+		public GameSpectatorState(Game game)
 		{
 			zeroCounter = game.observers[0].Counter;
 			wildCounter = game.observers[1].Counter;
@@ -24,7 +25,7 @@
 			activeCard = game.discardPile.PeekBottomCard();
 
 			activePlayer = game.activePlayerIndex;
-			//players = ...;
+			players = game.players.Where(p => p != null).Select(p => new PlayerInfo(p)).ToList();
 		}
 	}
 }

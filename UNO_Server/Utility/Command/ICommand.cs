@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace UNO_Server.Utility.Command
 {
-    interface ICommand
-    {
-        void Execute();
+	interface ICommand
+	{
+		void Execute();
 
-        void Undo();
-    }
+		void Undo();
+	}
 }

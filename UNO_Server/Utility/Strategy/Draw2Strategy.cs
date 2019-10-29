@@ -3,9 +3,9 @@
 namespace UNO_Server.Utility.Strategy
 {
 	class Draw2Strategy : ICardStrategy
-    {
-        public void Action()
-        {
+	{
+		public void Action()
+		{
 			var game = Game.GetInstance();
 			var targetPlayer = game.GetNextPlayer();
 
@@ -14,5 +14,5 @@ namespace UNO_Server.Utility.Strategy
 
 			game.NextPlayerSkipsTurn();
 		}
-    }
+	}
 }

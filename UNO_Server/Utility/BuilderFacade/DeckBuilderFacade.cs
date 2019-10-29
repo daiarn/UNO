@@ -5,11 +5,11 @@ namespace UNO_Server.Utility.BuilderFacade
 {
 	public class DeckBuilderFacade
 	{
-        protected Deck deck;
+		protected Deck deck;
 
 		public DeckBuilderFacade()
 		{
-            deck = new Deck();
+			deck = new Deck();
 		}
 
 		protected void addAllColors(Deck deck, CardType type)
@@ -21,12 +21,12 @@ namespace UNO_Server.Utility.BuilderFacade
 		}
 
 		public Deck build()
-        {
-            return deck;
+		{
+			return deck;
 		}
 
-        public DeckBuilderNumberFacade number => new DeckBuilderNumberFacade(deck);
-        public DeckBuilderActionFacade action => new DeckBuilderActionFacade(deck);
-        public DeckBuilderWildFacade wild => new DeckBuilderWildFacade(deck);
-    }
+		public DeckBuilderNumberFacade number => new DeckBuilderNumberFacade(deck);
+		public DeckBuilderActionFacade action => new DeckBuilderActionFacade(deck);
+		public DeckBuilderWildFacade wild => new DeckBuilderWildFacade(deck);
+	}
 }

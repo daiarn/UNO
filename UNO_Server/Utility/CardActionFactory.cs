@@ -5,10 +5,6 @@ namespace UNO_Server.Utility
 {
 	public class CardActionFactory : Factory
 	{
-		public CardActionFactory()
-		{
-		}
-
 		public override ICardStrategy CreateAction(CardType type)
 		{
 			switch (type)

@@ -255,7 +255,7 @@ namespace UNO_Server.Controllers
 				return new JsonResult(new
 				{
 					success = false,
-					message = "You can't play that card"
+					message = "You don't have that card"
 				});
 			}
 			else if (!game.CanCardBePlayed(card))

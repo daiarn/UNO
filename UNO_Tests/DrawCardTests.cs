@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
+using UNO_Server.Models.RecvData;
 
 namespace UNO_Tests
 {

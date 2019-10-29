@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UNO_Server.Models
+namespace UNO_Server.Models.RecvData
 {
 	public class StartData
 	{

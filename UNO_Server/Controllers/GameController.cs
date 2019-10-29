@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using UNO_Server.Models;
+using UNO_Server.Models.RecvData;
 using UNO_Server.Utility.Command;
 
 namespace UNO_Server.Controllers
@@ -337,6 +338,7 @@ namespace UNO_Server.Controllers
 		public ActionResult Uno(PlayerData data) // 
 		{
 			var game = Game.GetInstance();
+			/*
 			if (game.phase != GamePhase.Playing)
 			{
 				return new JsonResult(new
@@ -355,6 +357,7 @@ namespace UNO_Server.Controllers
 					message = "You are not in the game"
 				});
 			}
+			//*/
 
 			/*
 			else if (game.expectedAction != ExpectedPlayerAction.SayUNO)

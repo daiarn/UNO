@@ -136,7 +136,7 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
-		public void TestSuccessNumberCard()
+		public void TestNumberCard()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -166,7 +166,7 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
-		public void TestSuccessSkipTwoPlayerGame()
+		public void TestSkipTwoPlayerGame()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -198,7 +198,7 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
-		public void TestSuccessSkipThreePlayerGame()
+		public void TestSkipThreePlayerGame()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -232,7 +232,7 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
-		public void TestSuccessReverseTwoPlayerGame()
+		public void TestReverseTwoPlayerGame()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -266,7 +266,7 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
-		public void TestSuccessReverseThreePlayerGame()
+		public void TestReverseThreePlayerGame()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();

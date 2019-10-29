@@ -89,16 +89,11 @@ namespace UNO_Server.Models
 			return players[index].id;
 		}
 
-		public int GetPlayerIndexByUUID(Guid id)
-		{
-			for (int i = 0; i < numPlayers; i++)
-				if (players[i].id == id) return i;
-			return -1;
-		}
-
 		public void DeletePlayer(Guid id)
 		{
-			var index = GetPlayerIndexByUUID(id);
+			var index = -1;
+			for (int i = 0; i < numPlayers; i++)
+				if (players[i].id == id) index = i;
 			if (index < 0 || index > numPlayers) return;
 
 			var last = players[numPlayers - 1];
@@ -109,11 +104,14 @@ namespace UNO_Server.Models
 
 		public void EliminatePlayer(Guid id)
 		{
-			var index = GetPlayerIndexByUUID(id);
+			var index = -1;
+			for (int i = 0; i < numPlayers; i++)
+				if (players[i].id == id) index = i;
 			if (index < 0 || index > numPlayers) return;
 
 			var player = players[index];
 			player.isPlaying = false;
+
 			// TODO: check if it's that player's turn (also check if it's game over)
 		}
 

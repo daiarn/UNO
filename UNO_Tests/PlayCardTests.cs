@@ -180,7 +180,6 @@ namespace UNO_Tests
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
-			game.nextPlayerIndex = 1; // TODO: fix this, in a future refactor
 			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
 
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Skip));
@@ -215,7 +214,6 @@ namespace UNO_Tests
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
-			game.nextPlayerIndex = 1; // TODO: fix this, in a future refactor
 			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
 
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Skip));
@@ -249,7 +247,6 @@ namespace UNO_Tests
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
-			game.nextPlayerIndex = 1; // TODO: fix this, in a future refactor
 			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
 
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Reverse));
@@ -286,7 +283,6 @@ namespace UNO_Tests
 			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
-			game.nextPlayerIndex = 1; // TODO: fix this, in a future refactor
 			game.expectedAction = ExpectedPlayerAction.PlayCard; // TODO: remove this after refactor
 
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Reverse));

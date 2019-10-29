@@ -31,9 +31,7 @@ namespace UNO_Server.Models
 		public int numPlayers;
 
 		public ExpectedPlayerAction expectedAction;
-
 		public int activePlayerIndex;
-		public int nextPlayerIndex;
 
 		public List<Observer> observers;
 
@@ -230,13 +228,15 @@ namespace UNO_Server.Models
 
 			// TODO: check if player needs to say UNO
 
-			ICardStrategy action = cardActionFactory.CreateAction(card.type);
-			if (action != null) action.Action();
-
 			// TODO: check if player has won
 			//GameOver();
 
-			NextPlayerTurn();
+			ICardStrategy action = cardActionFactory.CreateAction(card.type);
+			if (action != null)
+				action.Action();
+			else
+				NextPlayerTurn();
+
 		}
 
 		public void PlayerSaysUNO()
@@ -267,26 +267,26 @@ namespace UNO_Server.Models
 					if (nextPlayerIndex < 0)
 						nextPlayerIndex = numPlayers - 1;
 				}
-			} while (!players[nextPlayerIndex].isPlaying);// && nextPlayerIndex != playerIndex); // if you get an infinite loop here you did something wrong
+			} while (!players[nextPlayerIndex].isPlaying && nextPlayerIndex != playerIndex);
+
+			if (nextPlayerIndex == playerIndex && GetActivePlayerCount() > 2)
+				throw new NotImplementedException("Failed to get next player");// if you are reading this, then you did something wrong, because you would have gotten an infinite loop
 
 			return nextPlayerIndex;
 		}
 
-		public Player GetNextPlayer()
+		public void SkipNextPlayerTurn()
 		{
-			return players[GetNextPlayerIndexAfter(activePlayerIndex)];
-		}
-
-		public void NextPlayerSkipsTurn()
-		{
-			nextPlayerIndex = GetNextPlayerIndexAfter(nextPlayerIndex);
+			activePlayerIndex = GetNextPlayerIndexAfter(activePlayerIndex);
+			NextPlayerTurn();
 		}
 
 		public void NextPlayerTurn()
 		{
-			int nextNextPlayer = GetNextPlayerIndexAfter(nextPlayerIndex);
-			activePlayerIndex = nextPlayerIndex;
-			nextPlayerIndex = nextNextPlayer;
+			//int nextNextPlayer = GetNextPlayerIndexAfter(nextPlayerIndex);
+			//activePlayerIndex = nextPlayerIndex;
+			//nextPlayerIndex = nextNextPlayer;
+			activePlayerIndex = GetNextPlayerIndexAfter(activePlayerIndex);
 
 			Player player = players[activePlayerIndex];
 			if (CanPlayerPlayAnyOn(player))
@@ -329,7 +329,7 @@ namespace UNO_Server.Models
 			drawPile.Shuffle();
 
 			activePlayerIndex = 0;
-			nextPlayerIndex = 0;
+			//nextPlayerIndex = 0;
 
 			for (int i = 0; i < numPlayers; i++)
 			{
@@ -339,7 +339,6 @@ namespace UNO_Server.Models
 				}
 				players[i].isPlaying = true;
 			}
-
 
 			Card firstCard = null;
 

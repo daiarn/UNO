@@ -8,11 +8,11 @@ namespace UNO_Server.Utility.Strategy
 		{
 			var game = Game.GetInstance();
 			if (game.GetActivePlayerCount() <= 2)
-				game.NextPlayerSkipsTurn();
+				game.SkipNextPlayerTurn();
 			else
 			{
 				game.ReverseFlow();
-				game.nextPlayerIndex = game.GetNextPlayerIndexAfter(game.activePlayerIndex);
+				game.NextPlayerTurn();
 			}
 		}
 	}

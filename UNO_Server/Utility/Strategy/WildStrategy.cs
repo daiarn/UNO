@@ -1,10 +1,12 @@
-﻿namespace UNO_Server.Utility.Strategy
+﻿using UNO_Server.Models;
+
+namespace UNO_Server.Utility.Strategy
 {
 	public class WildStrategy : ICardStrategy
 	{
 		public void Action()
 		{
-			// this action card actually has no action
+			Game.GetInstance().NextPlayerTurn(); // this action card can be removed
 		}
 	}
 }

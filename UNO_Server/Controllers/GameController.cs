@@ -371,8 +371,8 @@ namespace UNO_Server.Controllers
 					p2Hand.Add(new Card(CardColor.Yellow, CardType.Reverse));
 					p2Hand.Add(new Card(CardColor.Yellow, CardType.Draw2));
 
-					game.players[game.activePlayerIndex].hand = p1Hand;
-					game.players[game.nextPlayerIndex].hand = p2Hand;
+					game.players[0].hand = p1Hand;
+					game.players[1].hand = p2Hand;
 					game.expectedAction = ExpectedPlayerAction.PlayCard;
 
 					return new JsonResult(new { success = true });

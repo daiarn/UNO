@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNO_Client", "UNO_Client\UN
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UNO_Server", "UNO_Server\UNO_Server.csproj", "{AE3CCDD6-AC77-44F1-9987-66A1D5CAA8B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNO_Tests", "UNO_Tests\UNO_Tests.csproj", "{B04A0DFA-4653-4498-824B-1A338AEC0FC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AE3CCDD6-AC77-44F1-9987-66A1D5CAA8B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE3CCDD6-AC77-44F1-9987-66A1D5CAA8B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE3CCDD6-AC77-44F1-9987-66A1D5CAA8B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B04A0DFA-4653-4498-824B-1A338AEC0FC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B04A0DFA-4653-4498-824B-1A338AEC0FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B04A0DFA-4653-4498-824B-1A338AEC0FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B04A0DFA-4653-4498-824B-1A338AEC0FC8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

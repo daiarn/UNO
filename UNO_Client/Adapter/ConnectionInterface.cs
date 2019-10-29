@@ -4,7 +4,7 @@ using UNO_Client.Models;
 
 namespace UNO_Client.Adapter
 {
-	interface ConnectionInterface
+	interface ConnectionInterface // TODO: refactor return types
 	{
 		Task<string> GetPlayerGameState();
 

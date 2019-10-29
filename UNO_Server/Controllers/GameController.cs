@@ -7,102 +7,102 @@ using UNO_Server.Utility.Command;
 namespace UNO_Server.Controllers
 {
 	[Route("api/[controller]")]
-    [ApiController]
-    public class GameController : ControllerBase
+	[ApiController]
+	public class GameController : ControllerBase
 	{
-        DrawCard drawCard = new DrawCard();
-        Uno uno = new Uno();
+		DrawCard drawCard = new DrawCard();
+		Uno uno = new Uno();
 
-        #region UNIVERSAL
+		#region UNIVERSAL
 
-		    /// <summary>
-		    /// GET api/game
-		    /// Gets the state of the game from a spectator's point of view
-		    /// </summary>
-		    /// <returns>Game state</returns>
-		    [HttpGet]
-		    public ActionResult Get()
-		    {
-			    var game = Game.GetInstance();
+		/// <summary>
+		/// GET api/game
+		/// Gets the state of the game from a spectator's point of view
+		/// </summary>
+		/// <returns>Game state</returns>
+		[HttpGet]
+		public ActionResult Get()
+		{
+			var game = Game.GetInstance();
 
-			    List<object> allPlayerData = new List<object>();
-			    foreach (var player in game.players)
-			    {
-				    if (player == null) break;
-				    allPlayerData.Add(new { player.name, count = player.hand.GetCount(), player.isPlaying });
-			    }
+			List<object> allPlayerData = new List<object>();
+			foreach (var player in game.players)
+			{
+				if (player == null) break;
+				allPlayerData.Add(new { player.name, count = player.hand.GetCount(), player.isPlaying });
+			}
 
-			    return new JsonResult(new
-			    {
-				    success = true,
-				    gamestate = new
-				    {
-					    zeroCounter = game.observers[0].Counter,
-					    wildCounter = game.observers[1].Counter,
+			return new JsonResult(new
+			{
+				success = true,
+				gamestate = new
+				{
+					zeroCounter = game.observers[0].Counter,
+					wildCounter = game.observers[1].Counter,
 
-					    discardPile = game.discardPile.GetCount(),
-					    drawPile = game.drawPile.GetCount(),
-					    activeCard = game.discardPile.PeekBottomCard(),
+					discardPile = game.discardPile.GetCount(),
+					drawPile = game.drawPile.GetCount(),
+					activeCard = game.discardPile.PeekBottomCard(),
 
-					    activePlayer = game.activePlayerIndex,
-					    players = allPlayerData
-				    }
-			    });
-		    }
+					activePlayer = game.activePlayerIndex,
+					players = allPlayerData
+				}
+			});
+		}
 
-		    /// <summary>
-		    /// GET api/game/5
-		    /// Gets the state of the game from a player's point of view
-		    /// </summary>
-		    /// <param name="id">Player authentification identifier</param>
-		    /// <returns>Game state</returns>
-		    [HttpGet("{id}")]
-		    public ActionResult Get(Guid id)
-		    {
-			    var game = Game.GetInstance();
-			    var player = game.GetPlayerByUUID(id);
+		/// <summary>
+		/// GET api/game/5
+		/// Gets the state of the game from a player's point of view
+		/// </summary>
+		/// <param name="id">Player authentification identifier</param>
+		/// <returns>Game state</returns>
+		[HttpGet("{id}")]
+		public ActionResult Get(Guid id)
+		{
+			var game = Game.GetInstance();
+			var player = game.GetPlayerByUUID(id);
 
-			    if (player == null)
-			    {
-				    return new JsonResult(new
-				    {
-					    success = false,
-					    message = "You are not in the game"
-				    });
-			    }
+			if (player == null)
+			{
+				return new JsonResult(new
+				{
+					success = false,
+					message = "You are not in the game"
+				});
+			}
 
-			    List<object> allPlayerData = new List<object>();
-			    foreach (var item in game.players)
-			    {
-				    if (item == null) break;
-				    allPlayerData.Add(new { name = item.name, count = item.hand.GetCount(), isPlaying = item.isPlaying });
-			    }
+			List<object> allPlayerData = new List<object>();
+			foreach (var item in game.players)
+			{
+				if (item == null) break;
+				allPlayerData.Add(new { name = item.name, count = item.hand.GetCount(), isPlaying = item.isPlaying });
+			}
 
 
-			    return new JsonResult(new
-			    {
-				    success = true,
-				    gamestate = new
-				    {
-					    zeroCounter = game.observers[0].Counter,
-					    wildCounter = game.observers[1].Counter,
+			return new JsonResult(new
+			{
+				success = true,
+				gamestate = new
+				{
+					zeroCounter = game.observers[0].Counter,
+					wildCounter = game.observers[1].Counter,
 
-					    discardPile = game.discardPile.GetCount(),
-					    drawPile = game.drawPile.GetCount(),
-					    activeCard = game.discardPile.PeekBottomCard(),
+					discardPile = game.discardPile.GetCount(),
+					drawPile = game.drawPile.GetCount(),
+					activeCard = game.discardPile.PeekBottomCard(),
 
-					    activePlayer = game.activePlayerIndex,
-					    players = allPlayerData,
+					activePlayer = game.activePlayerIndex,
+					players = allPlayerData,
 
-					    hand = player.hand.cards
-				    }
-			    });
-		    }
+					hand = player.hand.cards
+				}
+			});
+		}
 
-		    #endregion
+		#endregion
 
 		#region NON-GAMEPLAY
-		
+
 		/// <summary>
 		/// POST api/game/join
 		/// A new player attempts to join the game
@@ -141,7 +141,7 @@ namespace UNO_Server.Controllers
 		/// <param name="data">Player authentification identifier</param>
 		/// <returns>Response message</returns>
 		[HttpPost("leave")]
-		public ActionResult Leave(PlayerData data) 
+		public ActionResult Leave(PlayerData data)
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.Playing)
@@ -163,7 +163,7 @@ namespace UNO_Server.Controllers
 		/// <param name="data">Game rule information</param>
 		/// <returns>Response message</returns>
 		[HttpPost("start")]
-		public ActionResult Start(StartData data) 
+		public ActionResult Start(StartData data)
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.WaitingForPlayers)
@@ -211,7 +211,7 @@ namespace UNO_Server.Controllers
 		/// <param name="data">Player and card information</param>
 		/// <returns>Response message</returns>
 		[HttpPost("play")]
-		public ActionResult Play(PlayData data) 
+		public ActionResult Play(PlayData data)
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.Playing)
@@ -240,12 +240,12 @@ namespace UNO_Server.Controllers
 					message = "Not your turn"
 				});
 			}
-			else if (game.expectedAction != ExpectedPlayerAction.PlayCard)
+			else if (game.expectedAction != ExpectedPlayerAction.PlayCard) // TODO: maybe have another way of checking
 			{
 				return new JsonResult(new
 				{
 					success = false,
-					message = "You can't play a card" // maybe have another way of checking
+					message = "You can't play a card"
 				});
 			}
 
@@ -255,7 +255,7 @@ namespace UNO_Server.Controllers
 				return new JsonResult(new
 				{
 					success = false,
-					message = "You can't play that card"
+					message = "You don't have that card"
 				});
 			}
 			else if (!game.CanCardBePlayed(card))
@@ -269,7 +269,7 @@ namespace UNO_Server.Controllers
 
 			// TODO: check if player has to say uno
 
-			if (card.type == CardType.Wild || card.type == CardType.Draw4)// TODO: temp fix for #1
+			if (card.type == CardType.Wild || card.type == CardType.Draw4) // TODO: temp fix for #14
 			{
 				card.color = CardColor.Red;
 			}
@@ -323,11 +323,11 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-            drawCard.Execute();
+			drawCard.Execute();
 			return new JsonResult(new { success = true });
 		}
 
-        /// <summary>
+		/// <summary>
 		/// POST api/game/uno
 		/// Player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
 		/// </summary>
@@ -356,7 +356,7 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-            /*
+			/*
 			else if (game.expectedAction != ExpectedPlayerAction.SayUNO)
 			{
 				return new JsonResult(new
@@ -367,7 +367,7 @@ namespace UNO_Server.Controllers
 			}
 			//*/
 
-            uno.Execute();
+			uno.Execute();
 			return new JsonResult(new { success = true });
 		}
 
@@ -384,9 +384,13 @@ namespace UNO_Server.Controllers
 					if (game.GetActivePlayerCount() != 2)
 						return new JsonResult(new { success = false, message = "Exactly 2 players must be present" });
 
+					game.phase = GamePhase.Playing;
+					game.finiteDeck = false;
+					game.flowClockWise = true;
+
 					game.discardPile = new Deck();
 					game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.Zero));
-					game.drawPile = new UNO_Server.Utility.BuilderFacade.DeckBuilderFacade()
+					game.drawPile = new Utility.BuilderFacade.DeckBuilderFacade()
 						.number.addIndividualNumberCards(0, 1)
 						.action.addSkipCards(1)
 						.number.addIndividualNumberCards(1, 1)
@@ -435,13 +439,13 @@ namespace UNO_Server.Controllers
 
 		// POST api/game/uno/undo
 		[HttpPost("uno/undo")]
-        public ActionResult UndoUno()
-        {
-            uno.Undo();
-            return new JsonResult(new { success = true });
-        }
+		public ActionResult UndoUno()
+		{
+			uno.Undo();
+			return new JsonResult(new { success = true });
+		}
 
-        #endregion
+		#endregion
 
-    }
-}    
+	}
+}

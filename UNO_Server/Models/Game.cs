@@ -18,14 +18,14 @@ namespace UNO_Server.Models
 	}
 
 	public class Game
-    {
+	{
 		public GamePhase phase;
-        public DateTime gameTime { get; set; }
+		public DateTime gameTime { get; set; }
 		public bool finiteDeck = false;
 
-        public bool flowClockWise { get; set; }
-        public Deck drawPile { get; set; }
-        public Deck discardPile { get; set; }
+		public bool flowClockWise { get; set; }
+		public Deck drawPile { get; set; }
+		public Deck discardPile { get; set; }
 
 		public Player[] players;
 		public int numPlayers;
@@ -37,12 +37,15 @@ namespace UNO_Server.Models
 
 		public List<Observer> observers;
 
-        private static readonly Game instance = new Game();
+		private static Game instance = new Game();
 		private static readonly Factory cardActionFactory = new CardActionFactory();
 		private readonly Deck perfectDeck;
 		private readonly Deck semiPerfectDeck;
 		private Game()
-        {
+		{
+			phase = GamePhase.WaitingForPlayers;
+			flowClockWise = true;
+
 			observers = new List<Observer>
 			{
 				new ZeroCounter(),
@@ -66,6 +69,12 @@ namespace UNO_Server.Models
 					.addNonZeroNumberCards(2)
 					.addIndividualNumberCards(0, 1)
 				.build();
+		}
+
+		public static Game ResetGame()
+		{
+			instance = new Game();
+			return instance;
 		}
 
 		public static Game GetInstance()
@@ -241,7 +250,7 @@ namespace UNO_Server.Models
 
 		// player turn logic
 
-		private int GetNextPlayerIndexAfter(int playerIndex)
+		public int GetNextPlayerIndexAfter(int playerIndex)
 		{
 			int nextPlayerIndex = playerIndex;
 			do
@@ -258,7 +267,7 @@ namespace UNO_Server.Models
 					if (nextPlayerIndex < 0)
 						nextPlayerIndex = numPlayers - 1;
 				}
-			} while (!players[nextPlayerIndex].isPlaying && nextPlayerIndex != playerIndex);
+			} while (!players[nextPlayerIndex].isPlaying);// && nextPlayerIndex != playerIndex); // if you get an infinite loop here you did something wrong
 
 			return nextPlayerIndex;
 		}
@@ -359,20 +368,20 @@ namespace UNO_Server.Models
 			throw new NotImplementedException("Game over, go home");
 		}
 
-        public void UndoDrawCard(int playerIndex)
-        {
-            if(playerIndex != -1)
-            {
-                int index = players[playerIndex].hand.cards.Count - 1;
-                Card card = players[playerIndex].hand.cards[index];
-                players[playerIndex].hand.cards.Remove(card);
-                drawPile.AddtoTop(card);
-            }
-        }
+		public void UndoDrawCard(int playerIndex)
+		{
+			if (playerIndex != -1)
+			{
+				int index = players[playerIndex].hand.cards.Count - 1;
+				Card card = players[playerIndex].hand.cards[index];
+				players[playerIndex].hand.cards.Remove(card);
+				drawPile.AddtoTop(card);
+			}
+		}
 
-        public void UndoUno()
-        {
-            //do nothing for now
-        }
-    }
+		public void UndoUno()
+		{
+			//do nothing for now
+		}
+	}
 }

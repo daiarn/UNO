@@ -16,18 +16,18 @@ namespace UNO_Client.Adapter
 			this.BASE_URL = base_url;
 			this.playerId = id;
 		}
-		
+
 		public async Task<string> GetPlayerGameState()
 		{
 			return await client.GetStringAsync(BASE_URL + "/" + playerId);
 		}
 
 
-		private async Task<HttpResponseMessage> SimplePostAsync(string playerId, string path)
+		private void SimplePostAsync(string playerId, string path)
 		{
 			string JsonString = "{\"id\":\"" + playerId + "\"}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-			return await client.PostAsync(BASE_URL + path, content);
+			client.PostAsync(BASE_URL + path, content);
 		}
 
 
@@ -36,39 +36,39 @@ namespace UNO_Client.Adapter
 		//	throw new System.NotImplementedException();
 		//}
 
-		public async Task<HttpResponseMessage> SendLeaveGame()
+		public void SendLeaveGame()
 		{
-			return await SimplePostAsync(playerId, "/leave");
+			SimplePostAsync(playerId, "/leave");
 		}
 
 
-		public async Task<HttpResponseMessage> SendDrawCard()
+		public void SendDrawCard()
 		{
-			return await SimplePostAsync(playerId, "/draw");
+			SimplePostAsync(playerId, "/draw");
 		}
-		public async Task<HttpResponseMessage> SendPlayCard(Card card)
+		public void SendPlayCard(Card card)
 		{
 			string JsonString = "{\"id\":\"" + playerId + "\", \"color\":" + card.Color + ",\"type\":" + card.Type + "}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-			return await client.PostAsync(BASE_URL + "/play", content);
+			client.PostAsync(BASE_URL + "/play", content);
 		}
 
-		public async Task<HttpResponseMessage> SendSayUNO()
+		public void SendSayUNO()
 		{
-			return await SimplePostAsync(playerId, "/uno");
+			SimplePostAsync(playerId, "/uno");
 		}
 
 
-		public async Task<HttpResponseMessage> SendUndoDraw()
-		{
-			var content = new StringContent("{}", Encoding.UTF8, "application/json");
-			return await client.PostAsync(BASE_URL + "/draw/undo", content);
-		}
-
-		public async Task<HttpResponseMessage> SendUndoUNO()
+		public void SendUndoDraw()
 		{
 			var content = new StringContent("{}", Encoding.UTF8, "application/json");
-			return await client.PostAsync(BASE_URL + "/uno/undo", content);
+			client.PostAsync(BASE_URL + "/draw/undo", content);
+		}
+
+		public void SendUndoUNO()
+		{
+			var content = new StringContent("{}", Encoding.UTF8, "application/json");
+			client.PostAsync(BASE_URL + "/uno/undo", content);
 		}
 	}
 }

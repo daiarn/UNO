@@ -9,13 +9,13 @@ namespace UNO_Client.Adapter
 		Task<string> GetPlayerGameState();
 
 		//Task<HttpResponseMessage> SendJoinGame(); // different parameters?
-		Task<HttpResponseMessage> SendLeaveGame();
+		void SendLeaveGame();
 
-		Task<HttpResponseMessage> SendDrawCard();
-		Task<HttpResponseMessage> SendPlayCard(Card card);
-		Task<HttpResponseMessage> SendSayUNO();
+		void SendDrawCard();
+		void SendPlayCard(Card card);
+		void SendSayUNO();
 
-		Task<HttpResponseMessage> SendUndoDraw();
-		Task<HttpResponseMessage> SendUndoUNO();
+		void SendUndoDraw();
+		void SendUndoUNO();
 	}
 }

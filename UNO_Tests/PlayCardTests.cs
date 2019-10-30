@@ -169,6 +169,40 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
+		public void TestColorlessWild()
+		{
+			// ARRANGE
+			var game = Game.ResetGame();
+			var control = new GameController();
+
+			var id = game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.players[0].isPlaying = true;
+			game.players[1].isPlaying = true;
+
+			game.phase = GamePhase.Playing;
+			game.discardPile = new Deck();
+			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
+			game.activePlayerIndex = 0;
+
+			var theCard = new Card(CardColor.Black, CardType.Wild); // wild cards
+			game.players[0].hand.Add(new Card(theCard));
+
+			// ACT
+			var response = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }) as JsonResult;
+			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+			Console.WriteLine(data["message"]);
+
+			var success = (bool) data["success"];
+			Assert.IsFalse(success);
+
+			Assert.IsTrue(game.players[0].hand.Contains(theCard));
+		}
+
+		[TestMethod]
 		public void TestSkipTwoPlayerGame()
 		{
 			// ARRANGE

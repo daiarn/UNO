@@ -53,7 +53,91 @@ namespace UNO_Tests
 		}
 
 		[TestMethod]
+		public void TestJoinTenthPlayer()
+		{
+			Game game = Game.ResetGame();
+			GameController control = new GameController();
+
+			game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.AddPlayer("Player Three");
+			game.AddPlayer("Player Four");
+			game.AddPlayer("Player Five");
+			game.AddPlayer("Player Six");
+			game.AddPlayer("Player Seven");
+			game.AddPlayer("Player Eight");
+			game.AddPlayer("Player Nine");
+
+			JoinData joinData = new JoinData { name = "My name" };
+
+			var response = control.Join(joinData) as JsonResult;
+			var data = new RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+
+			var success = (bool) data["success"];
+			Assert.IsTrue(success);
+
+			Assert.AreEqual(10, game.GetActivePlayerCount());
+		}
+
+		[TestMethod]
+		public void TestJoinEleventhPlayer()
+		{
+			Game game = Game.ResetGame();
+			GameController control = new GameController();
+
+			game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.AddPlayer("Player Three");
+			game.AddPlayer("Player Four");
+			game.AddPlayer("Player Five");
+			game.AddPlayer("Player Six");
+			game.AddPlayer("Player Seven");
+			game.AddPlayer("Player Eight");
+			game.AddPlayer("Player Nine");
+			game.AddPlayer("Player Ten");
+
+			JoinData joinData = new JoinData { name = "My name" };
+
+			var response = control.Join(joinData) as JsonResult;
+			var data = new RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+			Console.WriteLine(data["message"]);
+
+			var success = (bool) data["success"];
+			Assert.IsFalse(success);
+
+			Assert.AreEqual(10, game.GetActivePlayerCount());
+		}
+
+		[TestMethod]
 		public void TestLeaveGame() // TODO: more than one scenario
+		{
+			Game game = Game.ResetGame();
+			GameController control = new GameController();
+
+			var player = game.AddPlayer("Player One");
+			game.phase = GamePhase.WaitingForPlayers;
+
+			var response = control.Leave(new PlayerData { id = player }) as JsonResult;
+			var data = new RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+			Console.WriteLine(data["message"]);
+
+			var success = (bool) data["success"];
+			Assert.IsTrue(success);
+
+			Assert.AreEqual(0, game.GetActivePlayerCount());
+		}
+
+		[TestMethod]
+		public void TestLeaveMidGame() // TODO: maybe add with the other ones
 		{
 			Game game = Game.ResetGame();
 			GameController control = new GameController();
@@ -115,16 +199,14 @@ namespace UNO_Tests
 			Assert.AreEqual(game.phase, GamePhase.WaitingForPlayers);
 		}
 
-      [TestMethod]
-      [ExpectedException(typeof(NotImplementedException), "Game over, go home")]
-      public void TestGameOver()
-      {
-          Game game = Game.ResetGame();
+		[TestMethod]
+		[ExpectedException(typeof(NotImplementedException), "Game over, go home")]
+		public void TestGameOver()
+		{
+			Game game = Game.ResetGame();
 
-          game.GameOver();
-
-          Assert.AreEqual(game.phase, GamePhase.Finished);           
-      }
+			game.GameOver();
+		}
 
 		[TestMethod]
 		public void TestStartClassicSuccess()

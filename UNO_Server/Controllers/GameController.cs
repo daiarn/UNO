@@ -329,13 +329,16 @@ namespace UNO_Server.Controllers
 					game.discardPile = new Deck();
 					game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.Zero));
 					game.drawPile = new Utility.BuilderFacade.DeckBuilderFacade()
-						.number.addIndividualNumberCards(0, 1)
-						.action.addSkipCards(1)
-						.number.addIndividualNumberCards(1, 1)
-						.action.addSkipCards(1)
-						.wild.addWildCards(1)
-						.wild.addDraw4Cards(1)
-					.build();
+						.number.AddIndividualNumberCards(0, 1)
+						.action.AddSkipCards(1)
+						.number.AddIndividualNumberCards(1, 1)
+						.wild.AddWildCards(1)
+						.action.AddReverseCards(1)
+						.action.AddDraw2Cards(1)
+						.wild.AddDraw4Cards(1)
+						.number.AddIndividualNumberCards(11, 1) // just for tests
+						.number.AddIndividualNumberCards(-1, 1) // just for tests
+					.Build();
 
 					var p1Hand = new List<Card>();
 					p1Hand.Add(new Card(CardColor.Red, CardType.Zero));

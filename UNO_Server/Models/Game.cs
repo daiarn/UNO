@@ -47,19 +47,19 @@ namespace UNO_Server.Models
 
 			perfectDeck = new DeckBuilderFacade()
 				.number
-					.addNonZeroNumberCards(2)
-					.addIndividualNumberCards(0, 1)
+					.AddNonZeroNumberCards(2)
+					.AddIndividualNumberCards(0, 1)
 				.action
-					.addActionCards(2)
+					.AddActionCards(2)
 				.wild
-					.addBlackCards(4)
-				.build();
+					.AddBlackCards(4)
+				.Build();
 
 			semiPerfectDeck = new DeckBuilderFacade()
 				.number
-					.addNonZeroNumberCards(2)
-					.addIndividualNumberCards(0, 1)
-				.build();
+					.AddNonZeroNumberCards(2)
+					.AddIndividualNumberCards(0, 1)
+				.Build();
 		}
 
 		public static Game ResetGame()

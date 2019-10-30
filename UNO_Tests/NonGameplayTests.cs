@@ -115,6 +115,17 @@ namespace UNO_Tests
 			Assert.AreEqual(game.phase, GamePhase.WaitingForPlayers);
 		}
 
+      [TestMethod]
+      [ExpectedException(typeof(NotImplementedException), "Game over, go home")]
+      public void TestGameOver()
+      {
+          Game game = Game.ResetGame();
+
+          game.GameOver();
+
+          Assert.AreEqual(game.phase, GamePhase.Finished);           
+      }
+
 		[TestMethod]
 		public void TestStartClassicSuccess()
 		{

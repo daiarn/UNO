@@ -11,13 +11,44 @@ namespace UNO_Tests
 	public class DrawCardTests
 	{
 		[TestMethod]
-		public void TestSuccess()
+		public void TestInfinite()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
 			var control = new GameController();
 
 			var id = game.AddPlayer("Player One");
+			game.finiteDeck = false;
+			game.phase = GamePhase.Playing;
+			game.drawPile = new Deck();
+			game.discardPile = new Deck();
+			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
+			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
+
+			// ACT
+			var response = control.Draw(new PlayerData { id = id }) as JsonResult;
+			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+			Console.WriteLine(data["message"]);
+
+			var success = (bool) data["success"];
+			Assert.IsTrue(success);
+
+			Assert.AreEqual(1, game.players[0].hand.Count);
+			Assert.IsTrue(game.players[0].hand.Contains(new Card(CardColor.Red, CardType.Zero)));
+		}
+
+		[TestMethod]
+		public void TestFinite()
+		{
+			// ARRANGE
+			var game = Game.ResetGame();
+			var control = new GameController();
+
+			var id = game.AddPlayer("Player One");
+			game.finiteDeck = true;
 			game.phase = GamePhase.Playing;
 			game.drawPile = new Deck();
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));

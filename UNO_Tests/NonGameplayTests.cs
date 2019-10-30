@@ -114,5 +114,51 @@ namespace UNO_Tests
 
 			Assert.AreEqual(game.phase, GamePhase.WaitingForPlayers);
 		}
+
+		[TestMethod]
+		public void TestStartClassicSuccess()
+		{
+			Game game = Game.ResetGame();
+			GameController control = new GameController();
+
+			var id = game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.phase = GamePhase.WaitingForPlayers;
+
+			var response = control.Start(new StartData { id = id, finiteDeck = false, onlyNumbers = false }) as JsonResult;
+			var data = new RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+			//Console.WriteLine(data["message"]);
+
+			var success = (bool) data["success"];
+			Assert.IsTrue(success);
+
+			Assert.AreEqual(game.phase, GamePhase.Playing);
+		}
+
+		[TestMethod]
+		public void TestStartFiniteNumbersOnlySuccess()
+		{
+			Game game = Game.ResetGame();
+			GameController control = new GameController();
+
+			var id = game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.phase = GamePhase.WaitingForPlayers;
+
+			var response = control.Start(new StartData { id = id, finiteDeck = true, onlyNumbers = true }) as JsonResult;
+			var data = new RouteValueDictionary(response.Value);
+
+			// ASSERT
+			Assert.IsNotNull(response);
+			//Console.WriteLine(data["message"]);
+
+			var success = (bool) data["success"];
+			Assert.IsTrue(success);
+
+			Assert.AreEqual(game.phase, GamePhase.Playing);
+		}
 	}
 }

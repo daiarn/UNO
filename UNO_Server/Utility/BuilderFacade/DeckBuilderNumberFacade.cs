@@ -9,19 +9,19 @@ namespace UNO_Server.Utility.BuilderFacade
 			this.deck = deck;
 		}
 
-		public DeckBuilderNumberFacade addNonZeroNumberCards(int num)
+		public DeckBuilderNumberFacade AddNonZeroNumberCards(int num)
 		{
 			for (int i = 1; i < 10; i++)
 				for (int j = 0; j < num; j++)
-					addAllColors(deck, Card.numberCardTypes[i]);
+					AddAllColors(deck, Card.numberCardTypes[i]);
 
 			return this;
 		}
 
-		public DeckBuilderNumberFacade addIndividualNumberCards(int card, int num)
+		public DeckBuilderNumberFacade AddIndividualNumberCards(int card, int num)
 		{
 			if (card < 0 || card > 9) return this;
-			addAllColors(deck, Card.numberCardTypes[num]);
+			AddAllColors(deck, Card.numberCardTypes[num]);
 			return this;
 		}
 

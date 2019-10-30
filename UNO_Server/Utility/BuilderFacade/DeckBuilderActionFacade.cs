@@ -9,38 +9,38 @@ namespace UNO_Server.Utility.BuilderFacade
 			this.deck = deck;
 		}
 
-		public DeckBuilderActionFacade addActionCards(int num)
+		public DeckBuilderActionFacade AddActionCards(int num)
 		{
 			for (int j = 0; j < num; j++)
-				addAllColors(deck, CardType.Skip);
+				AddAllColors(deck, CardType.Skip);
 
 			for (int j = 0; j < num; j++)
-				addAllColors(deck, CardType.Reverse);
+				AddAllColors(deck, CardType.Reverse);
 
 			for (int j = 0; j < num; j++)
-				addAllColors(deck, CardType.Draw2);
+				AddAllColors(deck, CardType.Draw2);
 
 			return this;
 		}
 
-		public DeckBuilderActionFacade addSkipCards(int num)
+		public DeckBuilderActionFacade AddSkipCards(int num)
 		{
 			for (int j = 0; j < num; j++)
-				addAllColors(deck, CardType.Skip);
+				AddAllColors(deck, CardType.Skip);
 			return this;
 		}
 
-		public DeckBuilderActionFacade addReverseCards(int num)
+		public DeckBuilderActionFacade AddReverseCards(int num)
 		{
 			for (int j = 0; j < num; j++)
-				addAllColors(deck, CardType.Reverse);
+				AddAllColors(deck, CardType.Reverse);
 			return this;
 		}
 
-		public DeckBuilderActionFacade addDraw2Cards(int num)
+		public DeckBuilderActionFacade AddDraw2Cards(int num)
 		{
 			for (int j = 0; j < num; j++)
-				addAllColors(deck, CardType.Draw2);
+				AddAllColors(deck, CardType.Draw2);
 
 			return this;
 		}

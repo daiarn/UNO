@@ -12,7 +12,7 @@ namespace UNO_Server.Utility.BuilderFacade
 			deck = new Deck();
 		}
 
-		protected void addAllColors(Deck deck, CardType type)
+		protected void AddAllColors(Deck deck, CardType type)
 		{
 			deck.AddToBottom(new Card(CardColor.Red, type));
 			deck.AddToBottom(new Card(CardColor.Yellow, type));
@@ -20,7 +20,7 @@ namespace UNO_Server.Utility.BuilderFacade
 			//deck.AddToBottom(new Card(CardColor.Blue, type));
 		}
 
-		public Deck build()
+		public Deck Build()
 		{
 			return deck;
 		}

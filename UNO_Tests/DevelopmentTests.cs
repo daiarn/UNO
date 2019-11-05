@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
 
 namespace UNO_Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class DevelopmentTests
 	{
 
-		[TestMethod]
+		[Test]
 		public void TestScenarioOne()
 		{
 			// ARRANGE

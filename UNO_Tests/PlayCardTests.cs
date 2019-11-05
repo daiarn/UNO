@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
@@ -7,10 +7,10 @@ using UNO_Server.Models.RecvData;
 
 namespace UNO_Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class PlayCardTests
 	{
-		[TestMethod]
+		[Test]
 		public void TestPreGame()
 		{
 			// ARRANGE
@@ -29,7 +29,7 @@ namespace UNO_Tests
 			Assert.IsFalse(success);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestNoPlayerGame()
 		{
 			// ARRANGE
@@ -52,7 +52,7 @@ namespace UNO_Tests
 			Assert.IsFalse(success);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestWrongTurn()
 		{
 			// ARRANGE
@@ -79,7 +79,7 @@ namespace UNO_Tests
 			Assert.IsFalse(success);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestPlayerDoesntHaveCard()
 		{
 			// ARRANGE
@@ -106,7 +106,7 @@ namespace UNO_Tests
 			Assert.IsFalse(success);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestCardDoesntMatch()
 		{
 			// ARRANGE
@@ -135,7 +135,7 @@ namespace UNO_Tests
 			Assert.IsFalse(success);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestNumberCard()
 		{
 			// ARRANGE
@@ -168,7 +168,7 @@ namespace UNO_Tests
 			Assert.IsTrue(theCard.Equals(game.discardPile.PeekBottomCard()));
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestColorlessWild()
 		{
 			// ARRANGE
@@ -202,7 +202,7 @@ namespace UNO_Tests
 			Assert.IsTrue(game.players[0].hand.Contains(theCard));
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestSkipTwoPlayerGame()
 		{
 			// ARRANGE
@@ -236,7 +236,7 @@ namespace UNO_Tests
 			Assert.AreEqual(0, game.activePlayerIndex);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestSkipThreePlayerGame()
 		{
 			// ARRANGE
@@ -272,7 +272,7 @@ namespace UNO_Tests
 			Assert.AreEqual(2, game.activePlayerIndex);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestReverseTwoPlayerGame()
 		{
 			// ARRANGE
@@ -308,7 +308,7 @@ namespace UNO_Tests
 			Assert.AreEqual(0, game.activePlayerIndex);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestReverseThreePlayerGame()
 		{
 			// ARRANGE
@@ -347,7 +347,7 @@ namespace UNO_Tests
 			Assert.AreEqual(2, game.activePlayerIndex);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestDraw2TwoPlayerGame()
 		{
 			// ARRANGE
@@ -384,7 +384,7 @@ namespace UNO_Tests
 			Assert.AreEqual(0, game.activePlayerIndex);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestDraw2ThreePlayerGame()
 		{
 			// ARRANGE

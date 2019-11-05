@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
 using UNO_Server.Models.RecvData;
 namespace UNO_Tests
 {
-    [TestClass]
+    [TestFixture]
     public class UndoCardTests
     {
-        [TestMethod]
+        [Test]
         public void TestUndoDrawCard()
         {
             // ARRANGE

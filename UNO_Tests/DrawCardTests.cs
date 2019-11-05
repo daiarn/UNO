@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
@@ -7,10 +7,10 @@ using UNO_Server.Models.RecvData;
 
 namespace UNO_Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class DrawCardTests
 	{
-		[TestMethod]
+		[Test]
 		public void TestInfinite()
 		{
 			// ARRANGE
@@ -40,7 +40,7 @@ namespace UNO_Tests
 			Assert.IsTrue(game.players[0].hand.Contains(new Card(CardColor.Red, CardType.Zero)));
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestFinite()
 		{
 			// ARRANGE
@@ -68,7 +68,7 @@ namespace UNO_Tests
 			Assert.IsTrue(game.players[0].hand.Contains(new Card(CardColor.Red, CardType.Zero)));
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestGameIsntStarted()
 		{
 			// ARRANGE
@@ -92,7 +92,7 @@ namespace UNO_Tests
 			Assert.AreEqual(0, game.players[0].hand.Count);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestNotInGame()
 		{
 			// ARRANGE
@@ -117,7 +117,7 @@ namespace UNO_Tests
 			Assert.AreEqual(0, game.players[0].hand.Count);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestNotYourTurn()
 		{
 			// ARRANGE
@@ -145,7 +145,7 @@ namespace UNO_Tests
 			Assert.AreEqual(0, game.players[0].hand.Count);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestCantDraw()
 		{
 			// ARRANGE

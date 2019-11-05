@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.Collections.Generic;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
@@ -7,16 +7,16 @@ using UNO_Server.Models.SendData;
 
 namespace UNO_Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class UniversalTests
 	{
-		[TestMethod]
+		[Test]
 		public void TestNothing()
 		{
 			Game.GetInstance();
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestSpectatorEmptyGame()
 		{
 			// ARRANGE
@@ -46,7 +46,7 @@ namespace UNO_Tests
 			//Assert.IsNotNull(gamestate.players);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestSpectatorTwoPlayerGame()
 		{
 			// ARRANGE
@@ -70,7 +70,7 @@ namespace UNO_Tests
 			Assert.IsNotNull(gamestate);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestPlayerNotInGame()
 		{
 			// ARRANGE
@@ -89,7 +89,7 @@ namespace UNO_Tests
 			Assert.IsFalse(success);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestPlayerTwoPlayerGame()
 		{
 			// ARRANGE

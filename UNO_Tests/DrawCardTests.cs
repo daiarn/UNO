@@ -20,8 +20,6 @@ namespace UNO_Tests
 			var id = game.AddPlayer("Player One");
 			game.finiteDeck = false;
 			game.phase = GamePhase.Playing;
-			game.drawPile = new Deck();
-			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 
@@ -50,7 +48,6 @@ namespace UNO_Tests
 			var id = game.AddPlayer("Player One");
 			game.finiteDeck = true;
 			game.phase = GamePhase.Playing;
-			game.drawPile = new Deck();
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 
 			// ACT
@@ -127,7 +124,6 @@ namespace UNO_Tests
 			var id = game.AddPlayer("Player One");
 			game.AddPlayer("Player Two");
 			game.phase = GamePhase.Playing;
-			game.drawPile = new Deck();
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 			game.activePlayerIndex = 1;
 
@@ -156,7 +152,6 @@ namespace UNO_Tests
 			game.AddPlayer("Player Two");
 
 			game.phase = GamePhase.Playing;
-			game.drawPile = new Deck();
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 			game.activePlayerIndex = 0;
 			game.players[0].hand.Add(new Card(CardColor.Black, CardType.Wild));

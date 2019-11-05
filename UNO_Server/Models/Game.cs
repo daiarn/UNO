@@ -37,13 +37,20 @@ namespace UNO_Server.Models
 			phase = GamePhase.WaitingForPlayers;
 			flowClockWise = true;
 
+			discardPile = new Deck();
+			drawPile = new Deck();
+
+			players = new Player[10];
+			numPlayers = 0;
+
 			observers = new List<Observer>
 			{
 				new ZeroCounter(),
 				new WildCounter()
 			};
 
-			NewGamePrep();
+			foreach (var item in observers)
+				item.Counter = 0;
 
 			perfectDeck = new DeckBuilderFacade()
 				.number
@@ -281,19 +288,6 @@ namespace UNO_Server.Models
 
 		// game progress methods
 
-		public void NewGamePrep()
-		{
-			phase = GamePhase.WaitingForPlayers;
-
-			discardPile = new Deck();
-			drawPile = new Deck();
-
-			players = new Player[10];
-			numPlayers = 0;
-
-			foreach (var item in observers)
-				item.Counter = 0;
-		}
 
 		public void StartGame(bool finiteDeck = false, bool onlyNumbers = false)
 		{

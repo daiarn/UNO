@@ -20,7 +20,6 @@ namespace UNO_Tests
             game.AddPlayer("Player One");
             game.AddPlayer("Player Two");
             game.phase = GamePhase.Playing;
-            game.drawPile = new Deck();
             game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
             game.activePlayerIndex = 0;
             game.players[0].hand.Add(new Card(CardColor.Black, CardType.Wild));

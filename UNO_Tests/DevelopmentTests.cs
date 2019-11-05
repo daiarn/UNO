@@ -8,7 +8,6 @@ namespace UNO_Tests
 	[TestFixture]
 	public class DevelopmentTests
 	{
-
 		[Test]
 		public void TestScenarioOne()
 		{

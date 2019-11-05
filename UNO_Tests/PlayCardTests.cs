@@ -37,7 +37,6 @@ namespace UNO_Tests
 			var control = new GameController();
 
 			game.phase = GamePhase.Playing;
-			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 
 			// ACT
@@ -63,7 +62,6 @@ namespace UNO_Tests
 			game.AddPlayer("Player Two");
 
 			game.phase = GamePhase.Playing;
-			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 			game.activePlayerIndex = 1;
 
@@ -90,7 +88,6 @@ namespace UNO_Tests
 			game.AddPlayer("Player Two");
 
 			game.phase = GamePhase.Playing;
-			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.One));
 			game.activePlayerIndex = 0;
 
@@ -117,7 +114,6 @@ namespace UNO_Tests
 			game.AddPlayer("Player Two");
 
 			game.phase = GamePhase.Playing;
-			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.One));
 			game.activePlayerIndex = 0;
 
@@ -148,7 +144,6 @@ namespace UNO_Tests
 			game.players[1].isPlaying = true;
 
 			game.phase = GamePhase.Playing;
-			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
 
@@ -181,7 +176,6 @@ namespace UNO_Tests
 			game.players[1].isPlaying = true;
 
 			game.phase = GamePhase.Playing;
-			game.discardPile = new Deck();
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
 

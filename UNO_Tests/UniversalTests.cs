@@ -36,16 +36,15 @@ namespace UNO_Tests
 
 			Assert.IsTrue(success);
 			Assert.IsNotNull(gamestate);
+            
+            Assert.IsInstanceOf<GameSpectatorState>(data["gamestate"]);
 
-			//Assert.IsInstanceOfType(data["gamestate"], new GameSpectatorState(game).GetType());
+            Assert.IsNotNull(gamestate.discardPileCount);
+            Assert.IsNotNull(gamestate.drawPileCount);
 
-			// TODO: refactor these?
-			//Assert.IsNotNull(gamestate.discardPileCount);
-			//Assert.IsNotNull(gamestate.drawPileCount);
-
-			//Assert.IsNotNull(gamestate.activePlayer);
-			//Assert.IsNotNull(gamestate.players);
-		}
+            Assert.IsNotNull(gamestate.activePlayer);
+            Assert.IsNotNull(gamestate.players);
+        }
 
 		[Test]
 		public void TestSpectatorTwoPlayerGame()

@@ -115,36 +115,17 @@ namespace UNO_Tests
 			Assert.AreEqual(10, game.GetActivePlayerCount());
 		}
 
+        [TestCase(GamePhase.WaitingForPlayers)]
+        [TestCase(GamePhase.Playing)]
+        [TestCase(GamePhase.Finished)]
 		[Test]
-		public void TestLeaveGame() // TODO: more than one scenario
+		public void TestLeaveGame(GamePhase gamePhase) // TODO: more than one scenario
 		{
 			Game game = Game.ResetGame();
 			GameController control = new GameController();
 
 			var player = game.AddPlayer("Player One");
-			game.phase = GamePhase.WaitingForPlayers;
-
-            var response = control.Leave(new PlayerData { id = player }) as JsonResult;
-			var data = new RouteValueDictionary(response.Value);
-
-			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
-
-			Assert.AreEqual(0, game.GetActivePlayerCount());
-		}
-
-		[Test]
-		public void TestLeaveMidGame() // TODO: maybe add with the other ones
-		{
-			Game game = Game.ResetGame();
-			GameController control = new GameController();
-
-			var player = game.AddPlayer("Player One");
-			game.phase = GamePhase.Playing;
+			game.phase = gamePhase;
 
 			var response = control.Leave(new PlayerData { id = player }) as JsonResult;
 			var data = new RouteValueDictionary(response.Value);
@@ -158,6 +139,28 @@ namespace UNO_Tests
 
 			Assert.AreEqual(0, game.GetActivePlayerCount());
 		}
+
+		//[Test]
+		//public void TestLeaveMidGame() // TODO: maybe add with the other ones
+		//{
+		//	Game game = Game.ResetGame();
+		//	GameController control = new GameController();
+
+		//	var player = game.AddPlayer("Player One");
+		//	game.phase = GamePhase.Playing;
+
+		//	var response = control.Leave(new PlayerData { id = player }) as JsonResult;
+		//	var data = new RouteValueDictionary(response.Value);
+
+		//	// ASSERT
+		//	Assert.IsNotNull(response);
+		//	Console.WriteLine(data["message"]);
+
+		//	var success = (bool) data["success"];
+		//	Assert.IsTrue(success);
+
+		//	Assert.AreEqual(0, game.GetActivePlayerCount());
+		//}
 
 		[Test]
 		public void TestStartAlreadyStarted()

@@ -31,21 +31,23 @@ namespace UNO_Tests
 
 			Assert.AreEqual(1, game.GetActivePlayerCount());
 		}
+
+        [TestCase(GamePhase.Playing)]
+        [TestCase(GamePhase.Finished)]
 		[Test]
-		public void TestJoinFailPhase1() // TODO: refactor for all phases
+		public void TestJoinFailPhase1(GamePhase gamePhase)
 		{
 			Game game = Game.ResetGame();
 			GameController control = new GameController();
 
 			JoinData joinData = new JoinData { name = "My name" };
-			game.phase = GamePhase.Playing;
+			game.phase = gamePhase;
 
 			var response = control.Join(joinData) as JsonResult;
 			var data = new RouteValueDictionary(response.Value);
 
 			// ASSERT
 			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
 
 			var success = (bool) data["success"];
 			Assert.IsFalse(success);
@@ -119,7 +121,7 @@ namespace UNO_Tests
         [TestCase(GamePhase.Playing)]
         [TestCase(GamePhase.Finished)]
 		[Test]
-		public void TestLeaveGame(GamePhase gamePhase) // TODO: more than one scenario
+		public void TestLeaveGame(GamePhase gamePhase)
 		{
 			Game game = Game.ResetGame();
 			GameController control = new GameController();
@@ -140,28 +142,6 @@ namespace UNO_Tests
 			Assert.AreEqual(0, game.GetActivePlayerCount());
 		}
 
-		//[Test]
-		//public void TestLeaveMidGame() // TODO: maybe add with the other ones
-		//{
-		//	Game game = Game.ResetGame();
-		//	GameController control = new GameController();
-
-		//	var player = game.AddPlayer("Player One");
-		//	game.phase = GamePhase.Playing;
-
-		//	var response = control.Leave(new PlayerData { id = player }) as JsonResult;
-		//	var data = new RouteValueDictionary(response.Value);
-
-		//	// ASSERT
-		//	Assert.IsNotNull(response);
-		//	Console.WriteLine(data["message"]);
-
-		//	var success = (bool) data["success"];
-		//	Assert.IsTrue(success);
-
-		//	Assert.AreEqual(0, game.GetActivePlayerCount());
-		//}
-
 		[Test]
 		public void TestStartAlreadyStarted()
 		{
@@ -176,7 +156,6 @@ namespace UNO_Tests
 
 			// ASSERT
 			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
 
 			var success = (bool) data["success"];
 			Assert.IsFalse(success);
@@ -204,12 +183,10 @@ namespace UNO_Tests
 		}
 
 		[Test]
-		//[ExpectedException(typeof(NotImplementedException), "Game over, go home")]
 		public void TestGameOver()
 		{
 			Game game = Game.ResetGame();
 
-			//game.GameOver();
             var ex = Assert.Throws(typeof(NotImplementedException), new TestDelegate(game.GameOver));
             Assert.That(ex.Message == "Game over, go home");
         }
@@ -229,7 +206,6 @@ namespace UNO_Tests
 
 			// ASSERT
 			Assert.IsNotNull(response);
-			//Console.WriteLine(data["message"]);
 
 			var success = (bool) data["success"];
 			Assert.IsTrue(success);
@@ -252,7 +228,6 @@ namespace UNO_Tests
 
 			// ASSERT
 			Assert.IsNotNull(response);
-			//Console.WriteLine(data["message"]);
 
 			var success = (bool) data["success"];
 			Assert.IsTrue(success);

@@ -215,8 +215,6 @@ namespace UNO_Tests
 			game.players[1].isPlaying = true;
 
 			game.phase = GamePhase.Playing;
-			//game.discardPile = new Deck();
-			//game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
 
 			var theCard = new Card(CardColor.Red, CardType.Skip);
@@ -251,8 +249,6 @@ namespace UNO_Tests
 			game.players[2].isPlaying = true;
 
 			game.phase = GamePhase.Playing;
-			//game.discardPile = new Deck();
-			//game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
 
 			var theCard = new Card(CardColor.Red, CardType.Skip);
@@ -286,8 +282,6 @@ namespace UNO_Tests
 
 			game.flowClockWise = true;
 			game.phase = GamePhase.Playing;
-			//game.discardPile = new Deck();
-			//game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
 
 			var theCard = new Card(CardColor.Red, CardType.Reverse);
@@ -324,8 +318,6 @@ namespace UNO_Tests
 
 			game.flowClockWise = true;
 			game.phase = GamePhase.Playing;
-			//game.discardPile = new Deck();
-			//game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
 
 			var theCard = new Card(CardColor.Red, CardType.Reverse);
@@ -359,9 +351,7 @@ namespace UNO_Tests
 			game.players[0].isPlaying = true;
 			game.players[1].isPlaying = true;
 
-			//game.flowClockWise = true;
 			game.phase = GamePhase.Playing;
-			//game.drawPile = new Deck();
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;
@@ -398,9 +388,7 @@ namespace UNO_Tests
 			game.players[1].isPlaying = true;
 			game.players[2].isPlaying = true;
 
-			//game.flowClockWise = true;
 			game.phase = GamePhase.Playing;
-			//game.drawPile = new Deck();
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 			game.activePlayerIndex = 0;

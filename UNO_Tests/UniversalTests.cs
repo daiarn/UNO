@@ -158,7 +158,6 @@ namespace UNO_Tests
             var gameState = (GamePlayerState)data["gamestate"];
             Assert.IsTrue(success);
 
-            //Assert.IsTrue(theCard.Equals(game.discardPile.PeekBottomCard()));
             Assert.AreEqual(game.observers[0].Counter, gameState.zeroCounter);
             Assert.AreEqual(game.observers[1].Counter, gameState.wildCounter);
             Assert.AreEqual(game.discardPile.GetCount(), gameState.discardPileCount);

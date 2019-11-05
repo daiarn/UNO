@@ -12,11 +12,19 @@ namespace UNO_Tests
 	[TestFixture]
 	public class NonGameplayTests
 	{
+        private Game game;
+        private GameController control;
+
+        [SetUp]
+        public void TestInit()
+        {
+            this.game = Game.ResetGame();
+            this.control = new GameController();
+        }
+
 		[Test]
 		public void TestJoinSuccess()
 		{
-			Game game = Game.ResetGame();
-			GameController control = new GameController();
 
 			JoinData joinData = new JoinData { name = "My name" };
 
@@ -37,9 +45,6 @@ namespace UNO_Tests
 		[Test]
 		public void TestJoinFailPhase1(GamePhase gamePhase)
 		{
-			Game game = Game.ResetGame();
-			GameController control = new GameController();
-
 			JoinData joinData = new JoinData { name = "My name" };
 			game.phase = gamePhase;
 
@@ -58,9 +63,6 @@ namespace UNO_Tests
 		[Test]
 		public void TestJoinTenthPlayer()
 		{
-			Game game = Game.ResetGame();
-			GameController control = new GameController();
-
 			game.AddPlayer("Player One");
 			game.AddPlayer("Player Two");
 			game.AddPlayer("Player Three");
@@ -88,9 +90,6 @@ namespace UNO_Tests
 		[Test]
 		public void TestJoinEleventhPlayer()
 		{
-			Game game = Game.ResetGame();
-			GameController control = new GameController();
-
 			game.AddPlayer("Player One");
 			game.AddPlayer("Player Two");
 			game.AddPlayer("Player Three");
@@ -123,9 +122,6 @@ namespace UNO_Tests
 		[Test]
 		public void TestLeaveGame(GamePhase gamePhase)
 		{
-			Game game = Game.ResetGame();
-			GameController control = new GameController();
-
 			var player = game.AddPlayer("Player One");
 			game.phase = gamePhase;
 
@@ -145,9 +141,6 @@ namespace UNO_Tests
 		[Test]
 		public void TestStartAlreadyStarted()
 		{
-			Game game = Game.ResetGame();
-			GameController control = new GameController();
-
 			var player = game.AddPlayer("Player One");
 			game.phase = GamePhase.Finished;
 
@@ -164,9 +157,6 @@ namespace UNO_Tests
 		[Test]
 		public void TestStartNotInGame()
 		{
-			Game game = Game.ResetGame();
-			GameController control = new GameController();
-
 			game.phase = GamePhase.WaitingForPlayers;
 
 			var response = control.Start(new StartData { id = new Guid(), finiteDeck = false, onlyNumbers = false }) as JsonResult;
@@ -185,8 +175,6 @@ namespace UNO_Tests
 		[Test]
 		public void TestGameOver()
 		{
-			Game game = Game.ResetGame();
-
             var ex = Assert.Throws(typeof(NotImplementedException), new TestDelegate(game.GameOver));
             Assert.That(ex.Message == "Game over, go home");
         }
@@ -194,9 +182,6 @@ namespace UNO_Tests
 		[Test]
 		public void TestStartClassicSuccess()
 		{
-			Game game = Game.ResetGame();
-			GameController control = new GameController();
-
 			var id = game.AddPlayer("Player One");
 			game.AddPlayer("Player Two");
 			game.phase = GamePhase.WaitingForPlayers;
@@ -216,9 +201,6 @@ namespace UNO_Tests
 		[Test]
 		public void TestStartFiniteNumbersOnlySuccess()
 		{
-			Game game = Game.ResetGame();
-			GameController control = new GameController();
-
 			var id = game.AddPlayer("Player One");
 			game.AddPlayer("Player Two");
 			game.phase = GamePhase.WaitingForPlayers;

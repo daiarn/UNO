@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+//using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
@@ -8,10 +9,10 @@ using UNO_Server.Models.RecvData;
 
 namespace UNO_Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class NonGameplayTests
 	{
-		[TestMethod]
+		[Test]
 		public void TestJoinSuccess()
 		{
 			Game game = Game.ResetGame();
@@ -30,7 +31,7 @@ namespace UNO_Tests
 
 			Assert.AreEqual(1, game.GetActivePlayerCount());
 		}
-		[TestMethod]
+		[Test]
 		public void TestJoinFailPhase1() // TODO: refactor for all phases
 		{
 			Game game = Game.ResetGame();
@@ -52,7 +53,7 @@ namespace UNO_Tests
 			Assert.AreEqual(0, game.GetActivePlayerCount());
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestJoinTenthPlayer()
 		{
 			Game game = Game.ResetGame();
@@ -82,7 +83,7 @@ namespace UNO_Tests
 			Assert.AreEqual(10, game.GetActivePlayerCount());
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestJoinEleventhPlayer()
 		{
 			Game game = Game.ResetGame();
@@ -114,7 +115,7 @@ namespace UNO_Tests
 			Assert.AreEqual(10, game.GetActivePlayerCount());
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestLeaveGame() // TODO: more than one scenario
 		{
 			Game game = Game.ResetGame();
@@ -123,7 +124,7 @@ namespace UNO_Tests
 			var player = game.AddPlayer("Player One");
 			game.phase = GamePhase.WaitingForPlayers;
 
-			var response = control.Leave(new PlayerData { id = player }) as JsonResult;
+            var response = control.Leave(new PlayerData { id = player }) as JsonResult;
 			var data = new RouteValueDictionary(response.Value);
 
 			// ASSERT
@@ -136,7 +137,7 @@ namespace UNO_Tests
 			Assert.AreEqual(0, game.GetActivePlayerCount());
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestLeaveMidGame() // TODO: maybe add with the other ones
 		{
 			Game game = Game.ResetGame();
@@ -158,7 +159,7 @@ namespace UNO_Tests
 			Assert.AreEqual(0, game.GetActivePlayerCount());
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestStartAlreadyStarted()
 		{
 			Game game = Game.ResetGame();
@@ -178,7 +179,7 @@ namespace UNO_Tests
 			Assert.IsFalse(success);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestStartNotInGame()
 		{
 			Game game = Game.ResetGame();
@@ -199,16 +200,18 @@ namespace UNO_Tests
 			Assert.AreEqual(game.phase, GamePhase.WaitingForPlayers);
 		}
 
-		[TestMethod]
-		[ExpectedException(typeof(NotImplementedException), "Game over, go home")]
+		[Test]
+		//[ExpectedException(typeof(NotImplementedException), "Game over, go home")]
 		public void TestGameOver()
 		{
 			Game game = Game.ResetGame();
 
-			game.GameOver();
-		}
+			//game.GameOver();
+            var ex = Assert.Throws(typeof(NotImplementedException), new TestDelegate(game.GameOver));
+            Assert.That(ex.Message == "Game over, go home");
+        }
 
-		[TestMethod]
+		[Test]
 		public void TestStartClassicSuccess()
 		{
 			Game game = Game.ResetGame();
@@ -231,7 +234,7 @@ namespace UNO_Tests
 			Assert.AreEqual(game.phase, GamePhase.Playing);
 		}
 
-		[TestMethod]
+		[Test]
 		public void TestStartFiniteNumbersOnlySuccess()
 		{
 			Game game = Game.ResetGame();

@@ -11,9 +11,10 @@ namespace UNO_Tests
 	public class UniversalTests
 	{
 		[Test]
-		public void TestNothing()
+		public void TestSingleton()
 		{
-			Game.GetInstance();
+			var game = Game.GetInstance();
+            Assert.AreSame(game, Game.GetInstance());
 		}
 
 		[Test]

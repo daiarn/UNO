@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UNO_Server.Models.SendData;
 using UNO_Server.Utility;
 using UNO_Server.Utility.BuilderFacade;
 using UNO_Server.Utility.Strategy;
@@ -10,11 +9,6 @@ namespace UNO_Server.Models
 	public enum GamePhase
 	{
 		WaitingForPlayers, Playing, Finished
-	}
-
-	public enum ExpectedPlayerAction
-	{
-		DrawCard, PlayCard, SayUNO
 	}
 
 	public class Game
@@ -30,15 +24,12 @@ namespace UNO_Server.Models
 		public Player[] players;
 		public int numPlayers;
 
-		public ExpectedPlayerAction expectedAction;
-
 		public int activePlayerIndex;
-		public int nextPlayerIndex;
 
 		public List<Observer> observers;
 
 		private static Game instance = new Game();
-		private static readonly Factory cardActionFactory = new CardActionFactory();
+		private static readonly StrategyFactory cardActionFactory = new CardActionFactory();
 		private readonly Deck perfectDeck;
 		private readonly Deck semiPerfectDeck;
 		private Game()
@@ -46,29 +37,36 @@ namespace UNO_Server.Models
 			phase = GamePhase.WaitingForPlayers;
 			flowClockWise = true;
 
+			discardPile = new Deck();
+			drawPile = new Deck();
+
+			players = new Player[10];
+			numPlayers = 0;
+
 			observers = new List<Observer>
 			{
 				new ZeroCounter(),
 				new WildCounter()
 			};
 
-			NewGamePrep();
+			foreach (var item in observers)
+				item.Counter = 0;
 
 			perfectDeck = new DeckBuilderFacade()
 				.number
-					.addNonZeroNumberCards(2)
-					.addIndividualNumberCards(0, 1)
+					.AddNonZeroNumberCards(2)
+					.AddIndividualNumberCards(0, 1)
 				.action
-					.addActionCards(2)
+					.AddActionCards(2)
 				.wild
-					.addBlackCards(4)
-				.build();
+					.AddBlackCards(4)
+				.Build();
 
 			semiPerfectDeck = new DeckBuilderFacade()
 				.number
-					.addNonZeroNumberCards(2)
-					.addIndividualNumberCards(0, 1)
-				.build();
+					.AddNonZeroNumberCards(2)
+					.AddIndividualNumberCards(0, 1)
+				.Build();
 		}
 
 		public static Game ResetGame()
@@ -91,16 +89,11 @@ namespace UNO_Server.Models
 			return players[index].id;
 		}
 
-		public int GetPlayerIndexByUUID(Guid id)
-		{
-			for (int i = 0; i < numPlayers; i++)
-				if (players[i].id == id) return i;
-			return -1;
-		}
-
 		public void DeletePlayer(Guid id)
 		{
-			var index = GetPlayerIndexByUUID(id);
+			var index = -1;
+			for (int i = 0; i < numPlayers; i++)
+				if (players[i].id == id) index = i;
 			if (index < 0 || index > numPlayers) return;
 
 			var last = players[numPlayers - 1];
@@ -111,11 +104,14 @@ namespace UNO_Server.Models
 
 		public void EliminatePlayer(Guid id)
 		{
-			var index = GetPlayerIndexByUUID(id);
+			var index = -1;
+			for (int i = 0; i < numPlayers; i++)
+				if (players[i].id == id) index = i;
 			if (index < 0 || index > numPlayers) return;
 
 			var player = players[index];
 			player.isPlaying = false;
+
 			// TODO: check if it's that player's turn (also check if it's game over)
 		}
 
@@ -142,9 +138,9 @@ namespace UNO_Server.Models
 		public bool CanPlayerPlayAnyOn(Player player)
 		{
 			var activeCard = discardPile.PeekBottomCard();
-			for (int i = 0; i < player.hand.GetCount(); i++)
+			for (int i = 0; i < player.hand.Count; i++)
 			{
-				var playerCard = player.hand.GetCard(i);
+				var playerCard = player.hand[i];
 				if (CanCardBePlayed(activeCard, playerCard)) return true;
 			}
 			return false;
@@ -215,9 +211,7 @@ namespace UNO_Server.Models
 			else
 				player.hand.Add(card);
 
-			if (CanCardBePlayed(card))
-				expectedAction = ExpectedPlayerAction.PlayCard;
-			else
+			if (!CanCardBePlayed(card))
 				NextPlayerTurn();
 		}
 
@@ -230,13 +224,15 @@ namespace UNO_Server.Models
 
 			// TODO: check if player needs to say UNO
 
-			ICardStrategy action = cardActionFactory.CreateAction(card.type);
-			if (action != null) action.Action();
-
 			// TODO: check if player has won
 			//GameOver();
 
-			NextPlayerTurn();
+			ICardStrategy action = cardActionFactory.CreateAction(card.type);
+			if (action != null)
+				action.Action();
+			else
+				NextPlayerTurn();
+
 		}
 
 		public void PlayerSaysUNO()
@@ -267,33 +263,22 @@ namespace UNO_Server.Models
 					if (nextPlayerIndex < 0)
 						nextPlayerIndex = numPlayers - 1;
 				}
-			} while (!players[nextPlayerIndex].isPlaying);// && nextPlayerIndex != playerIndex); // if you get an infinite loop here you did something wrong
+			} while (!players[nextPlayerIndex].isPlaying && nextPlayerIndex != playerIndex);
+
+			if (nextPlayerIndex == playerIndex && GetActivePlayerCount() > 2)
+				throw new NotImplementedException("Failed to get next player");// if you are reading this, then you did something wrong, because you would have gotten an infinite loop
 
 			return nextPlayerIndex;
 		}
 
-		public Player GetNextPlayer()
+		public void SkipNextPlayerTurn()
 		{
-			return players[GetNextPlayerIndexAfter(activePlayerIndex)];
-		}
-
-		public void NextPlayerSkipsTurn()
-		{
-			nextPlayerIndex = GetNextPlayerIndexAfter(nextPlayerIndex);
+			activePlayerIndex = GetNextPlayerIndexAfter(GetNextPlayerIndexAfter(activePlayerIndex));
 		}
 
 		public void NextPlayerTurn()
 		{
-			int nextNextPlayer = GetNextPlayerIndexAfter(nextPlayerIndex);
-			activePlayerIndex = nextPlayerIndex;
-			nextPlayerIndex = nextNextPlayer;
-
-			Player player = players[activePlayerIndex];
-			if (CanPlayerPlayAnyOn(player))
-				expectedAction = ExpectedPlayerAction.PlayCard;
-			else
-				expectedAction = ExpectedPlayerAction.DrawCard;
-
+			activePlayerIndex = GetNextPlayerIndexAfter(activePlayerIndex);
 		}
 
 		public void ReverseFlow()
@@ -303,19 +288,6 @@ namespace UNO_Server.Models
 
 		// game progress methods
 
-		public void NewGamePrep()
-		{
-			phase = GamePhase.WaitingForPlayers;
-
-			discardPile = new Deck();
-			drawPile = new Deck();
-
-			players = new Player[10];
-			numPlayers = 0;
-
-			foreach (var item in observers)
-				item.Counter = 0;
-		}
 
 		public void StartGame(bool finiteDeck = false, bool onlyNumbers = false)
 		{
@@ -329,7 +301,6 @@ namespace UNO_Server.Models
 			drawPile.Shuffle();
 
 			activePlayerIndex = 0;
-			nextPlayerIndex = 0;
 
 			for (int i = 0; i < numPlayers; i++)
 			{
@@ -339,7 +310,6 @@ namespace UNO_Server.Models
 				}
 				players[i].isPlaying = true;
 			}
-
 
 			Card firstCard = null;
 
@@ -372,9 +342,9 @@ namespace UNO_Server.Models
 		{
 			if (playerIndex != -1)
 			{
-				int index = players[playerIndex].hand.cards.Count - 1;
-				Card card = players[playerIndex].hand.cards[index];
-				players[playerIndex].hand.cards.Remove(card);
+				int index = players[playerIndex].hand.Count - 1;
+				Card card = players[playerIndex].hand[index];
+				players[playerIndex].hand.Remove(card);
 				drawPile.AddtoTop(card);
 			}
 		}

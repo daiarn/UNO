@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using UNO_Server.Models;
+using UNO_Server.Models.RecvData;
+using UNO_Server.Models.SendData;
 using UNO_Server.Utility.Command;
 
 namespace UNO_Server.Controllers
@@ -25,29 +27,7 @@ namespace UNO_Server.Controllers
 		{
 			var game = Game.GetInstance();
 
-			List<object> allPlayerData = new List<object>();
-			foreach (var player in game.players)
-			{
-				if (player == null) break;
-				allPlayerData.Add(new { player.name, count = player.hand.GetCount(), player.isPlaying });
-			}
-
-			return new JsonResult(new
-			{
-				success = true,
-				gamestate = new
-				{
-					zeroCounter = game.observers[0].Counter,
-					wildCounter = game.observers[1].Counter,
-
-					discardPile = game.discardPile.GetCount(),
-					drawPile = game.drawPile.GetCount(),
-					activeCard = game.discardPile.PeekBottomCard(),
-
-					activePlayer = game.activePlayerIndex,
-					players = allPlayerData
-				}
-			});
+			return new JsonResult(new { success = true, gamestate = new GameSpectatorState(game) });
 		}
 
 		/// <summary>
@@ -71,32 +51,7 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			List<object> allPlayerData = new List<object>();
-			foreach (var item in game.players)
-			{
-				if (item == null) break;
-				allPlayerData.Add(new { name = item.name, count = item.hand.GetCount(), isPlaying = item.isPlaying });
-			}
-
-
-			return new JsonResult(new
-			{
-				success = true,
-				gamestate = new
-				{
-					zeroCounter = game.observers[0].Counter,
-					wildCounter = game.observers[1].Counter,
-
-					discardPile = game.discardPile.GetCount(),
-					drawPile = game.drawPile.GetCount(),
-					activeCard = game.discardPile.PeekBottomCard(),
-
-					activePlayer = game.activePlayerIndex,
-					players = allPlayerData,
-
-					hand = player.hand.cards
-				}
-			});
+			return new JsonResult(new { success = true, gamestate = new GamePlayerState(game, player) });
 		}
 
 		#endregion
@@ -173,7 +128,7 @@ namespace UNO_Server.Controllers
 					success = false,
 					message = "Game already started"
 				});
-			}
+			} // TODO: enable this for live gameplay
 			/*
 			else if (game.GetActivePlayerCount() < 2)
 			{
@@ -240,14 +195,6 @@ namespace UNO_Server.Controllers
 					message = "Not your turn"
 				});
 			}
-			else if (game.expectedAction != ExpectedPlayerAction.PlayCard) // TODO: maybe have another way of checking
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You can't play a card"
-				});
-			}
 
 			var card = new Card(data.color, data.type);
 			if (!player.hand.Contains(card))
@@ -267,12 +214,16 @@ namespace UNO_Server.Controllers
 				});
 			}
 
-			// TODO: check if player has to say uno
-
-			if (card.type == CardType.Wild || card.type == CardType.Draw4) // TODO: temp fix for #14
+			if ((card.type == CardType.Wild || card.type == CardType.Draw4) && card.color == CardColor.Black)
 			{
-				card.color = CardColor.Red;
+				return new JsonResult(new
+				{
+					success = false,
+					message = "You have to choose a color"
+				});
 			}
+
+			// TODO: check if player has to say uno
 
 			game.PlayerPlaysCard(card);
 			return new JsonResult(new { success = true });
@@ -314,12 +265,12 @@ namespace UNO_Server.Controllers
 					message = "Not your turn"
 				});
 			}
-			else if (game.expectedAction != ExpectedPlayerAction.DrawCard)
+			else if (game.CanPlayerPlayAnyOn(player))
 			{
 				return new JsonResult(new
 				{
 					success = false,
-					message = "You can't draw a card"
+					message = "You can't draw a card right now"
 				});
 			}
 
@@ -337,6 +288,7 @@ namespace UNO_Server.Controllers
 		public ActionResult Uno(PlayerData data) // 
 		{
 			var game = Game.GetInstance();
+			/*
 			if (game.phase != GamePhase.Playing)
 			{
 				return new JsonResult(new
@@ -355,16 +307,6 @@ namespace UNO_Server.Controllers
 					message = "You are not in the game"
 				});
 			}
-
-			/*
-			else if (game.expectedAction != ExpectedPlayerAction.SayUNO)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You failed to say \"UNO!\""
-				});
-			}
 			//*/
 
 			uno.Execute();
@@ -380,7 +322,7 @@ namespace UNO_Server.Controllers
 			var game = Game.GetInstance();
 			switch (scenario)
 			{
-				case 1: // Scenario 1: Generic 2 player game with few but diverse cards
+				case 1: // Scenario 1: Generic two player game with few but diverse cards
 					if (game.GetActivePlayerCount() != 2)
 						return new JsonResult(new { success = false, message = "Exactly 2 players must be present" });
 
@@ -391,15 +333,18 @@ namespace UNO_Server.Controllers
 					game.discardPile = new Deck();
 					game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.Zero));
 					game.drawPile = new Utility.BuilderFacade.DeckBuilderFacade()
-						.number.addIndividualNumberCards(0, 1)
-						.action.addSkipCards(1)
-						.number.addIndividualNumberCards(1, 1)
-						.action.addSkipCards(1)
-						.wild.addWildCards(1)
-						.wild.addDraw4Cards(1)
-					.build();
+						.number.AddIndividualNumberCards(0, 1)
+						.action.AddSkipCards(1)
+						.number.AddIndividualNumberCards(1, 1)
+						.wild.AddWildCards(1)
+						.action.AddReverseCards(1)
+						.action.AddDraw2Cards(1)
+						.wild.AddDraw4Cards(1)
+						.number.AddIndividualNumberCards(11, 1) // just for tests
+						.number.AddIndividualNumberCards(-1, 1) // just for tests
+					.Build();
 
-					var p1Hand = new Hand();
+					var p1Hand = new List<Card>();
 					p1Hand.Add(new Card(CardColor.Red, CardType.Zero));
 					p1Hand.Add(new Card(CardColor.Red, CardType.Zero));
 					p1Hand.Add(new Card(CardColor.Red, CardType.One));
@@ -407,16 +352,16 @@ namespace UNO_Server.Controllers
 					p1Hand.Add(new Card(CardColor.Red, CardType.Skip));
 					p1Hand.Add(new Card(CardColor.Red, CardType.Reverse));
 					p1Hand.Add(new Card(CardColor.Red, CardType.Draw2));
-					var p2Hand = new Hand();
+					var p2Hand = new List<Card>();
 					p2Hand.Add(new Card(CardColor.Yellow, CardType.Zero));
 					p2Hand.Add(new Card(CardColor.Yellow, CardType.One));
 					p2Hand.Add(new Card(CardColor.Yellow, CardType.Skip));
 					p2Hand.Add(new Card(CardColor.Yellow, CardType.Reverse));
 					p2Hand.Add(new Card(CardColor.Yellow, CardType.Draw2));
 
-					game.players[game.activePlayerIndex].hand = p1Hand;
-					game.players[game.nextPlayerIndex].hand = p2Hand;
-					game.expectedAction = ExpectedPlayerAction.PlayCard;
+					game.players[0].hand = p1Hand;
+					game.players[1].hand = p2Hand;
+					game.players[1].hand = p2Hand;
 
 					return new JsonResult(new { success = true });
 

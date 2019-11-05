@@ -1,22 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+using NUnit.Framework;
+using System.Linq;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
+using UNO_Server.Models.SendData;
 
 namespace UNO_Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class UniversalTests
 	{
-		[TestMethod]
-		public void TestNothing()
+		[Test]
+		public void TestSingleton()
 		{
-			Game.GetInstance();
+			var game = Game.GetInstance();
+            Assert.AreSame(game, Game.GetInstance());
 		}
 
-		[TestMethod]
-		public void TestGetSpectatorEmptyGame()
+		[Test]
+		public void TestSpectatorEmptyGame()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -30,23 +32,22 @@ namespace UNO_Tests
 			Assert.IsNotNull(response);
 
 			var success = (bool) data["success"];
-			var gamestate = new Microsoft.AspNetCore.Routing.RouteValueDictionary(data["gamestate"]);
-
-			//foreach (var key in gamestate.Keys)
-			//System.Console.WriteLine(key + ": " + gamestate[key]);
+			var gamestate = (GameSpectatorState) data["gamestate"];
 
 			Assert.IsTrue(success);
 			Assert.IsNotNull(gamestate);
 
-			Assert.IsNotNull(gamestate["discardPile"]);
-			Assert.IsNotNull(gamestate["drawPile"]);
-
-			Assert.IsNotNull(gamestate["activePlayer"]);
-			Assert.IsNotNull(gamestate["players"]);
+			Assert.AreEqual(0, gamestate.zeroCounter);
+			Assert.AreEqual(0, gamestate.wildCounter);
+			Assert.AreEqual(0, gamestate.discardPileCount);
+			Assert.AreEqual(0, gamestate.drawPileCount);
+			Assert.AreEqual(null, gamestate.activeCard);
+			Assert.AreEqual(0, gamestate.activePlayer);
+			Assert.AreEqual(0, gamestate.players.Count());
 		}
 
-		[TestMethod]
-		public void TestGetSpectatorTwoPlayerGame()
+		[Test]
+		public void TestSpectatorTwoPlayerGame()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -63,23 +64,22 @@ namespace UNO_Tests
 			Assert.IsNotNull(response);
 
 			var success = (bool) data["success"];
-			var gamestate = new Microsoft.AspNetCore.Routing.RouteValueDictionary(data["gamestate"]);
+			var gamestate = (GameSpectatorState) data["gamestate"];
 
 			Assert.IsTrue(success);
-
-			//System.Console.WriteLine(data["gamestate"].ToString()); // TODO: refactor test, check relevant values?
 			Assert.IsNotNull(gamestate);
 
-			Assert.IsNotNull(gamestate["discardPile"]);
-			Assert.IsNotNull(gamestate["drawPile"]);
-			//Assert.IsNull(gamestate["activeCard"]); // no card in pre-game phase
-
-			Assert.IsNotNull(gamestate["activePlayer"]);
-			Assert.IsNotNull(gamestate["players"]);
+			Assert.AreEqual(0, gamestate.zeroCounter);
+			Assert.AreEqual(0, gamestate.wildCounter);
+			Assert.AreEqual(0, gamestate.discardPileCount);
+			Assert.AreEqual(0, gamestate.drawPileCount);
+			Assert.AreEqual(null, gamestate.activeCard);
+			Assert.AreEqual(0, gamestate.activePlayer);
+			Assert.AreEqual(2, gamestate.players.Count());
 		}
 
-		[TestMethod]
-		public void TestGetPlayerNotInGame()
+		[Test]
+		public void TestPlayerNotInGame()
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -97,8 +97,8 @@ namespace UNO_Tests
 			Assert.IsFalse(success);
 		}
 
-		[TestMethod]
-		public void TestGetPlayerTwoPlayerGame()
+		[Test]
+		public void TestPlayerTwoPlayerGame() // TODO: add some cards to player hands
 		{
 			// ARRANGE
 			var game = Game.ResetGame();
@@ -112,27 +112,69 @@ namespace UNO_Tests
 			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
 
 			// ASSERT
-			Assert.IsNotNull(response);
 
 			var success = (bool) data["success"];
-			var gamestate = new Microsoft.AspNetCore.Routing.RouteValueDictionary(data["gamestate"]);
+			var gamestate = (GamePlayerState) data["gamestate"];
 
 			Assert.IsTrue(success);
 			Assert.IsNotNull(gamestate);
-			//System.Console.WriteLine(data["gamestate"].ToString());
 
-			Assert.IsNotNull(gamestate["discardPile"]);
-			Assert.IsNotNull(gamestate["drawPile"]);
+			Assert.AreEqual(0, gamestate.zeroCounter);
+			Assert.AreEqual(0, gamestate.wildCounter);
+			Assert.AreEqual(0, gamestate.discardPileCount);
+			Assert.AreEqual(0, gamestate.drawPileCount);
+			Assert.AreEqual(null, gamestate.activeCard);
+			Assert.AreEqual(0, gamestate.activePlayer);
+			Assert.AreEqual(2, gamestate.players.Count());
 
-			Assert.IsNotNull(gamestate["activePlayer"]);
-			Assert.IsNotNull(gamestate["players"]);
-
-			var hand = (List<Card>) gamestate["hand"];
-			Assert.IsNotNull(hand);
-			System.Console.WriteLine(hand);
-			System.Console.WriteLine(hand.Count);
-
-			// TODO: check cards in hand
+			// more gamestate checks
+			Assert.IsNotNull(gamestate.hand);
+			Assert.AreEqual(0, gamestate.hand.Count());
 		}
+
+        [Test]
+        public void TestGameControllerResults()
+        {
+            // ARRANGE
+            var game = Game.ResetGame();
+            var control = new GameController();
+
+            var id = game.AddPlayer("Player One");
+            game.AddPlayer("Player Two");
+            game.players[0].isPlaying = true;
+            game.players[1].isPlaying = true;
+
+            game.phase = GamePhase.Playing;
+            game.drawPile = new Deck();
+            game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.One));
+            game.discardPile = new Deck();
+            game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
+            game.activePlayerIndex = 0;
+            game.observers[0].Counter = 4;
+            game.observers[1].Counter = 0;
+
+            game.players[0].hand.Add(new Card(CardColor.Red, CardType.Zero));
+
+            // ACT
+            var response = control.Get(id) as JsonResult;
+            var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+
+            // ASSERT
+            Assert.IsNotNull(response);
+
+            var success = (bool)data["success"];
+            var gamestate = (GamePlayerState)data["gamestate"];
+
+            Assert.IsTrue(success);
+			Assert.IsNotNull(gamestate);
+
+			Assert.AreEqual(4, gamestate.zeroCounter);
+            Assert.AreEqual(0, gamestate.wildCounter);
+            Assert.AreEqual(1, gamestate.discardPileCount);
+            Assert.AreEqual(1, gamestate.drawPileCount);
+            Assert.AreEqual(new Card(CardColor.Red, CardType.One), gamestate.activeCard);
+            Assert.AreEqual(0, gamestate.activePlayer);
+            Assert.AreEqual(2, gamestate.players.Count());
+        }
 	}
 }

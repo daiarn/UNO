@@ -2,15 +2,15 @@
 
 namespace UNO_Server.Models.SendData
 {
-	public class GamePlayerState : GameState
+	public class GamePlayerState : GameSpectatorState
 	{
 		public List<Card> hand;
-		public int id;
+		public int index;
 
 		public GamePlayerState(Game game, Player player) : base(game)
 		{
-			hand = player.hand.cards;
-			id = game.GetPlayerIndexByUUID(player.id);
+			hand = player.hand;
+			index = System.Array.IndexOf(game.players, player);
 		}
 	}
 }

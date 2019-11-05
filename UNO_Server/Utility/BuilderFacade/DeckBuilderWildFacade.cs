@@ -8,21 +8,21 @@ namespace UNO_Server.Utility.BuilderFacade
 		{
 			this.deck = deck;
 		}
-		public DeckBuilderWildFacade addWildCards(int num)
+		public DeckBuilderWildFacade AddWildCards(int num)
 		{
 			for (int j = 0; j < num; j++)
 				deck.AddToBottom(new Card(CardColor.Black, CardType.Wild));
 			return this;
 		}
 
-		public DeckBuilderWildFacade addDraw4Cards(int num)
+		public DeckBuilderWildFacade AddDraw4Cards(int num)
 		{
 			for (int j = 0; j < num; j++)
 				deck.AddToBottom(new Card(CardColor.Black, CardType.Draw4));
 			return this;
 		}
 
-		public DeckBuilderWildFacade addBlackCards(int num)
+		public DeckBuilderWildFacade AddBlackCards(int num)
 		{
 			for (int j = 0; j < num; j++)
 				deck.AddToBottom(new Card(CardColor.Black, CardType.Wild));

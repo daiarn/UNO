@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UNO_Server.Utility;
 using UNO_Server.Utility.BuilderFacade;
 using UNO_Server.Utility.Strategy;
@@ -110,13 +112,10 @@ namespace UNO_Server.Models
 			if (index < 0 || index > numPlayers) return;
 
 			var player = players[index];
-			player.isPlaying = false;
+			PlayerLoses(index);
 
 			if (index == activePlayerIndex)
-			{
-				PlayerLoses(index);
 				NextPlayerTurn();
-			}
 
 			if (GetActivePlayerCount() < 2)
 				GameOver();
@@ -127,6 +126,7 @@ namespace UNO_Server.Models
 			for (int i = 0; i < numPlayers; i++)
 				if (winners[i] == -1)
 				{
+					players[index].isPlaying = false;
 					winners[i] = index;
 					break;
 				}
@@ -137,6 +137,7 @@ namespace UNO_Server.Models
 			for (int i = numPlayers-1; i >= 0; i--)
 				if (winners[i] == -1)
 				{
+					players[index].isPlaying = false;
 					winners[i] = index;
 					break;
 				}
@@ -228,10 +229,12 @@ namespace UNO_Server.Models
 			if (card == null)
 				GameOver();
 			else
+			{
 				player.hand.Add(card);
 
-			if (!CanCardBePlayed(card))
-				NextPlayerTurn();
+				if (!CanCardBePlayed(card))
+					NextPlayerTurn();
+			}
 		}
 
 		public void PlayerPlaysCard(Card card)
@@ -243,12 +246,21 @@ namespace UNO_Server.Models
 
 			if (player.hand.Count == 0) // winner
 			{
-				player.isPlaying = false;
 				PlayerWins(activePlayerIndex);
+				if (GetActivePlayerCount() < 2)
+				{
+					GameOver();
+					return;
+				}
 			}
 
-			bool forgotToSayUNO = false; // TODO: check if player needs to say UNO
-			if (forgotToSayUNO && player.hand.Count == 1)
+			bool playerSaidUNO = false; // TODO: check player UNO penalty
+			if (!playerSaidUNO && player.hand.Count == 1)
+			{
+				player.hand.Add(FromDrawPile());
+				player.hand.Add(FromDrawPile());
+			}
+			else if (playerSaidUNO)
 			{
 				player.hand.Add(FromDrawPile());
 				player.hand.Add(FromDrawPile());
@@ -323,7 +335,7 @@ namespace UNO_Server.Models
 
 			activePlayerIndex = 0;
 
-			winners = new int[numPlayers];
+			winners = new int[numPlayers].Select(_ => -1).ToArray();
 
 			for (int i = 0; i < numPlayers; i++)
 			{
@@ -358,9 +370,21 @@ namespace UNO_Server.Models
 		{
 			phase = GamePhase.Finished;
 
-			// TODO: gather remaining players and count their points
+			var stillPlaying = players.Where(p => p!=null && p.isPlaying).Select(p => new {
+				index = Array.IndexOf(players, p),
+				turn = (Array.IndexOf(players, p) - activePlayerIndex) % numPlayers,
+				score = p.hand.Aggregate(0, (sum, next) => sum + next.GetScore())
+			}).OrderByDescending(p => p.score).ThenBy(p => p.turn);
 
-			throw new NotImplementedException("Game over, go home");
+			int start;
+			for (start = 0; start < numPlayers; start++)
+				if (winners[start] != -1) break;
+
+			foreach (var item in stillPlaying)
+				winners[start++] = item.index;
+
+			Task.Factory.StartNew(() => { System.Threading.Thread.Sleep(10000); Game.ResetGame(); });
+			//throw new NotImplementedException("Game over, go home");
 		}
 
 		public void UndoDrawCard(int playerIndex)

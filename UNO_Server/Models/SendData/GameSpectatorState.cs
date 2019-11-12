@@ -14,6 +14,7 @@ namespace UNO_Server.Models.SendData
 
 		public int activePlayer;
 		public List<PlayerInfo> players;
+		public int[] winners;
 
 		public GameSpectatorState(Game game)
 		{
@@ -26,6 +27,7 @@ namespace UNO_Server.Models.SendData
 
 			activePlayer = game.activePlayerIndex;
 			players = game.players.Where(p => p != null).Select(p => new PlayerInfo(p)).ToList();
+			winners = game.winners;
 		}
 	}
 }

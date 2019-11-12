@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using System;
 using UNO_Server.Controllers;
@@ -43,7 +42,7 @@ namespace UNO_Tests
         [TestCase(GamePhase.Playing)]
         [TestCase(GamePhase.Finished)]
 		[Test]
-		public void TestJoinFailPhase1(GamePhase gamePhase)
+		public void TestJoinPhase(GamePhase gamePhase)
 		{
 			JoinData joinData = new JoinData { name = "My name" };
 			game.phase = gamePhase;
@@ -123,7 +122,14 @@ namespace UNO_Tests
 		public void TestLeaveGame(GamePhase gamePhase)
 		{
 			var player = game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.AddPlayer("Player Three");
+			game.players[0].isPlaying = true;
+			game.players[1].isPlaying = true;
+			game.players[2].isPlaying = true;
+
 			game.phase = gamePhase;
+			game.winners = new int[]{-1,-1,-1};
 
 			var response = control.Leave(new PlayerData { id = player }) as JsonResult;
 			var data = new RouteValueDictionary(response.Value);
@@ -134,8 +140,9 @@ namespace UNO_Tests
 
 			var success = (bool) data["success"];
 			Assert.IsTrue(success);
+			Console.WriteLine(game.phase);
 
-			Assert.AreEqual(0, game.GetActivePlayerCount());
+			Assert.AreEqual(2, game.GetActivePlayerCount());
 		}
 
 		[Test]
@@ -171,13 +178,6 @@ namespace UNO_Tests
 
 			Assert.AreEqual(game.phase, GamePhase.WaitingForPlayers);
 		}
-
-		[Test]
-		public void TestGameOver()
-		{
-            var ex = Assert.Throws(typeof(NotImplementedException), new TestDelegate(game.GameOver));
-            Assert.That(ex.Message == "Game over, go home");
-        }
 
 		[Test]
 		public void TestStartClassicSuccess()

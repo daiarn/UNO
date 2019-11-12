@@ -104,11 +104,11 @@ namespace UNO_Server.Controllers
 				game.DeletePlayer(data.id);
 				return new JsonResult(new { success = true });
 			}
-
-			// TODO: add more checks when game is in progress
-
-			game.EliminatePlayer(data.id);
-			return new JsonResult(new { success = true, message = "You were in an in-progress game, but left anyway" });
+			else
+			{
+				game.EliminatePlayer(data.id);
+				return new JsonResult(new { success = true, message = "You were in an in-progress game, but left anyway" });
+			}
 		}
 
 		/// <summary>

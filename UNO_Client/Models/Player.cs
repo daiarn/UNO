@@ -13,7 +13,7 @@ namespace UNO_Client.Models
         bool isPlaying;
 
         public string Name { get => name; set => name = value; }
-        public int Count { get => cardCount; set => cardCount = value; }
+        public int CardCount { get => cardCount; set => cardCount = value; }
         public bool IsPlaying { get => isPlaying; set => isPlaying = value; }
 
         public string Id { get; set; }

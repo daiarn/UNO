@@ -17,15 +17,18 @@ namespace UNO_Client.Forms
 		private readonly ConnectionInterface serverConnection;
 		private static readonly SoundAdapter soundAdaptor = new SoundAdapter();
 		private Game Game;
+        private JoinPost joinPost;
 
 		public GameForm(JoinPost joinPost)
 		{
+            this.joinPost = joinPost;
 			serverConnection = new HttpAdapter("https://localhost:44331/api/game", joinPost.Id); // TODO: change url?
 			SetGame();
 			Thread.Sleep(1000);
 			InitializeComponent();
 			SetGameTimer();
-		}
+            //UpdateActivePlayer();
+        }
 
 		private void Draw_ClickAsync(object sender, EventArgs e)
 		{
@@ -194,7 +197,9 @@ namespace UNO_Client.Forms
 			Update();
 			mainPanel.Refresh();
 			handPanel.Refresh();
-		}
+            UpdateActivePlayer();
+            UpdateGameCounters();
+        }
 		private void SetGameTimer()
 		{
 			// Create a timer with a two second interval.
@@ -220,7 +225,7 @@ namespace UNO_Client.Forms
 			for (int i = 0; i < count; i++)
 			{
 				var player = Game.Gamestate.Players[i];
-				string line = player.Name + " " + player.Count;
+				string line = player.Name + " " + player.CardCount;
 				infomration[i] = line;
 			}
 			return infomration;
@@ -230,7 +235,32 @@ namespace UNO_Client.Forms
 			var info = FormatPlayersInformation();
 			PlayersInfo.Lines = info;
 		}
+        private void UpdateActivePlayer()
+        {
+            if (IsActive())
+            {
+                PlayerTurn.Text = "Your turn";
+            }
+            else
+            {
+                PlayerTurn.Text = "Waiting for opponent turn";
+            }
+        }
+        private bool IsActive()
+        {
+            int activePlayerIndex = Game.Gamestate.ActivePlayer;
+            int id = Game.Gamestate.Index;
+            return activePlayerIndex == id;
+        }
+        private void UpdateGameCounters()
+        {
+            int zeroCounter = Game.Gamestate.ZeroCounter;
+            int wildCounter = Game.Gamestate.WildCounter;
 
+            string counterInfo = String.Format("Zero cards drawn in the game {0}\n Wild cards drawn in the game {1}\n", zeroCounter, wildCounter);
+
+            CounterInformation.Text = counterInfo;
+        }
 		private void GameForm_Load(object sender, EventArgs e)
 		{
 

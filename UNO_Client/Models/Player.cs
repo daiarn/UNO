@@ -9,11 +9,11 @@ namespace UNO_Client.Models
     class Player
     {
         string name;
-        int count;
+        int cardCount;
         bool isPlaying;
 
         public string Name { get => name; set => name = value; }
-        public int Count { get => count; set => count = value; }
+        public int Count { get => cardCount; set => cardCount = value; }
         public bool IsPlaying { get => isPlaying; set => isPlaying = value; }
 
         public string Id { get; set; }

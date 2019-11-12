@@ -247,5 +247,10 @@ namespace UNO_Client.Forms
 			serverConnection.SendUndoUNO();
 			//SetGame();
 		}
-	}
+
+        private void PlayerTurn_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
 }

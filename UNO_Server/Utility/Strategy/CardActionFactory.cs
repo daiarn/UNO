@@ -1,7 +1,6 @@
 ﻿using UNO_Server.Models;
-using UNO_Server.Utility.Strategy;
 
-namespace UNO_Server.Utility
+namespace UNO_Server.Utility.Strategy
 {
 	public class CardActionFactory : StrategyFactory
 	{

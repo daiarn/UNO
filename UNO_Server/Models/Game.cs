@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using UNO_Server.Models.SendData;
 using UNO_Server.Utility;
 using UNO_Server.Utility.BuilderFacade;
 using UNO_Server.Utility.Strategy;
@@ -23,6 +26,7 @@ namespace UNO_Server.Models
 
 		public Player[] players;
 		public int numPlayers;
+		public WinnerInfo[] winners;
 
 		public int activePlayerIndex;
 
@@ -80,7 +84,6 @@ namespace UNO_Server.Models
 			return instance;
 		}
 
-		// player methods
 		public Guid AddPlayer(string name)
 		{
 			int index = numPlayers;
@@ -110,9 +113,35 @@ namespace UNO_Server.Models
 			if (index < 0 || index > numPlayers) return;
 
 			var player = players[index];
-			player.isPlaying = false;
+			PlayerLoses(index);
 
-			// TODO: check if it's that player's turn (also check if it's game over)
+			if (index == activePlayerIndex)
+				NextPlayerTurn();
+
+			if (GetActivePlayerCount() < 2)
+				GameOver();
+		}
+
+		public void PlayerWins(int index)
+		{
+			for (int i = 0; i < numPlayers; i++)
+				if (winners[i] == null)
+				{
+					players[index].isPlaying = false;
+					winners[i] = new WinnerInfo(players[index]);
+					break;
+				}
+		}
+
+		public void PlayerLoses(int index)
+		{
+			for (int i = numPlayers-1; i >= 0; i--)
+				if (winners[i] == null)
+				{
+					players[index].isPlaying = false;
+					winners[i] = new WinnerInfo(players[index]);
+					break;
+				}
 		}
 
 		public Player GetPlayerByUUID(Guid id)
@@ -133,32 +162,26 @@ namespace UNO_Server.Models
 			return count;
 		}
 
-		// card methods
-
 		public bool CanPlayerPlayAnyOn(Player player)
 		{
-			var activeCard = discardPile.PeekBottomCard();
 			for (int i = 0; i < player.hand.Count; i++)
 			{
 				var playerCard = player.hand[i];
-				if (CanCardBePlayed(activeCard, playerCard)) return true;
+				if (CanCardBePlayed(playerCard)) return true;
 			}
 			return false;
 		}
 
-		public static bool CanCardBePlayed(Card activeCard, Card playerCard)
+		public bool CanCardBePlayed(Card playerCard)
 		{
+			var activeCard = discardPile.PeekBottomCard();
+
 			if (activeCard == null) return true; // wait, what? how did this happen? we're smarter than this
 			if (activeCard.color == playerCard.color) return true;
 			if (activeCard.type == playerCard.type) return true;
 
 			if (playerCard.type == CardType.Wild || playerCard.type == CardType.Draw4) return true;
 			return false;
-		}
-
-		public bool CanCardBePlayed(Card playerCard)
-		{
-			return CanCardBePlayed(discardPile.PeekBottomCard(), playerCard);
 		}
 
 		public Card FromDrawPile() // draws from the draw pile according to the deck finite-ness rules
@@ -199,8 +222,6 @@ namespace UNO_Server.Models
 			}
 		}
 
-		// player action methods
-
 		public void PlayerDrawsCard()
 		{
 			var player = players[activePlayerIndex];
@@ -209,10 +230,12 @@ namespace UNO_Server.Models
 			if (card == null)
 				GameOver();
 			else
+			{
 				player.hand.Add(card);
 
-			if (!CanCardBePlayed(card))
-				NextPlayerTurn();
+				if (!CanCardBePlayed(card))
+					NextPlayerTurn();
+			}
 		}
 
 		public void PlayerPlaysCard(Card card)
@@ -222,29 +245,41 @@ namespace UNO_Server.Models
 			player.hand.Remove(card);
 			discardPile.AddToBottom(card);
 
-			// TODO: check if player needs to say UNO
+			if (player.hand.Count == 0) // winner
+			{
+				PlayerWins(activePlayerIndex);
+				if (GetActivePlayerCount() < 2)
+				{
+					GameOver();
+					return;
+				}
+			}
 
-			// TODO: check if player has won
-			//GameOver();
+			bool playerSaidUNO = false; // TODO: check player UNO penalty
+			if (!playerSaidUNO && player.hand.Count == 1)
+			{
+				player.hand.Add(FromDrawPile());
+				player.hand.Add(FromDrawPile());
+			}
+			else if (playerSaidUNO)
+			{
+				player.hand.Add(FromDrawPile());
+				player.hand.Add(FromDrawPile());
+			}
 
 			ICardStrategy action = cardActionFactory.CreateAction(card.type);
 			if (action != null)
-				action.Action();
+				action.Action(); // action card is responsible whose turn is next
 			else
 				NextPlayerTurn();
-
 		}
 
 		public void PlayerSaysUNO()
 		{
 			//var player = players[activePlayerIndex];
 
-			// TODO: avoid card draw penalty
-
-			NextPlayerTurn();
+			// TODO: avoid UNO penalty here
 		}
-
-		// player turn logic
 
 		public int GetNextPlayerIndexAfter(int playerIndex)
 		{
@@ -266,7 +301,7 @@ namespace UNO_Server.Models
 			} while (!players[nextPlayerIndex].isPlaying && nextPlayerIndex != playerIndex);
 
 			if (nextPlayerIndex == playerIndex && GetActivePlayerCount() > 2)
-				throw new NotImplementedException("Failed to get next player");// if you are reading this, then you did something wrong, because you would have gotten an infinite loop
+				throw new NotImplementedException("Failed to get next player"); // if you are reading this, then you did something wrong, because you would have gotten an infinite loop
 
 			return nextPlayerIndex;
 		}
@@ -278,6 +313,8 @@ namespace UNO_Server.Models
 
 		public void NextPlayerTurn()
 		{
+			// TODO: add UNO draw penalty
+
 			activePlayerIndex = GetNextPlayerIndexAfter(activePlayerIndex);
 		}
 
@@ -285,9 +322,6 @@ namespace UNO_Server.Models
 		{
 			flowClockWise = !flowClockWise;
 		}
-
-		// game progress methods
-
 
 		public void StartGame(bool finiteDeck = false, bool onlyNumbers = false)
 		{
@@ -301,6 +335,8 @@ namespace UNO_Server.Models
 			drawPile.Shuffle();
 
 			activePlayerIndex = 0;
+
+			winners = new WinnerInfo[numPlayers];
 
 			for (int i = 0; i < numPlayers; i++)
 			{
@@ -335,7 +371,19 @@ namespace UNO_Server.Models
 		{
 			phase = GamePhase.Finished;
 
-			throw new NotImplementedException("Game over, go home");
+			var stillPlaying = players.Where(p => p!=null && p.isPlaying).Select(
+				p => new WinnerInfo(p, (Array.IndexOf(players, p) - activePlayerIndex) % numPlayers))
+			.OrderByDescending(p => p.score).ThenBy(p => p.turn);
+
+			int start;
+			for (start = 0; start < numPlayers; start++)
+				if (winners[start] != null) break;
+
+			foreach (var item in stillPlaying)
+				winners[start++] = item;
+
+			Task.Factory.StartNew(() => { System.Threading.Thread.Sleep(10000); Game.ResetGame(); });
+			//throw new NotImplementedException("Game over, go home");
 		}
 
 		public void UndoDrawCard(int playerIndex)

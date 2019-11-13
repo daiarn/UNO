@@ -10,9 +10,10 @@ namespace UNO_Client.Models
     {
         int zeroCounter;
         int wildCounter;
-        int discardPile;
-        int drawPile;
+        int discardPileCount;
+        int drawPileCount;
         int activePlayer;
+        int index;
 
         Card activeCard;
         List<Player> players;
@@ -20,12 +21,13 @@ namespace UNO_Client.Models
 
         public int ZeroCounter { get => zeroCounter; set => zeroCounter = value; }
         public int WildCounter { get => wildCounter; set => wildCounter = value; }
-        public int DiscardPile { get => discardPile; set => discardPile = value; }
-        public int DrawPile { get => drawPile; set => drawPile = value; }
+        public int DiscardPile { get => discardPileCount; set => discardPileCount = value; }
+        public int DrawPile { get => drawPileCount; set => drawPileCount = value; }
         public int ActivePlayer { get => activePlayer; set => activePlayer = value; }
         public Card ActiveCard { get => activeCard; set => activeCard = value; }
 
         public List<Player> Players { get => players; set => players = value; }
         public List<Card> Hand { get => hand; set => hand = value; }
+        public int Index { get => index; set => index = value; }
     }
 }

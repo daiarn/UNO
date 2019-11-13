@@ -1,21 +1,20 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using UNO_Client.Models;
 
 namespace UNO_Client.Adapter
 {
-	interface ConnectionInterface // TODO: refactor return types
+	interface ConnectionInterface
 	{
 		Task<string> GetPlayerGameState();
 
 		//Task<HttpResponseMessage> SendJoinGame(); // different parameters?
-		Task<HttpResponseMessage> SendLeaveGame();
+		bool SendLeaveGame();
 
-		Task<HttpResponseMessage> SendDrawCard();
-		Task<HttpResponseMessage> SendPlayCard(Card card);
-		Task<HttpResponseMessage> SendSayUNO();
+		bool SendDrawCard();
+		bool SendPlayCard(Card card);
+		bool SendSayUNO();
 
-		Task<HttpResponseMessage> SendUndoDraw();
-		Task<HttpResponseMessage> SendUndoUNO();
+		void SendUndoDraw();
+		void SendUndoUNO();
 	}
 }

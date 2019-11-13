@@ -128,7 +128,7 @@ namespace UNO_Server.Models
 				if (winners[i] == null)
 				{
 					players[index].isPlaying = false;
-					winners[i] = new WinnerInfo(players[index]);
+					winners[i] = new WinnerInfo(index);
 					break;
 				}
 		}
@@ -139,7 +139,7 @@ namespace UNO_Server.Models
 				if (winners[i] == null)
 				{
 					players[index].isPlaying = false;
-					winners[i] = new WinnerInfo(players[index]);
+					winners[i] = new WinnerInfo(index);
 					break;
 				}
 		}
@@ -372,7 +372,7 @@ namespace UNO_Server.Models
 			phase = GamePhase.Finished;
 
 			var stillPlaying = players.Where(p => p!=null && p.isPlaying).Select(
-				p => new WinnerInfo(p, (Array.IndexOf(players, p) - activePlayerIndex) % numPlayers))
+				p => new WinnerInfo(Array.IndexOf(players, p), p.hand, (Array.IndexOf(players, p) - activePlayerIndex) % numPlayers))
 			.OrderByDescending(p => p.score).ThenBy(p => p.turn);
 
 			int start;

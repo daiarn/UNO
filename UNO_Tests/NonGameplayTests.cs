@@ -129,7 +129,7 @@ namespace UNO_Tests
 			game.players[2].isPlaying = true;
 
 			game.phase = gamePhase;
-			game.winners = new int[]{-1,-1,-1};
+			game.winners = new UNO_Server.Models.SendData.WinnerInfo[3];
 
 			var response = control.Leave(new PlayerData { id = player }) as JsonResult;
 			var data = new RouteValueDictionary(response.Value);

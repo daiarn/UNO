@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UNO_Server.Models.SendData;
 using UNO_Server.Utility;
 using UNO_Server.Utility.BuilderFacade;
 using UNO_Server.Utility.Strategy;
@@ -25,7 +26,7 @@ namespace UNO_Server.Models
 
 		public Player[] players;
 		public int numPlayers;
-		public int[] winners; // the order of player indexes from winner to loser
+		public WinnerInfo[] winners;
 
 		public int activePlayerIndex;
 
@@ -124,10 +125,10 @@ namespace UNO_Server.Models
 		public void PlayerWins(int index)
 		{
 			for (int i = 0; i < numPlayers; i++)
-				if (winners[i] == -1)
+				if (winners[i] == null)
 				{
 					players[index].isPlaying = false;
-					winners[i] = index;
+					winners[i] = new WinnerInfo(players[index]);
 					break;
 				}
 		}
@@ -135,10 +136,10 @@ namespace UNO_Server.Models
 		public void PlayerLoses(int index)
 		{
 			for (int i = numPlayers-1; i >= 0; i--)
-				if (winners[i] == -1)
+				if (winners[i] == null)
 				{
 					players[index].isPlaying = false;
-					winners[i] = index;
+					winners[i] = new WinnerInfo(players[index]);
 					break;
 				}
 		}
@@ -335,7 +336,7 @@ namespace UNO_Server.Models
 
 			activePlayerIndex = 0;
 
-			winners = new int[numPlayers].Select(_ => -1).ToArray();
+			winners = new WinnerInfo[numPlayers];
 
 			for (int i = 0; i < numPlayers; i++)
 			{
@@ -370,18 +371,16 @@ namespace UNO_Server.Models
 		{
 			phase = GamePhase.Finished;
 
-			var stillPlaying = players.Where(p => p!=null && p.isPlaying).Select(p => new {
-				index = Array.IndexOf(players, p),
-				turn = (Array.IndexOf(players, p) - activePlayerIndex) % numPlayers,
-				score = p.hand.Aggregate(0, (sum, next) => sum + next.GetScore())
-			}).OrderByDescending(p => p.score).ThenBy(p => p.turn);
+			var stillPlaying = players.Where(p => p!=null && p.isPlaying).Select(
+				p => new WinnerInfo(p, (Array.IndexOf(players, p) - activePlayerIndex) % numPlayers))
+			.OrderByDescending(p => p.score).ThenBy(p => p.turn);
 
 			int start;
 			for (start = 0; start < numPlayers; start++)
-				if (winners[start] != -1) break;
+				if (winners[start] != null) break;
 
 			foreach (var item in stillPlaying)
-				winners[start++] = item.index;
+				winners[start++] = item;
 
 			Task.Factory.StartNew(() => { System.Threading.Thread.Sleep(10000); Game.ResetGame(); });
 			//throw new NotImplementedException("Game over, go home");

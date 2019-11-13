@@ -14,7 +14,7 @@ namespace UNO_Server.Models.SendData
 
 		public int activePlayer;
 		public List<PlayerInfo> players;
-		public int[] winners;
+		public WinnerInfo[] winners;
 
 		public GameSpectatorState(Game game)
 		{

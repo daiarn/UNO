@@ -375,8 +375,8 @@ namespace UNO_Server.Models
 				p => new WinnerInfo(Array.IndexOf(players, p), p.hand, (Array.IndexOf(players, p) - activePlayerIndex) % numPlayers))
 			.OrderByDescending(p => p.score).ThenBy(p => p.turn);
 
-			int start;
-			for (start = 0; start < numPlayers; start++)
+			int start;//TO DO Explain this magic
+            for (start = 0; start < numPlayers; start++)
 				if (winners[start] != null) break;
 
 			foreach (var item in stillPlaying)

@@ -197,7 +197,7 @@ namespace UNO_Client.Forms
 			Update();
 			mainPanel.Refresh();
 			handPanel.Refresh();
-            UpdateActivePlayer();
+            UpdateTopText();
             UpdateGameCounters();
         }
 		private void SetGameTimer()
@@ -235,6 +235,24 @@ namespace UNO_Client.Forms
 			var info = FormatPlayersInformation();
 			PlayersInfo.Lines = info;
 		}
+        private void UpdateTopText()
+        {
+            WinnerInfo player;
+            if (Game.Gamestate.Winners == null)
+            {
+                UpdateActivePlayer();
+                return;
+            }
+            player = IsWinner();
+            if (player == null)
+            {
+                UpdateActivePlayer();
+            }
+            else
+            {
+                UpdateWinnerInfomration(player);
+            }
+        }
         private void UpdateActivePlayer()
         {
             if (IsActive())
@@ -246,11 +264,55 @@ namespace UNO_Client.Forms
                 PlayerTurn.Text = "Waiting for opponent turn";
             }
         }
+        private void UpdateWinnerInfomration(WinnerInfo player)
+        {
+            int playerPlace = GetWinnerPlace(player);
+            if (player.Turn == -1)
+            {
+                PlayerTurn.Text = "You won the game. Place: " + playerPlace;
+            }
+            else
+            {
+                PlayerTurn.Text = String.Format("You won the game. Place: {0} Score {1}", playerPlace, player.Score);
+            }
+        }
+        private int GetWinnerPlace(WinnerInfo player)
+        {
+            int i = 0;
+            var enumerator = Game.Gamestate.Winners.GetEnumerator();
+            while (enumerator.Current != null)
+            {
+                i++;
+                WinnerInfo p = (WinnerInfo)enumerator.Current;
+                if (p.Index == player.Index)
+                {
+                    return i;
+                }
+                enumerator.MoveNext();
+            }
+            return -1;
+        }
         private bool IsActive()
         {
             int activePlayerIndex = Game.Gamestate.ActivePlayer;
-            int id = Game.Gamestate.Index;
-            return activePlayerIndex == id;
+            int myIndex = Game.Gamestate.Index;
+            return activePlayerIndex == myIndex;
+        }
+        private WinnerInfo IsWinner()
+        {
+            int myIndex = Game.Gamestate.Index;
+            WinnerInfo[] winners = Game.Gamestate.Winners;
+            var enumerator = winners.GetEnumerator();
+            while (enumerator.Current != null)
+            {
+                WinnerInfo player = (WinnerInfo)enumerator.Current;
+                if (player.Index == myIndex)
+                {
+                    return player;
+                }
+                enumerator.MoveNext();
+            }
+            return null;
         }
         private void UpdateGameCounters()
         {

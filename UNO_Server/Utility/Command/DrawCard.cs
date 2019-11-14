@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using UNO_Server.Models;
 
 namespace UNO_Server.Utility.Command
 {
@@ -11,13 +8,21 @@ namespace UNO_Server.Utility.Command
 
 		public void Execute()
 		{
-			playerNumber = Models.Game.GetInstance().activePlayerIndex;
-			Models.Game.GetInstance().PlayerDrawsCard();
+			playerNumber = Game.GetInstance().activePlayerIndex;
+			Game.GetInstance().PlayerDrawsCard();
 		}
 
 		public void Undo()
 		{
-			Models.Game.GetInstance().UndoDrawCard(playerNumber);
+			if (playerNumber != -1)
+			{
+				var game = Game.GetInstance();
+
+				int index = game.players[playerNumber].hand.Count - 1;
+				Card card = game.players[playerNumber].hand[index];
+				game.players[playerNumber].hand.Remove(card);
+				game.drawPile.AddtoTop(card);
+			}
 			playerNumber = -1;
 		}
 	}

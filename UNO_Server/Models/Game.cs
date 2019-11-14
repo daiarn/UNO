@@ -17,7 +17,6 @@ namespace UNO_Server.Models
 	public class Game
 	{
 		public GamePhase phase;
-		public DateTime gameTime { get; set; }
 		public bool finiteDeck = false;
 
 		public bool flowClockWise { get; set; }
@@ -112,7 +111,6 @@ namespace UNO_Server.Models
 				if (players[i].id == id) index = i;
 			if (index < 0 || index > numPlayers) return;
 
-			var player = players[index];
 			PlayerLoses(index);
 
 			if (index == activePlayerIndex)
@@ -135,7 +133,7 @@ namespace UNO_Server.Models
 
 		public void PlayerLoses(int index)
 		{
-			for (int i = numPlayers-1; i >= 0; i--)
+			for (int i = numPlayers - 1; i >= 0; i--)
 				if (winners[i] == null)
 				{
 					players[index].isPlaying = false;
@@ -255,17 +253,18 @@ namespace UNO_Server.Models
 				}
 			}
 
-			bool playerSaidUNO = false; // TODO: check player UNO penalty
+			bool playerSaidUNO = true; // TODO: check player UNO penalty
 			if (!playerSaidUNO && player.hand.Count == 1)
 			{
 				player.hand.Add(FromDrawPile());
 				player.hand.Add(FromDrawPile());
 			}
+			/*
 			else if (playerSaidUNO)
 			{
 				player.hand.Add(FromDrawPile());
 				player.hand.Add(FromDrawPile());
-			}
+			}//*/
 
 			ICardStrategy action = cardActionFactory.CreateAction(card.type);
 			if (action != null)
@@ -313,8 +312,6 @@ namespace UNO_Server.Models
 
 		public void NextPlayerTurn()
 		{
-			// TODO: add UNO draw penalty
-
 			activePlayerIndex = GetNextPlayerIndexAfter(activePlayerIndex);
 		}
 
@@ -371,35 +368,18 @@ namespace UNO_Server.Models
 		{
 			phase = GamePhase.Finished;
 
-			var stillPlaying = players.Where(p => p!=null && p.isPlaying).Select(
+			var stillPlaying = players.Where(p => p != null && p.isPlaying).Select(
 				p => new WinnerInfo(Array.IndexOf(players, p), p.hand, (Array.IndexOf(players, p) - activePlayerIndex) % numPlayers))
 			.OrderByDescending(p => p.score).ThenBy(p => p.turn);
 
-			int start;//TO DO Explain this magic
-            for (start = 0; start < numPlayers; start++)
+			int start;
+			for (start = 0; start < numPlayers; start++)
 				if (winners[start] != null) break;
 
 			foreach (var item in stillPlaying)
 				winners[start++] = item;
 
-			Task.Factory.StartNew(() => { System.Threading.Thread.Sleep(10000); Game.ResetGame(); });
-			//throw new NotImplementedException("Game over, go home");
-		}
-
-		public void UndoDrawCard(int playerIndex)
-		{
-			if (playerIndex != -1)
-			{
-				int index = players[playerIndex].hand.Count - 1;
-				Card card = players[playerIndex].hand[index];
-				players[playerIndex].hand.Remove(card);
-				drawPile.AddtoTop(card);
-			}
-		}
-
-		public void UndoUno()
-		{
-			//do nothing for now
+			Task.Factory.StartNew(() => { System.Threading.Thread.Sleep(10000); ResetGame(); });
 		}
 	}
 }

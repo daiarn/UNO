@@ -278,17 +278,14 @@ namespace UNO_Client.Forms
         }
         private int GetWinnerPlace(WinnerInfo player)
         {
-            int i = 0;
-            var enumerator = Game.Gamestate.Winners.GetEnumerator();
-            while (enumerator.Current != null)
+            WinnerInfo[] winners = Game.Gamestate.Winners;
+            int count = Game.Gamestate.Players.Count;
+            for (int i = 0; i < count; i++)
             {
-                i++;
-                WinnerInfo p = (WinnerInfo)enumerator.Current;
-                if (p.Index == player.Index)
+                if (winners[i].Index == player.Index)
                 {
                     return i;
                 }
-                enumerator.MoveNext();
             }
             return -1;
         }

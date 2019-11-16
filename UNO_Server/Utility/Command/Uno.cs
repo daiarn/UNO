@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace UNO_Server.Utility.Command
+﻿namespace UNO_Server.Utility.Command
 {
 	public class Uno : ICommand
 	{
@@ -14,7 +9,7 @@ namespace UNO_Server.Utility.Command
 
 		public void Undo()
 		{
-			Models.Game.GetInstance().UndoUno();
+			// uno has no undo
 		}
 	}
 }

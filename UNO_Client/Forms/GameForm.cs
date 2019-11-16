@@ -302,15 +302,13 @@ namespace UNO_Client.Forms
         {
             int myIndex = Game.Gamestate.Index;
             WinnerInfo[] winners = Game.Gamestate.Winners;
-            var enumerator = winners.GetEnumerator();
-            while (enumerator.Current != null)
+            int count = Game.Gamestate.Players.Count;
+            for (int i = 0; i < count; i++)
             {
-                WinnerInfo player = (WinnerInfo)enumerator.Current;
-                if (player.Index == myIndex)
+                if (winners[i].Index == myIndex)
                 {
-                    return player;
+                    return winners[i];
                 }
-                enumerator.MoveNext();
             }
             return null;
         }

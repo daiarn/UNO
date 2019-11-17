@@ -44,11 +44,16 @@ namespace UNO_Client.Forms
             string JsonString = "{\"id\":\"" + joinPost.Id + "\",\"finiteDeck\":\"" + isFiniteDeck + "\",\"onlyNumbers\":\"" + isOnlyNumbers +"\"}";
             var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(BASE_URL + "/start", content);
+            GameTimer.Stop();
+            GameTimer.Dispose();
+            OpenGameForm();
+        }
+        private void OpenGameForm()
+        {
             GameForm form = new GameForm(joinPost);
             this.Close();
             form.Show();
         }
-
         private void gameOptions_SelectedIndexChanged(object sender, EventArgs e)
         {
 
@@ -58,8 +63,25 @@ namespace UNO_Client.Forms
         {
             var respondeString = await client.GetStringAsync(BASE_URL + "/" + joinPost.Id);
             //json serializer to Game object and set it globaly
-            Game = JsonConvert.DeserializeObject<Game>(respondeString);           
-            ShowPlayersInformation();
+            Game = JsonConvert.DeserializeObject<Game>(respondeString);
+            if (IsGameStarted())
+            {
+                OpenGameForm();
+            }
+            else
+            {
+                ShowPlayersInformation();
+            }
+        }
+        private bool IsGameStarted()
+        {
+            if (Game.Gamestate.GamePhase == GamePhase.Playing)
+            {
+                GameTimer.Stop();
+                GameTimer.Dispose();
+                return true;
+            }
+            return false;
         }
         private string[] FormatPlayersInformation()
         {

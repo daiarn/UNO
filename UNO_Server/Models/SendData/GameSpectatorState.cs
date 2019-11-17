@@ -8,6 +8,7 @@ namespace UNO_Server.Models.SendData
 		public int zeroCounter;
 		public int wildCounter;
 
+		public GamePhase phase;
 		public int discardPileCount;
 		public int drawPileCount;
 		public Card activeCard;
@@ -22,6 +23,7 @@ namespace UNO_Server.Models.SendData
 			zeroCounter = game.observers[0].Counter;
 			wildCounter = game.observers[1].Counter;
 
+			phase = game.phase;
 			discardPileCount = game.discardPile.GetCount();
 			drawPileCount = game.drawPile.GetCount();
 			activeCard = game.discardPile.PeekBottomCard();

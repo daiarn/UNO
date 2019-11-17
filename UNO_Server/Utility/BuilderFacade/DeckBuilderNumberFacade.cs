@@ -18,10 +18,10 @@ namespace UNO_Server.Utility.BuilderFacade
 			return this;
 		}
 
-		public DeckBuilderNumberFacade AddIndividualNumberCards(int card, int num)
+		public DeckBuilderNumberFacade AddIndividualNumberCards(int cardNumber, int amount)
 		{
-			if (card < 0 || card > 9) return this;
-			AddAllColors(deck, Card.numberCardTypes[num]);
+			if (cardNumber < 0 || cardNumber > 9) return this;
+			AddAllColors(deck, Card.numberCardTypes[amount]);
 			return this;
 		}
 

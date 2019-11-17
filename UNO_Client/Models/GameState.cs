@@ -19,6 +19,7 @@ namespace UNO_Client.Models
         Card activeCard;
         List<Player> players;
         List<Card> hand;
+        WinnerInfo[] winners;
 
         public int ZeroCounter { get => zeroCounter; set => zeroCounter = value; }
         public int WildCounter { get => wildCounter; set => wildCounter = value; }
@@ -30,6 +31,8 @@ namespace UNO_Client.Models
         public List<Player> Players { get => players; set => players = value; }
         public List<Card> Hand { get => hand; set => hand = value; }
         public int Index { get => index; set => index = value; }
+        internal WinnerInfo[] Winners { get => winners; set => winners = value; }
         public GamePhase GamePhase { get => gamePhase; set => gamePhase = value; }
+
     }
 }

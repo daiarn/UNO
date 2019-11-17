@@ -88,6 +88,7 @@
     </Compile>
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\GamePhase.cs" />
     <Compile Include="Models\GameState.cs" />
     <Compile Include="Models\JoinPost.cs" />
     <Compile Include="Models\Player.cs" />

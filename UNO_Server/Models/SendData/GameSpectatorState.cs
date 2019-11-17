@@ -20,10 +20,10 @@ namespace UNO_Server.Models.SendData
 
 		public GameSpectatorState(Game game)
 		{
-			zeroCounter = game.observers[0].Counter;
-			wildCounter = game.observers[1].Counter;
+            zeroCounter = game.gameWatcher.observers[0].Counter;
+            wildCounter = game.gameWatcher.observers[1].Counter;
 
-			phase = game.phase;
+            phase = game.phase;
 			discardPileCount = game.discardPile.GetCount();
 			drawPileCount = game.drawPile.GetCount();
 			activeCard = game.discardPile.PeekBottomCard();

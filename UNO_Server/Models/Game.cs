@@ -28,8 +28,8 @@ namespace UNO_Server.Models
 		public WinnerInfo[] winners;
 
 		public int activePlayerIndex;
-
-		public List<Observer> observers;
+        
+        public GameWatcher gameWatcher;//Observers inside
         public CardsCounter cardsCounter;
 
 		private static Game instance = new Game();
@@ -47,14 +47,7 @@ namespace UNO_Server.Models
 			players = new Player[10];
 			numPlayers = 0;
 
-			observers = new List<Observer>
-			{
-				new ZeroCounter(),
-				new WildCounter()
-			};
-
-			foreach (var item in observers)
-				item.Counter = 0;
+            gameWatcher = new GameWatcher();
 
 			perfectDeck = new DeckBuilderFacade()
 				.number
@@ -217,10 +210,12 @@ namespace UNO_Server.Models
 
 		private void NotifyAllObservers(Card card)
 		{
-			foreach (var item in observers)
-			{
-				item.Notify(card);
-			}
+            var iterator = gameWatcher.GetIterator();
+            while (iterator.HasNext)
+            {
+                Observer observer = (Observer)iterator.Next;
+                observer.Notify(card);
+            }
 		}
 
 		public void PlayerDrawsCard()

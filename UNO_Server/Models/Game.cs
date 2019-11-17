@@ -180,7 +180,6 @@ namespace UNO_Server.Models
 		{
 			if (drawPile.GetCount() > 0)
 			{
-                cardsCounter.AddCard(players[activePlayerIndex].id, 1);// TO DO when next player draws 2 or 4 cards he should get count
                 var card = drawPile.DrawTopCard();
 				NotifyAllObservers(card);
 				return card;
@@ -189,7 +188,6 @@ namespace UNO_Server.Models
 			{
 				if (!finiteDeck)
 				{
-                    cardsCounter.AddCard(players[activePlayerIndex].id, 1);// TO DO when next player draws 2 or 4 cards he should get count
                     var activeCard = discardPile.DrawBottomCard();
 
 					drawPile = discardPile;
@@ -210,6 +208,7 @@ namespace UNO_Server.Models
 
 		private void NotifyAllObservers(Card card)
 		{
+            cardsCounter.AddCard(players[activePlayerIndex].id, 1);// TO DO when next player draws 2 or 4 cards he should get count
             var iterator = gameWatcher.GetIterator();
             while (iterator.HasNext)
             {

@@ -30,6 +30,7 @@ namespace UNO_Server.Models
 		public int activePlayerIndex;
 
 		public List<Observer> observers;
+        public CardsCounter cardsCounter;
 
 		private static Game instance = new Game();
 		private static readonly StrategyFactory cardActionFactory = new CardActionFactory();
@@ -186,7 +187,8 @@ namespace UNO_Server.Models
 		{
 			if (drawPile.GetCount() > 0)
 			{
-				var card = drawPile.DrawTopCard();
+                cardsCounter.AddCard(players[activePlayerIndex].id, 1);// TO DO when next player draws 2 or 4 cards he should get count
+                var card = drawPile.DrawTopCard();
 				NotifyAllObservers(card);
 				return card;
 			}
@@ -194,7 +196,8 @@ namespace UNO_Server.Models
 			{
 				if (!finiteDeck)
 				{
-					var activeCard = discardPile.DrawBottomCard();
+                    cardsCounter.AddCard(players[activePlayerIndex].id, 1);// TO DO when next player draws 2 or 4 cards he should get count
+                    var activeCard = discardPile.DrawBottomCard();
 
 					drawPile = discardPile;
 
@@ -330,6 +333,8 @@ namespace UNO_Server.Models
 			if (onlyNumbers) drawPile = semiPerfectDeck.MakeDeepCopy();
 			else drawPile = perfectDeck.MakeDeepCopy();
 			drawPile.Shuffle();
+
+            cardsCounter = new CardsCounter(players, numPlayers);
 
 			activePlayerIndex = 0;
 

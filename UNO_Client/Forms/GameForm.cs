@@ -86,16 +86,19 @@ namespace UNO_Client.Forms
 				for (int i = 0; i < handCount; i++)
 				{
 					var card = Game.Gamestate.Hand[i];
-					var img = card.GetImage();
+                    if (card != null)
+                    {
+                        var img = card.GetImage();
 
-					xyImage[i, 0] = middlePoint + movePosition;
-					xyImage[i, 1] = 15f; //Recommended cards
-					movePosition += widthPerCard;
+                        xyImage[i, 0] = middlePoint + movePosition;
+                        xyImage[i, 1] = 15f; //Recommended cards
+                        movePosition += widthPerCard;
 
-					var dbWidth = HandCardWidth / (float) img.Width;
-					var dbHeight = dbWidth * img.Height;
+                        var dbWidth = HandCardWidth / (float)img.Width;
+                        var dbHeight = dbWidth * img.Height;
 
-					graphics.DrawImage(img, new RectangleF(xyImage[i, 0], xyImage[i, 1], HandCardWidth, dbHeight));
+                        graphics.DrawImage(img, new RectangleF(xyImage[i, 0], xyImage[i, 1], HandCardWidth, dbHeight));
+                    }
 				}
 			}
 		}
@@ -183,7 +186,7 @@ namespace UNO_Client.Forms
 
 		private void putCard(Card card, int Color)
 		{
-			serverConnection.SendPlayCard(card);
+			serverConnection.SendPlayCard(card, Color);
 			SetGame();
 		}
 

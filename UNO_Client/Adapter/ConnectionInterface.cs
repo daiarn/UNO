@@ -11,7 +11,7 @@ namespace UNO_Client.Adapter
 		bool SendLeaveGame();
 
 		bool SendDrawCard();
-		bool SendPlayCard(Card card);
+		bool SendPlayCard(Card card, int color);
 		bool SendSayUNO();
 
 		void SendUndoDraw();

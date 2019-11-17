@@ -50,9 +50,9 @@ namespace UNO_Client.Adapter
 			var response = SimplePostAsync(playerId, "/draw");
 			return true;
 		}
-		public bool SendPlayCard(Card card)
+		public bool SendPlayCard(Card card, int color)
 		{
-			string JsonString = "{\"id\":\"" + playerId + "\", \"color\":" + card.Color + ",\"type\":" + card.Type + "}";
+			string JsonString = "{\"id\":\"" + playerId + "\", \"color\":" + color + ",\"type\":" + card.Type + "}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
 			var response = client.PostAsync(BASE_URL + "/play", content);
 			return true;

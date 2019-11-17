@@ -13,6 +13,7 @@ namespace UNO_Server.Models.SendData
 		public Card activeCard;
 
 		public int activePlayer;
+        public GamePhase gamePhase;
 		public List<PlayerInfo> players;
 		public WinnerInfo[] winners;
 
@@ -26,7 +27,8 @@ namespace UNO_Server.Models.SendData
 			activeCard = game.discardPile.PeekBottomCard();
 
 			activePlayer = game.activePlayerIndex;
-			players = game.players.Where(p => p != null).Select(p => new PlayerInfo(p)).ToList();
+            gamePhase = game.phase;
+            players = game.players.Where(p => p != null).Select(p => new PlayerInfo(p)).ToList();
 			winners = game.winners;
 		}
 	}

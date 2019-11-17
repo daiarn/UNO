@@ -15,6 +15,7 @@ namespace UNO_Client.Models
         int activePlayer;
         int index;
 
+        GamePhase gamePhase;
         Card activeCard;
         List<Player> players;
         List<Card> hand;
@@ -29,5 +30,6 @@ namespace UNO_Client.Models
         public List<Player> Players { get => players; set => players = value; }
         public List<Card> Hand { get => hand; set => hand = value; }
         public int Index { get => index; set => index = value; }
+        public GamePhase GamePhase { get => gamePhase; set => gamePhase = value; }
     }
 }

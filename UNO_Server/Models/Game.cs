@@ -184,7 +184,7 @@ namespace UNO_Server.Models
 
 		public Card FromDrawPile() // draws from the draw pile according to the deck finite-ness rules
 		{
-			if (drawPile.GetCount() > 0)
+			if (drawPile.Count() > 0)
 			{
                 var card = drawPile.DrawTopCard();
 				NotifyAllObservers(card);
@@ -215,10 +215,9 @@ namespace UNO_Server.Models
 		private void NotifyAllObservers(Card card)
 		{
             var iterator = gameWatcher.GetIterator();
-            while (iterator.HasNext)
+            for (Observer o = iterator.First(); iterator.HasNext(); o = iterator.Next())
             {
-                Observer observer = (Observer)iterator.Next;
-                observer.Notify(card);
+                o.Notify(card);
             }
 		}
 
@@ -350,7 +349,7 @@ namespace UNO_Server.Models
 
 			Card firstCard = null;
 
-			for (int i = 0; i < drawPile.GetCount(); i++)
+			for (int i = 0; i < drawPile.Count(); i++)
 			{
 				var aCard = drawPile.DrawTopCard();
 				if (Card.numberCardTypes.Contains(aCard.type))

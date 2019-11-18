@@ -42,17 +42,14 @@ namespace UNO_Server.Models
             }
         }
 
-        public int Count
+        public int Count()
         {
-            get
-            {
-                return PlayerCarsCounter.Count;
-            }
+            return PlayerCarsCounter.Count;
         }
 
         public IIterator<int> GetIterator()
         {
-            return new MyIterator<int>(this);
+            return new ConcreteIterator<int>(this);
         }
     }
 }

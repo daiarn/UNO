@@ -2,9 +2,9 @@
 {
 	public interface IIterator<T>
     {
-        T First { get; }
-        T Next { get; }
-        T Current { get; }
-        bool HasNext { get; }
+        T First();
+        T Next();
+        T Current();
+        bool HasNext();
     }
 }

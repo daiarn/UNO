@@ -9,8 +9,6 @@ namespace UNO_Server.Models
     {
 		private List<Card> cards { get; set; }
 
-        public int Count => cards.Count;
-
         public Card this[int itemIndex]
         {
             get => cards[itemIndex];
@@ -98,14 +96,14 @@ namespace UNO_Server.Models
 			return cards.LastOrDefault();
 		}
 
-		public int GetCount()
+		public int Count()
 		{
 			return cards.Count;
 		}
 
         public IIterator<Card> GetIterator()
         {
-            return new MyIterator<Card>(this);
+            return new ConcreteIterator<Card>(this);
         }
     }
 }

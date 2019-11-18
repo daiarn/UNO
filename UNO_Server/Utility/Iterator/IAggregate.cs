@@ -4,6 +4,6 @@
 	{
         IIterator<T> GetIterator();
         T this[int itemIndex] { set; get; }
-        int Count { get; }
+        int Count();
     }
 }

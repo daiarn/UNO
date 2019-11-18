@@ -24,8 +24,8 @@ namespace UNO_Server.Models.SendData
             wildCounter = game.gameWatcher.observers[1].Counter;
 
             phase = game.phase;
-			discardPileCount = game.discardPile.GetCount();
-			drawPileCount = game.drawPile.GetCount();
+			discardPileCount = game.discardPile.Count();
+			drawPileCount = game.drawPile.Count();
 			activeCard = game.discardPile.PeekBottomCard();
 
 			activePlayer = game.activePlayerIndex;

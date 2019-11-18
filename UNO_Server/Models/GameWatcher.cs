@@ -28,11 +28,11 @@ namespace UNO_Server.Models
             set => observers[itemIndex] = (Observer)value;
         }
 
-        public int Count => observers.Length;
+        public int Count() => observers.Length;
 
         public IIterator<Observer> GetIterator()
         {
-            return new MyIterator<Observer>(this);
+            return new ConcreteIterator<Observer>(this);
         }
     }
 }

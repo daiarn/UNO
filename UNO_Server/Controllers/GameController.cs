@@ -322,6 +322,10 @@ namespace UNO_Server.Controllers
 			var game = Game.GetInstance();
 			switch (scenario)
 			{
+				case 0:
+					Game.ResetGame();
+					return new JsonResult(new { success = true });
+
 				case 1: // Scenario 1: Generic two player game with few but diverse cards
 					if (game.GetActivePlayerCount() != 2)
 						return new JsonResult(new { success = false, message = "Exactly 2 players must be present" });

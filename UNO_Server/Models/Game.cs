@@ -176,6 +176,12 @@ namespace UNO_Server.Models
 			return false;
 		}
 
+		public void GivePlayerACard(Player player, Card card)
+		{
+			player.hand.Add(card);
+			cardsCounter.AddCard(player.id, 1);
+		}
+
 		public Card FromDrawPile() // draws from the draw pile according to the deck finite-ness rules
 		{
 			if (drawPile.GetCount() > 0)
@@ -208,7 +214,6 @@ namespace UNO_Server.Models
 
 		private void NotifyAllObservers(Card card)
 		{
-            cardsCounter.AddCard(players[activePlayerIndex].id, 1);// TO DO when next player draws 2 or 4 cards he should get count
             var iterator = gameWatcher.GetIterator();
             while (iterator.HasNext)
             {
@@ -226,7 +231,7 @@ namespace UNO_Server.Models
 				GameOver();
 			else
 			{
-				player.hand.Add(card);
+				GivePlayerACard(player, card);
 
 				if (!CanCardBePlayed(card))
 					NextPlayerTurn();
@@ -253,14 +258,14 @@ namespace UNO_Server.Models
 			bool playerSaidUNO = true; // TODO: check player UNO penalty
 			if (!playerSaidUNO && player.hand.Count == 1)
 			{
-				player.hand.Add(FromDrawPile());
-				player.hand.Add(FromDrawPile());
+				GivePlayerACard(player, FromDrawPile());
+				GivePlayerACard(player, FromDrawPile());
 			}
 			/*
 			else if (playerSaidUNO)
 			{
-				player.hand.Add(FromDrawPile());
-				player.hand.Add(FromDrawPile());
+				GivePlayerACard(player, FromDrawPile());
+				GivePlayerACard(player, FromDrawPile());
 			}//*/
 
 			ICardStrategy action = cardActionFactory.CreateAction(card.type);
@@ -338,7 +343,7 @@ namespace UNO_Server.Models
 			{
 				for (int j = 0; j < 7; j++) // each player draws 7 cards
 				{
-					players[i].hand.Add(FromDrawPile());
+					GivePlayerACard(players[i], FromDrawPile());
 				}
 				players[i].isPlaying = true;
 			}

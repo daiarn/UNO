@@ -389,7 +389,7 @@ namespace UNO_Server.Models
 
 			int start;
 			for (start = 0; start < numPlayers; start++)
-				if (scoreboard[start] != null) break;
+				if (scoreboard[start] == null) break;
 
 			foreach (var item in stillPlaying)
 				scoreboard[start++] = item;

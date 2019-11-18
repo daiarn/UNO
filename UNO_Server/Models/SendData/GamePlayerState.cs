@@ -14,9 +14,10 @@ namespace UNO_Server.Models.SendData
 			index = System.Array.IndexOf(game.players, player);
 
 			scoreboardIndex = -1;
-			for (int i = 0; i < game.scoreboard.Length; i++)
-				if (game.scoreboard[i].index == index)
-					scoreboardIndex = i;
+            if (game.scoreboard != null)
+			    for (int i = 0; i < game.scoreboard.Length; i++)
+				    if (game.scoreboard[i] != null && game.scoreboard[i].index == index)
+					    scoreboardIndex = i;
 		}
 	}
 }

@@ -14,6 +14,7 @@ namespace UNO_Client.Models
         int drawPileCount;
         int activePlayer;
         int index;
+        int scoreboardIndex;
 
         GamePhase gamePhase;
         Card activeCard;
@@ -33,6 +34,6 @@ namespace UNO_Client.Models
         public int Index { get => index; set => index = value; }
         internal WinnerInfo[] Winners { get => winners; set => winners = value; }
         public GamePhase GamePhase { get => gamePhase; set => gamePhase = value; }
-
+        public int ScoreboardIndex { get => scoreboardIndex; set => scoreboardIndex = value; }
     }
 }

@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using System.Threading;
 using UNO_Client.Decorator;
 using UNO_Client.Adapter;
+using UNO_Client.State;
+using System.Linq;
 
 namespace UNO_Client.Forms
 {
@@ -18,11 +20,13 @@ namespace UNO_Client.Forms
 		private static readonly SoundAdapter soundAdaptor = new SoundAdapter();
 		private Game Game;
         private JoinPost joinPost;
+        private StateContext stateContext;
 
 		public GameForm(JoinPost joinPost)
 		{
             this.joinPost = joinPost;
 			serverConnection = new HttpAdapter("https://localhost:44331/api/game", joinPost.Id); // TODO: change url?
+            stateContext = new StateContext();
 			SetGame();
 			Thread.Sleep(1000);
 			InitializeComponent();
@@ -200,8 +204,9 @@ namespace UNO_Client.Forms
 			Update();
 			mainPanel.Refresh();
 			handPanel.Refresh();
-            UpdateTopText();
+            UpdatePlayerState();
             UpdateGameCounters();
+            stateContext.WritePlayerStatusInGame(this);
         }
 		private void SetGameTimer()
 		{
@@ -238,67 +243,110 @@ namespace UNO_Client.Forms
 			var info = FormatPlayersInformation();
 			PlayersInfo.Lines = info;
 		}
-        private void UpdateTopText()
+
+        private void UpdatePlayerState()
         {
-            WinnerInfo player;
-            if (Game.Gamestate.Winners == null)
+            int playerCount = Game.Gamestate.Players.Count();
+            var scoreboardIndex = Game.Gamestate.ScoreboardIndex;
+            if (scoreboardIndex != null && scoreboardIndex > -1 && scoreboardIndex != playerCount)
             {
-                UpdateActivePlayer();
-                return;
-            }
-            player = IsWinner();
-            if (player == null)
-            {
-                UpdateActivePlayer();
+                stateContext.setState(new WinningState());
             }
             else
             {
-                UpdateWinnerInfomration(player);
+                stateContext.setState(new LosingState());
             }
-        }
-        private void UpdateActivePlayer()
-        {
+
             if (IsActive())
             {
-                PlayerTurn.Text = "Your turn";
+                stateContext.setState(new PlayingState());
             }
             else
             {
-                PlayerTurn.Text = "Waiting for opponent turn";
+                stateContext.setState(new WaitingState());
             }
         }
-        private void UpdateWinnerInfomration(WinnerInfo player)
+
+        //private void UpdateTopText()
+        //{
+        //    WinnerInfo player;
+        //    if (Game.Gamestate.Winners == null)
+        //    {
+        //        UpdateActivePlayer();
+        //        return;
+        //    }
+        //    player = CheckIfWinner();
+        //    if (player == null)
+        //    {
+        //        UpdateActivePlayer();
+        //    }
+        //    else
+        //    {
+        //        UpdateWinnerInfomration(player);
+        //    }
+        //}
+
+        public void ChangeLabelToPlaying()
         {
-            int playerPlace = GetWinnerPlace(player);
-            if (player.Turn == -1)
-            {
-                PlayerTurn.Text = "You won the game. Place: " + playerPlace;
-            }
-            else
-            {
-                PlayerTurn.Text = String.Format("You won the game. Place: {0} Score {1}", playerPlace, player.Score);
-            }
+            PlayerTurn.Text = "Your turn";
         }
-        private int GetWinnerPlace(WinnerInfo player)
+
+        public void ChangeLabelToWaiting()
         {
-            WinnerInfo[] winners = Game.Gamestate.Winners;
-            int count = Game.Gamestate.Players.Count;
-            for (int i = 0; i < count; i++)
-            {
-                if (winners[i].Index == player.Index)
-                {
-                    return i;
-                }
-            }
-            return -1;
+            PlayerTurn.Text = "Waiting for opponent turn";
         }
+
+        public void ChangeLabelToWon()
+        {
+            PlayerTurn.Text = "You won the game";
+        }
+
+        public void ChangeLabeToLost()
+        {
+            PlayerTurn.Text = "You lost. Better luck next time";
+        }
+
+        //private void UpdateActivePlayer()
+        //{
+        //    if (IsActive())
+        //    {
+        //        PlayerTurn.Text = "Your turn";
+        //    }
+        //    else
+        //    {
+        //        PlayerTurn.Text = "Waiting for opponent turn";
+        //    }
+        //}
+        //private void UpdateWinnerInfomration(WinnerInfo player)
+        //{
+        //    int playerPlace = GetWinnerPlace(player);
+        //    if (player.Turn == -1)
+        //    {
+        //        PlayerTurn.Text = "You won the game. Place: " + playerPlace;
+        //    }
+        //    else
+        //    {
+        //        PlayerTurn.Text = String.Format("You won the game. Place: {0} Score {1}", playerPlace, player.Score);
+        //    }
+        ////}
+        //private int GetWinnerPlace(WinnerInfo player)
+        //{
+        //    WinnerInfo[] winners = Game.Gamestate.Winners;
+        //    int count = Game.Gamestate.Players.Count;
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        if (winners[i].Index == player.Index)
+        //        {
+        //            return i;
+        //        }
+        //    }
+        //    return -1;
+        //}
         private bool IsActive()
         {
-            int activePlayerIndex = Game.Gamestate.ActivePlayer;
-            int myIndex = Game.Gamestate.Index;
-            return activePlayerIndex == myIndex;
+            return Game.Gamestate.Index == Game.Gamestate.ActivePlayer;
         }
-        private WinnerInfo IsWinner()
+        private WinnerInfo CheckIfWinner()
         {
             int myIndex = Game.Gamestate.Index;
             WinnerInfo[] winners = Game.Gamestate.Winners;

@@ -6,8 +6,8 @@ using UNO_Server.Utility.Iterator;
 
 namespace UNO_Server.Models
 {
-    public class CardsCounter : IAggregate
-    {
+    public class CardsCounter : IAggregate<int>
+	{
         private Dictionary<Guid, int> PlayerCarsCounter;
 
 
@@ -23,7 +23,7 @@ namespace UNO_Server.Models
         {
             PlayerCarsCounter[index] += count;
         }
-        public object this[int itemIndex]
+        public int this[int itemIndex]
         {
             get
             {
@@ -33,7 +33,7 @@ namespace UNO_Server.Models
                 }
                 else
                 {
-                    return null;
+                    return 0;
                 }
             }
             set
@@ -50,9 +50,9 @@ namespace UNO_Server.Models
             }
         }
 
-        public IIterator GetIterator()
+        public IIterator<int> GetIterator()
         {
-            return new MyIterator(this);
+            return new MyIterator<int>(this);
         }
     }
 }

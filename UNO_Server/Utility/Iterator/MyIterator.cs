@@ -5,17 +5,18 @@ using System.Threading.Tasks;
 
 namespace UNO_Server.Utility.Iterator
 {
-    public class MyIterator : IIterator
+    public class MyIterator<T> : IIterator<T>
     {
-        IAggregate aggregate_ = null;
+        IAggregate<T> aggregate_ = null;
         int currentIndex_ = 0;
 
-        public MyIterator(IAggregate aggregate)
+        public MyIterator(IAggregate<T> aggregate)
         {
+			currentIndex_ = 0;
             aggregate_ = aggregate;
         }
 
-        public object First
+        public T First
         {
             get
             {
@@ -24,7 +25,7 @@ namespace UNO_Server.Utility.Iterator
             }
         }
 
-        public object Next
+        public T Next
         {
             get
             {
@@ -36,12 +37,12 @@ namespace UNO_Server.Utility.Iterator
                 }
                 else
                 {
-                    return string.Empty;
+                    return default(T);
                 }
             }
         }
 
-        public object Current
+        public T Current
         {
             get
             {

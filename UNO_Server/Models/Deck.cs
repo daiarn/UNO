@@ -5,13 +5,13 @@ using UNO_Server.Utility.Iterator;
 
 namespace UNO_Server.Models
 {
-	public class Deck : IAggregate
+	public class Deck : IAggregate<Card>
     {
 		private List<Card> cards { get; set; }
 
         public int Count => cards.Count;
 
-        public object this[int itemIndex]
+        public Card this[int itemIndex]
         {
             get => cards[itemIndex];
             set => cards.Add((Card)value);
@@ -103,9 +103,9 @@ namespace UNO_Server.Models
 			return cards.Count;
 		}
 
-        public IIterator GetIterator()
+        public IIterator<Card> GetIterator()
         {
-            return new MyIterator(this);
+            return new MyIterator<Card>(this);
         }
     }
 }

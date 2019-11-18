@@ -151,7 +151,7 @@ namespace UNO_Server.Controllers
 
 			// that's probably enough checks
 
-			game.StartGame(data.finiteDeck, data.onlyNumbers);
+			game.StartGame(data.finiteDeck, data.onlyNumbers, data.slowGame);
 			return new JsonResult(new { success = true });
 		}
 

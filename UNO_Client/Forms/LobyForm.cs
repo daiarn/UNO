@@ -1,21 +1,14 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows.Forms;
 using UNO_Client.Models;
 
 namespace UNO_Client.Forms
 {
-    public partial class LobyForm : Form
+	public partial class LobyForm : Form
     {
         private const string BASE_URL = "https://localhost:44331/api/game"; //TODO: change this
         private static readonly HttpClient client = new HttpClient();
@@ -25,7 +18,7 @@ namespace UNO_Client.Forms
         public LobyForm(JoinPost joinPost)
         {
             this.joinPost = joinPost;
-            SetGame();
+            SendGameRequest();
             Thread.Sleep(1000);
             InitializeComponent();
             SetGameTimer();
@@ -39,9 +32,10 @@ namespace UNO_Client.Forms
         private async void button1_Click(object sender, EventArgs e)
         {
             bool isOnlyNumbers = gameOptions.GetItemChecked(0);
-            bool isFiniteDeck = gameOptions.GetItemChecked(1);
-            //Start game
-            string JsonString = "{\"id\":\"" + joinPost.Id + "\",\"finiteDeck\":\"" + isFiniteDeck + "\",\"onlyNumbers\":\"" + isOnlyNumbers +"\"}";
+			bool isFiniteDeck = gameOptions.GetItemChecked(1);
+			bool slowGame = gameOptions.GetItemChecked(2);
+			//Start game
+			string JsonString = "{\"id\":\"" + joinPost.Id + "\",\"finiteDeck\":\"" + isFiniteDeck + "\",\"onlyNumbers\":\"" + isOnlyNumbers + "\",\"slowGame\":\"" + slowGame + "\"}";
             var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(BASE_URL + "/start", content);
             GameTimer.Stop();
@@ -59,7 +53,7 @@ namespace UNO_Client.Forms
 
         }
 
-        private async void SetGame()
+        private async void SendGameRequest()
         {
             var respondeString = await client.GetStringAsync(BASE_URL + "/" + joinPost.Id);
             //json serializer to Game object and set it globaly
@@ -112,7 +106,7 @@ namespace UNO_Client.Forms
         {
             GameTimer.Stop();
             //Fetch game data
-            SetGame();
+            SendGameRequest();
             GameTimer.Enabled = true;
         }
     }

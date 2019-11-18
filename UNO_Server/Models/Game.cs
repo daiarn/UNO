@@ -18,6 +18,7 @@ namespace UNO_Server.Models
 	{
 		public GamePhase phase;
 		public bool finiteDeck = false;
+		public bool slowGame = false;
 
 		public bool flowClockWise { get; set; }
 		public Deck drawPile { get; set; }
@@ -106,6 +107,12 @@ namespace UNO_Server.Models
 			if (index < 0 || index > numPlayers) return;
 
 			PlayerLoses(index);
+
+			if (!slowGame)
+			{
+				GameOver();
+				return;
+			}
 
 			if (index == activePlayerIndex)
 				NextPlayerTurn();
@@ -247,6 +254,10 @@ namespace UNO_Server.Models
 			if (player.hand.Count == 0) // winner
 			{
 				PlayerWins(activePlayerIndex);
+
+				if (!slowGame)
+					GameOver();
+
 				if (GetActivePlayerCount() < 2)
 				{
 					GameOver();
@@ -321,10 +332,11 @@ namespace UNO_Server.Models
 			flowClockWise = !flowClockWise;
 		}
 
-		public void StartGame(bool finiteDeck = false, bool onlyNumbers = false)
+		public void StartGame(bool finiteDeck = false, bool onlyNumbers = false, bool slowGame = false)
 		{
 			phase = GamePhase.Playing;
 			this.finiteDeck = finiteDeck;
+			this.slowGame = slowGame;
 
 			flowClockWise = true;
 			discardPile = new Deck();

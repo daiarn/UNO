@@ -248,7 +248,7 @@ namespace UNO_Client.Forms
         {
             int playerCount = Game.Gamestate.Players.Count();
             var scoreboardIndex = Game.Gamestate.ScoreboardIndex;
-            if (scoreboardIndex != null && scoreboardIndex > -1 && scoreboardIndex != playerCount)
+            if (scoreboardIndex > -1 && scoreboardIndex != playerCount)
             {
                 stateContext.setState(new WinningState());
             }

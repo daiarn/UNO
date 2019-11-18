@@ -150,8 +150,8 @@ namespace UNO_Tests
             game.discardPile = new Deck();
             game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
             game.activePlayerIndex = 0;
-            game.observers[0].Counter = 4;
-            game.observers[1].Counter = 0;
+            game.gameWatcher.observers[0].Counter = 4;
+            game.gameWatcher.observers[1].Counter = 0;
 
             game.players[0].hand.Add(new Card(CardColor.Red, CardType.Zero));
 

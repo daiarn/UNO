@@ -382,7 +382,7 @@ namespace UNO_Server.Models
 			foreach (var item in stillPlaying)
 				winners[start++] = item;
 
-			Task.Factory.StartNew(() => { System.Threading.Thread.Sleep(10000); ResetGame(); });
+			//Task.Factory.StartNew(() => { System.Threading.Thread.Sleep(10000); ResetGame(); });
 		}
 	}
 }

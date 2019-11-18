@@ -26,11 +26,11 @@ namespace UNO_Server.Models
 
 		public Player[] players;
 		public int numPlayers;
-		public WinnerInfo[] winners;
+		public ScoreboardInfo[] scoreboard;
 
 		public int activePlayerIndex;
         
-        public GameWatcher gameWatcher;//Observers inside
+        public GameWatcher gameWatcher; // observers inside
         public CardsCounter cardsCounter;
 
 		private static Game instance = new Game();
@@ -124,10 +124,10 @@ namespace UNO_Server.Models
 		public void PlayerWins(int index)
 		{
 			for (int i = 0; i < numPlayers; i++)
-				if (winners[i] == null)
+				if (scoreboard[i] == null)
 				{
 					players[index].isPlaying = false;
-					winners[i] = new WinnerInfo(index);
+					scoreboard[i] = new ScoreboardInfo(index);
 					break;
 				}
 		}
@@ -135,10 +135,10 @@ namespace UNO_Server.Models
 		public void PlayerLoses(int index)
 		{
 			for (int i = numPlayers - 1; i >= 0; i--)
-				if (winners[i] == null)
+				if (scoreboard[i] == null)
 				{
 					players[index].isPlaying = false;
-					winners[i] = new WinnerInfo(index);
+					scoreboard[i] = new ScoreboardInfo(index);
 					break;
 				}
 		}
@@ -348,7 +348,7 @@ namespace UNO_Server.Models
 
 			activePlayerIndex = 0;
 
-			winners = new WinnerInfo[numPlayers];
+			scoreboard = new ScoreboardInfo[numPlayers];
 
 			for (int i = 0; i < numPlayers; i++)
 			{
@@ -384,15 +384,15 @@ namespace UNO_Server.Models
 			phase = GamePhase.Finished;
 
 			var stillPlaying = players.Where(p => p != null && p.isPlaying).Select(
-				p => new WinnerInfo(Array.IndexOf(players, p), p.hand, (Array.IndexOf(players, p) - activePlayerIndex) % numPlayers))
+				p => new ScoreboardInfo(Array.IndexOf(players, p), p.hand, (Array.IndexOf(players, p) - activePlayerIndex) % numPlayers))
 			.OrderByDescending(p => p.score).ThenBy(p => p.turn);
 
 			int start;
 			for (start = 0; start < numPlayers; start++)
-				if (winners[start] != null) break;
+				if (scoreboard[start] != null) break;
 
 			foreach (var item in stillPlaying)
-				winners[start++] = item;
+				scoreboard[start++] = item;
 
 			//Task.Factory.StartNew(() => { System.Threading.Thread.Sleep(10000); ResetGame(); });
 		}

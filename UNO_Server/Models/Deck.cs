@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UNO_Server.Utility.Iterator;
 
 namespace UNO_Server.Models
 {
-	public class Deck
-	{
+	public class Deck : IAggregate<Card>
+    {
 		private List<Card> cards { get; set; }
 
-		public Deck()
+        public Card this[int itemIndex]
+        {
+            get => cards[itemIndex];
+            set => cards.Add((Card)value);
+        }
+
+        public Deck()
 		{
 			cards = new List<Card>();
 		}
@@ -89,9 +96,14 @@ namespace UNO_Server.Models
 			return cards.LastOrDefault();
 		}
 
-		public int GetCount()
+		public int Count()
 		{
 			return cards.Count;
 		}
-	}
+
+        public IIterator<Card> GetIterator()
+        {
+            return new ConcreteIterator<Card>(this);
+        }
+    }
 }

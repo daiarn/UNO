@@ -9,8 +9,8 @@ namespace UNO_Server.Utility.Strategy
 			var game = Game.GetInstance();
 			var targetPlayer = game.players[game.GetNextPlayerIndexAfter(game.activePlayerIndex)];
 
-			targetPlayer.hand.Add(game.FromDrawPile());
-			targetPlayer.hand.Add(game.FromDrawPile());
+			game.GivePlayerACard(targetPlayer, game.FromDrawPile());
+			game.GivePlayerACard(targetPlayer, game.FromDrawPile());
 
 			game.SkipNextPlayerTurn();
 		}

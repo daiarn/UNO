@@ -28,8 +28,9 @@ namespace UNO_Server.Models
 		public WinnerInfo[] winners;
 
 		public int activePlayerIndex;
-
-		public List<Observer> observers;
+        
+        public GameWatcher gameWatcher;//Observers inside
+        public CardsCounter cardsCounter;
 
 		private static Game instance = new Game();
 		private static readonly StrategyFactory cardActionFactory = new CardActionFactory();
@@ -46,14 +47,7 @@ namespace UNO_Server.Models
 			players = new Player[10];
 			numPlayers = 0;
 
-			observers = new List<Observer>
-			{
-				new ZeroCounter(),
-				new WildCounter()
-			};
-
-			foreach (var item in observers)
-				item.Counter = 0;
+            gameWatcher = new GameWatcher();
 
 			perfectDeck = new DeckBuilderFacade()
 				.number
@@ -182,11 +176,17 @@ namespace UNO_Server.Models
 			return false;
 		}
 
+		public void GivePlayerACard(Player player, Card card)
+		{
+			player.hand.Add(card);
+			cardsCounter.AddCard(player.id, 1);
+		}
+
 		public Card FromDrawPile() // draws from the draw pile according to the deck finite-ness rules
 		{
-			if (drawPile.GetCount() > 0)
+			if (drawPile.Count() > 0)
 			{
-				var card = drawPile.DrawTopCard();
+                var card = drawPile.DrawTopCard();
 				NotifyAllObservers(card);
 				return card;
 			}
@@ -194,7 +194,7 @@ namespace UNO_Server.Models
 			{
 				if (!finiteDeck)
 				{
-					var activeCard = discardPile.DrawBottomCard();
+                    var activeCard = discardPile.DrawBottomCard();
 
 					drawPile = discardPile;
 
@@ -214,10 +214,11 @@ namespace UNO_Server.Models
 
 		private void NotifyAllObservers(Card card)
 		{
-			foreach (var item in observers)
-			{
-				item.Notify(card);
-			}
+            var iterator = gameWatcher.GetIterator();
+            for (Observer o = iterator.First(); iterator.HasNext(); o = iterator.Next())
+            {
+                o.Notify(card);
+            }
 		}
 
 		public void PlayerDrawsCard()
@@ -229,7 +230,7 @@ namespace UNO_Server.Models
 				GameOver();
 			else
 			{
-				player.hand.Add(card);
+				GivePlayerACard(player, card);
 
 				if (!CanCardBePlayed(card))
 					NextPlayerTurn();
@@ -256,14 +257,14 @@ namespace UNO_Server.Models
 			bool playerSaidUNO = true; // TODO: check player UNO penalty
 			if (!playerSaidUNO && player.hand.Count == 1)
 			{
-				player.hand.Add(FromDrawPile());
-				player.hand.Add(FromDrawPile());
+				GivePlayerACard(player, FromDrawPile());
+				GivePlayerACard(player, FromDrawPile());
 			}
 			/*
 			else if (playerSaidUNO)
 			{
-				player.hand.Add(FromDrawPile());
-				player.hand.Add(FromDrawPile());
+				GivePlayerACard(player, FromDrawPile());
+				GivePlayerACard(player, FromDrawPile());
 			}//*/
 
 			ICardStrategy action = cardActionFactory.CreateAction(card.type);
@@ -331,6 +332,8 @@ namespace UNO_Server.Models
 			else drawPile = perfectDeck.MakeDeepCopy();
 			drawPile.Shuffle();
 
+            cardsCounter = new CardsCounter(players, numPlayers);
+
 			activePlayerIndex = 0;
 
 			winners = new WinnerInfo[numPlayers];
@@ -339,14 +342,14 @@ namespace UNO_Server.Models
 			{
 				for (int j = 0; j < 7; j++) // each player draws 7 cards
 				{
-					players[i].hand.Add(FromDrawPile());
+					GivePlayerACard(players[i], FromDrawPile());
 				}
 				players[i].isPlaying = true;
 			}
 
 			Card firstCard = null;
 
-			for (int i = 0; i < drawPile.GetCount(); i++)
+			for (int i = 0; i < drawPile.Count(); i++)
 			{
 				var aCard = drawPile.DrawTopCard();
 				if (Card.numberCardTypes.Contains(aCard.type))
@@ -379,7 +382,7 @@ namespace UNO_Server.Models
 			foreach (var item in stillPlaying)
 				winners[start++] = item;
 
-			Task.Factory.StartNew(() => { System.Threading.Thread.Sleep(10000); ResetGame(); });
+			//Task.Factory.StartNew(() => { System.Threading.Thread.Sleep(10000); ResetGame(); });
 		}
 	}
 }

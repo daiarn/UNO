@@ -31,7 +31,6 @@ namespace UNO_Client.Forms
 			Thread.Sleep(1000);
 			InitializeComponent();
 			SetGameTimer();
-            //UpdateActivePlayer();
         }
 
 		private void Draw_ClickAsync(object sender, EventArgs e)
@@ -248,13 +247,17 @@ namespace UNO_Client.Forms
         {
             int playerCount = Game.Gamestate.Players.Count();
             var scoreboardIndex = Game.Gamestate.ScoreboardIndex;
-            if (scoreboardIndex > -1 && scoreboardIndex != playerCount)
+
+            if (scoreboardIndex > -1 && scoreboardIndex != playerCount - 1)
             {
                 stateContext.setState(new WinningState());
+                return;
             }
-            else
+
+            if (scoreboardIndex == playerCount - 1)
             {
                 stateContext.setState(new LosingState());
+                return;
             }
 
             if (IsActive())
@@ -266,25 +269,6 @@ namespace UNO_Client.Forms
                 stateContext.setState(new WaitingState());
             }
         }
-
-        //private void UpdateTopText()
-        //{
-        //    WinnerInfo player;
-        //    if (Game.Gamestate.Winners == null)
-        //    {
-        //        UpdateActivePlayer();
-        //        return;
-        //    }
-        //    player = CheckIfWinner();
-        //    if (player == null)
-        //    {
-        //        UpdateActivePlayer();
-        //    }
-        //    else
-        //    {
-        //        UpdateWinnerInfomration(player);
-        //    }
-        //}
 
         public void ChangeLabelToPlaying()
         {
@@ -306,42 +290,6 @@ namespace UNO_Client.Forms
             PlayerTurn.Text = "You lost. Better luck next time";
         }
 
-        //private void UpdateActivePlayer()
-        //{
-        //    if (IsActive())
-        //    {
-        //        PlayerTurn.Text = "Your turn";
-        //    }
-        //    else
-        //    {
-        //        PlayerTurn.Text = "Waiting for opponent turn";
-        //    }
-        //}
-        //private void UpdateWinnerInfomration(WinnerInfo player)
-        //{
-        //    int playerPlace = GetWinnerPlace(player);
-        //    if (player.Turn == -1)
-        //    {
-        //        PlayerTurn.Text = "You won the game. Place: " + playerPlace;
-        //    }
-        //    else
-        //    {
-        //        PlayerTurn.Text = String.Format("You won the game. Place: {0} Score {1}", playerPlace, player.Score);
-        //    }
-        ////}
-        //private int GetWinnerPlace(WinnerInfo player)
-        //{
-        //    WinnerInfo[] winners = Game.Gamestate.Winners;
-        //    int count = Game.Gamestate.Players.Count;
-        //    for (int i = 0; i < count; i++)
-        //    {
-        //        if (winners[i].Index == player.Index)
-        //        {
-        //            return i;
-        //        }
-        //    }
-        //    return -1;
-        //}
         private bool IsActive()
         {
             return Game.Gamestate.Index == Game.Gamestate.ActivePlayer;

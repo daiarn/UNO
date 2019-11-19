@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UNO_Server.Models.SendData;
-using UNO_Server.Utility;
 using UNO_Server.Utility.BuilderFacade;
 using UNO_Server.Utility.Strategy;
 
@@ -52,18 +49,18 @@ namespace UNO_Server.Models
 
 			perfectDeck = new DeckBuilderFacade()
 				.number
-					.AddNonZeroNumberCards(2)
-					.AddIndividualNumberCards(0, 1)
+					.SetAllNumberCards(2)
+					.SetIndividualNumberCards(0, 1)
 				.action
-					.AddActionCards(2)
+					.SetActionCards(2)
 				.wild
-					.AddBlackCards(4)
+					.SetBlackCards(4)
 				.Build();
 
 			semiPerfectDeck = new DeckBuilderFacade()
 				.number
-					.AddNonZeroNumberCards(2)
-					.AddIndividualNumberCards(0, 1)
+					.SetAllNumberCards(2)
+					.SetIndividualNumberCards(0, 1)
 				.Build();
 		}
 
@@ -222,7 +219,7 @@ namespace UNO_Server.Models
 		private void NotifyAllObservers(Card card)
 		{
             var iterator = gameWatcher.GetIterator();
-            for (Observer o = iterator.First(); iterator.HasNext(); o = iterator.Next())
+            for (var o = iterator.First(); iterator.HasNext(); o = iterator.Next())
             {
                 o.Notify(card);
             }

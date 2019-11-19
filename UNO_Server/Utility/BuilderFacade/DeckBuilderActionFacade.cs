@@ -1,49 +1,36 @@
-﻿using UNO_Server.Models;
-
-namespace UNO_Server.Utility.BuilderFacade
+﻿namespace UNO_Server.Utility.BuilderFacade
 {
 	public class DeckBuilderActionFacade : DeckBuilderFacade
 	{
-		public DeckBuilderActionFacade(Deck deck)
+		public DeckBuilderActionFacade(DeckInfo info)
 		{
-			this.deck = deck;
+			this.info = info;
 		}
 
-		public DeckBuilderActionFacade AddActionCards(int num)
+		public DeckBuilderActionFacade SetActionCards(int num)
 		{
-			for (int j = 0; j < num; j++)
-				AddAllColors(deck, CardType.Skip);
-
-			for (int j = 0; j < num; j++)
-				AddAllColors(deck, CardType.Reverse);
-
-			for (int j = 0; j < num; j++)
-				AddAllColors(deck, CardType.Draw2);
-
+			info.skipCards = num;
+			info.reverseCards = num;
+			info.draw2Cards = num;
 			return this;
 		}
 
-		public DeckBuilderActionFacade AddSkipCards(int num)
+		public DeckBuilderActionFacade SetSkipCards(int num)
 		{
-			for (int j = 0; j < num; j++)
-				AddAllColors(deck, CardType.Skip);
+			info.skipCards = num;
 			return this;
 		}
 
-		public DeckBuilderActionFacade AddReverseCards(int num)
+		public DeckBuilderActionFacade SetReverseCards(int num)
 		{
-			for (int j = 0; j < num; j++)
-				AddAllColors(deck, CardType.Reverse);
+			info.reverseCards = num;
 			return this;
 		}
 
-		public DeckBuilderActionFacade AddDraw2Cards(int num)
+		public DeckBuilderActionFacade SetDraw2Cards(int num)
 		{
-			for (int j = 0; j < num; j++)
-				AddAllColors(deck, CardType.Draw2);
-
+			info.draw2Cards = num;
 			return this;
 		}
-
 	}
 }

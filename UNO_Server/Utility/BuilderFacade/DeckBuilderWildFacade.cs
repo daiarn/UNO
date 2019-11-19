@@ -1,36 +1,29 @@
-﻿using UNO_Server.Models;
-
-namespace UNO_Server.Utility.BuilderFacade
+﻿namespace UNO_Server.Utility.BuilderFacade
 {
 	public class DeckBuilderWildFacade : DeckBuilderFacade
 	{
-		public DeckBuilderWildFacade(Deck deck)
+		public DeckBuilderWildFacade(DeckInfo info)
 		{
-			this.deck = deck;
+			this.info = info;
 		}
-		public DeckBuilderWildFacade AddWildCards(int num)
+
+		public DeckBuilderWildFacade SetWildCards(int num)
 		{
-			for (int j = 0; j < num; j++)
-				deck.AddToBottom(new Card(CardColor.Black, CardType.Wild));
+			info.wildCards = num;
 			return this;
 		}
 
-		public DeckBuilderWildFacade AddDraw4Cards(int num)
+		public DeckBuilderWildFacade SetDraw4Cards(int num)
 		{
-			for (int j = 0; j < num; j++)
-				deck.AddToBottom(new Card(CardColor.Black, CardType.Draw4));
+			info.draw4Cards = num;
 			return this;
 		}
 
-		public DeckBuilderWildFacade AddBlackCards(int num)
+		public DeckBuilderWildFacade SetBlackCards(int num)
 		{
-			for (int j = 0; j < num; j++)
-				deck.AddToBottom(new Card(CardColor.Black, CardType.Wild));
-
-			for (int j = 0; j < num; j++)
-				deck.AddToBottom(new Card(CardColor.Black, CardType.Draw4));
+			info.wildCards = num;
+			info.draw4Cards = num;
 			return this;
 		}
-
 	}
 }

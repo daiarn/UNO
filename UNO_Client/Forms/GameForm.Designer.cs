@@ -52,7 +52,7 @@
             this.Draw.TabIndex = 0;
             this.Draw.Text = "Draw card";
             this.Draw.UseVisualStyleBackColor = true;
-            this.Draw.Click += new System.EventHandler(this.Draw_ClickAsync);
+            this.Draw.Click += new System.EventHandler(this.Draw_Click);
             // 
             // GiveUp
             // 
@@ -104,8 +104,7 @@
             this.handPanel.Size = new System.Drawing.Size(604, 165);
             this.handPanel.TabIndex = 5;
             this.handPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.HandPanel_Paint);
-            this.handPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.handPanel_MouseClick);
-            this.handPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.handPanel_MouseMove);
+            this.handPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.HandPanel_MouseClick);
             // 
             // PlayersInfo
             // 

@@ -2,13 +2,13 @@
 using System.Drawing;
 using System.Windows.Forms;
 using UNO_Client.Models;
-using Newtonsoft.Json;
 using System.Threading;
 using UNO_Client.Decorator;
 using UNO_Client.Adapter;
 using UNO_Client.State;
 using System.Linq;
 using UNO_Client.Flyweight;
+using System.Threading.Tasks;
 
 namespace UNO_Client.Forms
 {
@@ -17,9 +17,9 @@ namespace UNO_Client.Forms
 		public float[,] xyImage;
 
 		private static System.Windows.Forms.Timer GameTimer;
-		private readonly ConnectionInterface serverConnection;
+		private readonly IConnection serverConnection;
 		private static readonly SoundAdapter soundAdaptor = new SoundAdapter();
-		private Game Game;
+		private GameState Gamestate;
         private JoinPost joinPost;
         private StateContext stateContext;
 
@@ -28,45 +28,45 @@ namespace UNO_Client.Forms
             this.joinPost = joinPost;
 			serverConnection = new HttpAdapter("https://localhost:44331/api/game", joinPost.Id); // TODO: change url?
             stateContext = new StateContext();
-			SetGame();
+			_ = UpdateGameStateAsync();
 			Thread.Sleep(1000);
 			InitializeComponent();
 			SetGameTimer();
         }
 
-		private void Draw_ClickAsync(object sender, EventArgs e)
+		private async void Draw_Click(object sender, EventArgs e)
 		{
-			serverConnection.SendDrawCard();
-			SetGame();
+			await serverConnection.SendDrawCardAsync();
+			_ = UpdateGameStateAsync();
 		}
 
-		private void GiveUp_Click(object sender, EventArgs e)
+		private async void GiveUp_Click(object sender, EventArgs e)
 		{
-			serverConnection.SendLeaveGame();
-			SetGame();
+			await serverConnection.SendLeaveGameAsync();
+			_ = UpdateGameStateAsync();
 		}
 
-		private void UNO_Click(object sender, EventArgs e)
+		private async void UNO_Click(object sender, EventArgs e)
 		{
-			serverConnection.SendSayUNO();
+			await serverConnection.SendSayUNOAsync();
 			soundAdaptor.turnOnSoundEffect();
 
-			SetGame();
+			_ = UpdateGameStateAsync();
 		}
 
 		private void Exit_Click(object sender, EventArgs e)
 		{
-			serverConnection.SendLeaveGame();
+			serverConnection.SendLeaveGameAsync();
 		}
 
 		const float HandCardWidth = 80f;
 
 		private void HandPanel_Paint(object sender, PaintEventArgs e)
 		{
-			if (Game != null)
+			if (Gamestate != null)
 			{
 				var widthPerCard = HandCardWidth / 2;
-				var handCount = Game.Gamestate.Hand.Count;
+				var handCount = Gamestate.Hand.Count;
 
 				var graphics = e.Graphics;
 				float movePosition = 0f;
@@ -89,7 +89,7 @@ namespace UNO_Client.Forms
 
 				for (int i = 0; i < handCount; i++)
 				{
-					var card = Game.Gamestate.Hand[i];
+					var card = Gamestate.Hand[i];
                     if (card != null)
                     {
 						var img = CardImageStore.GetImage(card);
@@ -107,12 +107,12 @@ namespace UNO_Client.Forms
 			}
 		}
 
-		private void handPanel_MouseClick(object sender, MouseEventArgs e)
+		private void HandPanel_MouseClick(object sender, MouseEventArgs e)
 		{
 			int bild = HitTestCard(e.Location);
 			if (bild != -1)
 			{
-				var card = Game.Gamestate.Hand[bild];
+				var card = Gamestate.Hand[bild];
 				var color = card.Color;
 
 				if (color == 0)
@@ -122,13 +122,8 @@ namespace UNO_Client.Forms
 					color = chooser.Color;
 				}
 
-				putCard(card, color);
+				_ = PutCard(card, color);
 			}
-		}
-
-		private void handPanel_MouseMove(object sender, MouseEventArgs e)
-		{
-			//DO NOTHING
 		}
 
 		int HitTestCard(Point loc)
@@ -137,9 +132,9 @@ namespace UNO_Client.Forms
 			var y = loc.Y;
 
 			int bild = -1;
-			for (int i = 0; i < Game.Gamestate.Hand.Count; i++)
+			for (int i = 0; i < Gamestate.Hand.Count; i++)
 			{
-				var img = CardImageStore.GetImage(Game.Gamestate.Hand[i]);
+				var img = CardImageStore.GetImage(Gamestate.Hand[i]);
 
 				var dblFac = HandCardWidth / (float) img.Width;
 				var dblHeight = dblFac * img.Height;
@@ -184,22 +179,20 @@ namespace UNO_Client.Forms
 			RectangleF rectToDecorate = new RectangleF(middlePointX - (dbWidth / 2) - 5, middlePointY - dbHeight - (dbHeight / 4), dbWidth + 10, dbHeight);
 			Rect simpleRect = new DiagonalDecorator(new BorderDecorator(new BackgroundDecorator(new SimpleRect(rectToDecorate, graphics))));
 			simpleRect.Draw();
-			graphics.DrawImage(CardImageStore.GetImage(Game.Gamestate.ActiveCard), rect);
+			graphics.DrawImage(CardImageStore.GetImage(Gamestate.ActiveCard), rect);
 
 		}
 
-		private void putCard(Card card, int Color)
+		private async Task PutCard(Card card, int Color)
 		{
-			serverConnection.SendPlayCard(card, Color);
-			SetGame();
+			await serverConnection.SendPlayCardAsync(card, Color);
+			_ = UpdateGameStateAsync();
 		}
 
-		private async void SetGame()
+		private async Task UpdateGameStateAsync()
 		{
-			var respondeString = await serverConnection.GetPlayerGameState();
+			Gamestate = await serverConnection.GetPlayerGameStateAsync();
 
-			//json serializer to Game object and set it globaly
-			Game = JsonConvert.DeserializeObject<Game>(respondeString);
 			ShowPlayersInformation();
 			Update();
 			mainPanel.Refresh();
@@ -218,21 +211,20 @@ namespace UNO_Client.Forms
 			GameTimer.Start();
 		}
 
-		private void OnTimedGameEvent(Object myObject, EventArgs myEventArgs)
+		private async void OnTimedGameEvent(Object myObject, EventArgs myEventArgs)
 		{
 			GameTimer.Stop();
-			//Fetch game data
-			SetGame();
+			await UpdateGameStateAsync();
 			GameTimer.Enabled = true;
 		}
 
 		private string[] FormatPlayersInformation()
 		{
-			int count = Game.Gamestate.Players.Count;
+			int count = Gamestate.Players.Count;
 			string[] infomration = new string[count];
 			for (int i = 0; i < count; i++)
 			{
-				var player = Game.Gamestate.Players[i];
+				var player = Gamestate.Players[i];
 				string line = player.Name + " " + player.CardCount;
 				infomration[i] = line;
 			}
@@ -246,8 +238,8 @@ namespace UNO_Client.Forms
 
         private void UpdatePlayerState()
         {
-            int playerCount = Game.Gamestate.Players.Count();
-            var scoreboardIndex = Game.Gamestate.ScoreboardIndex;
+            int playerCount = Gamestate.Players.Count();
+            var scoreboardIndex = Gamestate.ScoreboardIndex;
 
             if (scoreboardIndex > -1 && scoreboardIndex != playerCount - 1)
             {
@@ -293,13 +285,13 @@ namespace UNO_Client.Forms
 
         private bool IsActive()
         {
-            return Game.Gamestate.Index == Game.Gamestate.ActivePlayer;
+            return Gamestate.Index == Gamestate.ActivePlayer;
         }
         private WinnerInfo CheckIfWinner()
         {
-            int myIndex = Game.Gamestate.Index;
-            WinnerInfo[] winners = Game.Gamestate.Winners;
-            int count = Game.Gamestate.Players.Count;
+            int myIndex = Gamestate.Index;
+            WinnerInfo[] winners = Gamestate.Winners;
+            int count = Gamestate.Players.Count;
             for (int i = 0; i < count; i++)
             {
                 if (winners[i].Index == myIndex)
@@ -311,8 +303,8 @@ namespace UNO_Client.Forms
         }
         private void UpdateGameCounters()
         {
-            int zeroCounter = Game.Gamestate.ZeroCounter;
-            int wildCounter = Game.Gamestate.WildCounter;
+            int zeroCounter = Gamestate.ZeroCounter;
+            int wildCounter = Gamestate.WildCounter;
 
             string counterInfo = String.Format("Zero cards drawn in the game {0}\n Wild cards drawn in the game {1}\n", zeroCounter, wildCounter);
 

@@ -49,7 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapter\ConnectionInterface.cs" />
+    <Compile Include="Adapter\IConnection.cs" />
     <Compile Include="Flyweight\CardImageStore.cs" />
     <Compile Include="Forms\ColorChooserForm.cs">
       <SubType>Form</SubType>
@@ -95,6 +95,7 @@
     <Compile Include="Models\Player.cs" />
     <Compile Include="Adapter\HttpAdapter.cs" />
     <Compile Include="Adapter\SoundAdapter.cs" />
+    <Compile Include="Models\SimpleResponse.cs" />
     <Compile Include="Models\WinnerInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

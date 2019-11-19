@@ -365,7 +365,6 @@ namespace UNO_Server.Controllers
 
 					game.players[0].hand = p1Hand;
 					game.players[1].hand = p2Hand;
-					game.players[1].hand = p2Hand;
 
 					return new JsonResult(new { success = true });
 

@@ -1,11 +1,12 @@
-﻿using System.Net.Http;
+﻿using Newtonsoft.Json;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using UNO_Client.Models;
 
 namespace UNO_Client.Adapter
 {
-	class HttpAdapter : ConnectionInterface
+	class HttpAdapter : IConnection
 	{
 		private static readonly HttpClient client = new HttpClient();
 		private readonly string BASE_URL;
@@ -17,64 +18,60 @@ namespace UNO_Client.Adapter
 			this.playerId = id;
 		}
 
-		public async Task<string> GetPlayerGameState()
+		public async Task<GameState> GetPlayerGameStateAsync()
 		{
-			return await client.GetStringAsync(BASE_URL + "/" + playerId);
+			var respondString = await client.GetStringAsync(BASE_URL + "/" + playerId);
+			var game = JsonConvert.DeserializeObject<Game>(respondString);
+			return game.Gamestate;
 		}
-
 
 		private Task<HttpResponseMessage> SimplePostAsync(string playerId, string path)
 		{
 			string JsonString = "{\"id\":\"" + playerId + "\"}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-			var response = client.PostAsync(BASE_URL + path, content);
+			return client.PostAsync(BASE_URL + path, content);
+		}
 
+		public async Task<SimpleResponse> SendLeaveGameAsync()
+		{
+			var request = await SimplePostAsync(playerId, "/leave");
+			var response = JsonConvert.DeserializeObject<SimpleResponse>(await request.Content.ReadAsStringAsync());
 			return response;
 		}
 
-
-		//public async Task<HttpResponseMessage> SendJoinGame()
-		//{
-		//	throw new System.NotImplementedException();
-		//}
-
-		public bool SendLeaveGame()
+		public async Task<SimpleResponse> SendDrawCardAsync()
 		{
-			var response = SimplePostAsync(playerId, "/leave");
-			return true;
+			var request = await SimplePostAsync(playerId, "/draw");
+			var response = JsonConvert.DeserializeObject<SimpleResponse>(await request.Content.ReadAsStringAsync());
+			return response;
 		}
 
-
-		public bool SendDrawCard()
+		public async Task<SimpleResponse> SendSayUNOAsync()
 		{
-			var response = SimplePostAsync(playerId, "/draw");
-			return true;
+			var request = await SimplePostAsync(playerId, "/uno");
+			var response = JsonConvert.DeserializeObject<SimpleResponse>(await request.Content.ReadAsStringAsync());
+			return response;
 		}
-		public bool SendPlayCard(Card card, int color)
+
+		public async Task<SimpleResponse> SendPlayCardAsync(Card card, int color)
 		{
 			string JsonString = "{\"id\":\"" + playerId + "\", \"color\":" + color + ",\"type\":" + card.Type + "}";
 			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-			var response = client.PostAsync(BASE_URL + "/play", content);
-			return true;
+			var request = await client.PostAsync(BASE_URL + "/play", content);
+			var response = JsonConvert.DeserializeObject<SimpleResponse>(await request.Content.ReadAsStringAsync());
+			return response;
 		}
-
-		public bool SendSayUNO()
-		{
-			var response = SimplePostAsync(playerId, "/uno");
-			return true;
-		}
-
 
 		public void SendUndoDraw()
 		{
-			var content = new StringContent("{}", Encoding.UTF8, "application/json");
-			client.PostAsync(BASE_URL + "/draw/undo", content);
+			//var content = new StringContent("{}", Encoding.UTF8, "application/json");
+			//client.PostAsync(BASE_URL + "/draw/undo", content);
 		}
 
 		public void SendUndoUNO()
 		{
-			var content = new StringContent("{}", Encoding.UTF8, "application/json");
-			client.PostAsync(BASE_URL + "/uno/undo", content);
+			//var content = new StringContent("{}", Encoding.UTF8, "application/json");
+			//client.PostAsync(BASE_URL + "/uno/undo", content);
 		}
 	}
 }

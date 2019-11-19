@@ -32,8 +32,11 @@ namespace UNO_Client
             HttpResponseMessage response = await client.PostAsync(BASE_URL + "/join", content);
             string message = await response.Content.ReadAsStringAsync();
             JoinPost joinPost = JsonConvert.DeserializeObject<JoinPost>(message);
-            //JoinPost joinPost = new JoinPost();
-            //joinPost.Id = "2a12fe31-a06c-49dd-916f-3a566aefbb06";
+
+			if (!joinPost.Success)
+			{
+				throw new NotImplementedException("Fix your client");
+			}
 
             LobyForm form = new LobyForm(joinPost);
             form.Show();

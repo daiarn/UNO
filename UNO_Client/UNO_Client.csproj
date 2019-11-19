@@ -50,6 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapter\ConnectionInterface.cs" />
+    <Compile Include="Composite\Graphic.cs" />
+    <Compile Include="Composite\GraphicComposite.cs" />
+    <Compile Include="Composite\Star.cs" />
     <Compile Include="Flyweight\CardImageStore.cs" />
     <Compile Include="Forms\ColorChooserForm.cs">
       <SubType>Form</SubType>

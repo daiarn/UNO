@@ -9,6 +9,7 @@ using UNO_Client.Adapter;
 using UNO_Client.State;
 using System.Linq;
 using UNO_Client.Flyweight;
+using UNO_Client.Composite;
 
 namespace UNO_Client.Forms
 {
@@ -182,6 +183,12 @@ namespace UNO_Client.Forms
 
 			RectangleF rect = new RectangleF(middlePointX - (dbWidth / 2), middlePointY - dbHeight - (dbHeight / 4), dbWidth, dbHeight);
 			RectangleF rectToDecorate = new RectangleF(middlePointX - (dbWidth / 2) - 5, middlePointY - dbHeight - (dbHeight / 4), dbWidth + 10, dbHeight);
+            RectangleF rectComposite = new RectangleF();
+
+            Star star = new Star(rectComposite, graphics);
+            GraphicComposite graphicComposite = new GraphicComposite();
+            graphicComposite.Add(star); //TODO: make shit work
+
 			Rect simpleRect = new DiagonalDecorator(new BorderDecorator(new BackgroundDecorator(new SimpleRect(rectToDecorate, graphics))));
 			simpleRect.Draw();
 			graphics.DrawImage(CardImageStore.GetImage(Game.Gamestate.ActiveCard), rect);

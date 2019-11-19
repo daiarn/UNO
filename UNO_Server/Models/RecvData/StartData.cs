@@ -7,5 +7,6 @@ namespace UNO_Server.Models.RecvData
 		public Guid id { get; set; }
 		public bool finiteDeck { get; set; }
 		public bool onlyNumbers { get; set; }
+		public bool slowGame { get; set; }
 	}
 }

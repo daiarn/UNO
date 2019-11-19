@@ -6,11 +6,18 @@ namespace UNO_Server.Models.SendData
 	{
 		public List<Card> hand;
 		public int index;
+		public int scoreboardIndex;
 
 		public GamePlayerState(Game game, Player player) : base(game)
 		{
 			hand = player.hand;
 			index = System.Array.IndexOf(game.players, player);
+
+			scoreboardIndex = -1;
+            if (game.scoreboard != null)
+			    for (int i = 0; i < game.scoreboard.Length; i++)
+				    if (game.scoreboard[i] != null && game.scoreboard[i].index == index)
+					    scoreboardIndex = i;
 		}
 	}
 }

@@ -104,6 +104,12 @@
     <Compile Include="Decorator\RectDecorator.cs" />
     <Compile Include="Decorator\Rect.cs" />
     <Compile Include="Decorator\SimpleRect.cs" />
+    <Compile Include="State\LosingState.cs" />
+    <Compile Include="State\PlayerState.cs" />
+    <Compile Include="State\PlayingState.cs" />
+    <Compile Include="State\StateContext.cs" />
+    <Compile Include="State\WaitingState.cs" />
+    <Compile Include="State\WinningState.cs" />
     <EmbeddedResource Include="Forms\ColorChooserForm.resx">
       <DependentUpon>ColorChooserForm.cs</DependentUpon>
     </EmbeddedResource>

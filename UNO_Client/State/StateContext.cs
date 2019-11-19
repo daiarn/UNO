@@ -16,9 +16,14 @@ namespace UNO_Client.State
 			state = newState;
 		}
 
-		public void WritePlayerStatusInGame(GameForm form)
+		public PlayerState GetState()
 		{
-			state.WritePlayerStatusInGame(form, this);
+			return state;
 		}
-	}
+
+        public void WritePlayerStatusInGame(GameForm form)
+        {
+            state.WritePlayerStatusInGame(form, this);
+        }
+    }
 }

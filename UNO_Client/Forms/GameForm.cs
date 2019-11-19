@@ -107,7 +107,7 @@ namespace UNO_Client.Forms
 						var img = CardImageStore.GetImage(card);
 
 						xyImage[i, 0] = middlePoint + movePosition;
-						xyImage[i, 1] = 15f; //Recommended cards
+						xyImage[i, 1] = 15f; // Recommended cards
 						movePosition += widthPerCard;
 
 						var dbWidth = HandCardWidth / (float) img.Width;
@@ -152,8 +152,6 @@ namespace UNO_Client.Forms
 				var dblFac = HandCardWidth / (float) img.Width;
 				var dblHeight = dblFac * img.Height;
 
-				//float test2 = xyImage[i, 0] + HandCardWidth;
-
 				if (x >= xyImage[i, 0] && x <= xyImage[i, 0] + HandCardWidth && y >= xyImage[i, 1] && y <= xyImage[i, 1] + dblHeight)
 				{
 					bild = i;
@@ -182,8 +180,6 @@ namespace UNO_Client.Forms
 			var middlePointX = width / 2f;
 			var middlePointY = height / 2f;
 
-			//var img = Game.TopCard.GetImage();
-
 			float dbWidth = 80f;
 			float dbFac = dbWidth / (float) blankCardImage.Width;
 			var dbHeight = dbFac * blankCardImage.Height;
@@ -194,6 +190,10 @@ namespace UNO_Client.Forms
 			simpleRect.Draw();
 			graphics.DrawImage(CardImageStore.GetImage(Gamestate.ActiveCard), rect);
 
+			if(stateContext.GetState() is WinningState)
+			{
+				PrintStars(graphics);
+			}
 		}
 
 		private void BeginGameTimer()
@@ -234,6 +234,11 @@ namespace UNO_Client.Forms
 			if (scoreboardIndex > -1 && scoreboardIndex != playerCount - 1)
 			{
 				StateContext.setState(new WinningState());
+				if (!soundOn)
+				{
+					soundAdaptor.turnOnSoundEffect();
+					soundOn = true;
+				}
 				return;
 			}
 
@@ -277,21 +282,47 @@ namespace UNO_Client.Forms
 		{
 			return Gamestate.Index == Gamestate.ActivePlayer;
 		}
+		
+		private void PrintStars(Graphics Graphics)
+		{
+			// Create stars
+			Star star1 = new Star(30, 30, Color.Red, Graphics);
+			Star star2 = new Star(370, 20, Color.Blue, Graphics);
+			Star star3 = new Star(350, 90, Color.Green, Graphics);
+			Star star4 = new Star(110, 35, Color.Pink, Graphics);
+			Star star5 = new Star(310, 70, Color.Yellow, Graphics);
+			Star star6 = new Star(175, 10, Color.Violet, Graphics);
+			Star star7 = new Star(350, 50, Color.LimeGreen, Graphics);
+			Star star8 = new Star(300, 250, Color.Orange, Graphics);
+			Star star9 = new Star(410, 80, Color.Lavender, Graphics);
 
-		//private WinnerInfo CheckIfWinner()
-		//{
-		//	int myIndex = Gamestate.Index;
-		//	WinnerInfo[] winners = Gamestate.Winners;
-		//	int count = Gamestate.Players.Count;
-		//	for (int i = 0; i < count; i++)
-		//	{
-		//		if (winners[i].Index == myIndex)
-		//		{
-		//			return winners[i];
-		//		}
-		//	}
-		//	return null;
-		//}
+			// Create composite
+			GraphicComposite graphicCompositeMain = new GraphicComposite();
+			GraphicComposite graphicComposite1 = new GraphicComposite();
+			GraphicComposite graphicComposite2 = new GraphicComposite();
+			GraphicComposite graphicComposite3 = new GraphicComposite();
+
+			// Add stars to composite
+			graphicComposite1.Add(star1);
+			graphicComposite1.Add(star3);
+			graphicComposite1.Add(star5);
+
+			graphicComposite2.Add(star2);
+			graphicComposite2.Add(star4);
+			graphicComposite2.Add(star6);
+
+			graphicComposite3.Add(star7);
+			graphicComposite3.Add(star8);
+			graphicComposite3.Add(star9);
+
+			// Add composite to main
+			graphicCompositeMain.Add(graphicComposite1);
+			graphicCompositeMain.Add(graphicComposite2);
+			graphicCompositeMain.Add(graphicComposite3);
+
+			// Paint
+			graphicCompositeMain.Paint();
+		}
 
 		private void UpdateGameCounters()
 		{
@@ -306,13 +337,13 @@ namespace UNO_Client.Forms
 		private void UndoDraw_Click(object sender, EventArgs e)
 		{
 			//serverConnection.SendUndoDraw();
-			//SetGame();
+			//_ = UpdateGameStateAsync();
 		}
 
 		private void UndoUno_Click(object sender, EventArgs e)
 		{
 			//serverConnection.SendUndoUNO();
-			//SetGame();
+			//_ = UpdateGameStateAsync();
 		}
 	}
 }

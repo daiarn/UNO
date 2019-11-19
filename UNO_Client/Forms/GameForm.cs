@@ -8,6 +8,7 @@ using UNO_Client.Decorator;
 using UNO_Client.Adapter;
 using UNO_Client.State;
 using System.Linq;
+using UNO_Client.Flyweight;
 
 namespace UNO_Client.Forms
 {
@@ -91,7 +92,7 @@ namespace UNO_Client.Forms
 					var card = Game.Gamestate.Hand[i];
                     if (card != null)
                     {
-                        var img = card.GetImage();
+						var img = CardImageStore.GetImage(card);
 
                         xyImage[i, 0] = middlePoint + movePosition;
                         xyImage[i, 1] = 15f; //Recommended cards
@@ -138,7 +139,7 @@ namespace UNO_Client.Forms
 			int bild = -1;
 			for (int i = 0; i < Game.Gamestate.Hand.Count; i++)
 			{
-				var img = Game.Gamestate.Hand[i].GetImage();
+				var img = CardImageStore.GetImage(Game.Gamestate.Hand[i]);
 
 				var dblFac = HandCardWidth / (float) img.Width;
 				var dblHeight = dblFac * img.Height;
@@ -158,7 +159,7 @@ namespace UNO_Client.Forms
 		public const double TAU = 2 * Math.PI;
 		Font playerFont = SystemFonts.CaptionFont;
 		Font activePlayerFont;
-		Bitmap blankCardImage = new Bitmap("..//..//CardImages//r0.png");
+		Bitmap blankCardImage = new Bitmap("..//..//CardImages//_blank.png");
 
 		private void MainPanel_Paint(object sender, PaintEventArgs e)
 		{
@@ -183,7 +184,7 @@ namespace UNO_Client.Forms
 			RectangleF rectToDecorate = new RectangleF(middlePointX - (dbWidth / 2) - 5, middlePointY - dbHeight - (dbHeight / 4), dbWidth + 10, dbHeight);
 			Rect simpleRect = new DiagonalDecorator(new BorderDecorator(new BackgroundDecorator(new SimpleRect(rectToDecorate, graphics))));
 			simpleRect.Draw();
-			graphics.DrawImage(Game.Gamestate.ActiveCard.GetImage(), rect);
+			graphics.DrawImage(CardImageStore.GetImage(Game.Gamestate.ActiveCard), rect);
 
 		}
 

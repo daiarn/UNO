@@ -13,5 +13,9 @@
 		// wild action cards
 		public int wildCards;
 		public int draw4Cards;
+		public DeckInfo()
+		{
+			numberCards = new int[10];
+		}
 	}
 }

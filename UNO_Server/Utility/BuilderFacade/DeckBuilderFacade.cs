@@ -6,6 +6,10 @@ namespace UNO_Server.Utility.BuilderFacade
 	{
 		protected DeckInfo info;
 
+		public DeckBuilderFacade()
+		{
+			info = new DeckInfo();
+		}
 		private void AddAllColors(Deck deck, CardType type)
 		{
 			deck.AddToBottom(new Card(CardColor.Red, type));

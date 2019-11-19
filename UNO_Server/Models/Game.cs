@@ -341,7 +341,7 @@ namespace UNO_Server.Models
 			else drawPile = perfectDeck.MakeDeepCopy();
 			drawPile.Shuffle();
 
-            cardsCounter = new CardsCounter(players, numPlayers);
+            cardsCounter = new CardsCounter(players);
 
 			activePlayerIndex = 0;
 

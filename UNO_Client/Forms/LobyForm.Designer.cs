@@ -31,7 +31,7 @@
 			this.Players = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
-			this.gameOptions = new System.Windows.Forms.CheckedListBox();
+			this.GameOptions = new System.Windows.Forms.CheckedListBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -61,20 +61,19 @@
 			this.button1.TabIndex = 2;
 			this.button1.Text = "Start game";
 			this.button1.UseVisualStyleBackColor = true;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
+			this.button1.Click += new System.EventHandler(this.StartGame_ClickAsync);
 			// 
 			// gameOptions
 			// 
-			this.gameOptions.FormattingEnabled = true;
-			this.gameOptions.Items.AddRange(new object[] {
+			this.GameOptions.FormattingEnabled = true;
+			this.GameOptions.Items.AddRange(new object[] {
             "Only numbers",
             "Finite deck",
             "Long game"});
-			this.gameOptions.Location = new System.Drawing.Point(218, 46);
-			this.gameOptions.Name = "gameOptions";
-			this.gameOptions.Size = new System.Drawing.Size(120, 49);
-			this.gameOptions.TabIndex = 3;
-			this.gameOptions.SelectedIndexChanged += new System.EventHandler(this.gameOptions_SelectedIndexChanged);
+			this.GameOptions.Location = new System.Drawing.Point(218, 46);
+			this.GameOptions.Name = "gameOptions";
+			this.GameOptions.Size = new System.Drawing.Size(120, 49);
+			this.GameOptions.TabIndex = 3;
 			// 
 			// label2
 			// 
@@ -91,13 +90,12 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(352, 278);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.gameOptions);
+			this.Controls.Add(this.GameOptions);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.Players);
 			this.Name = "LobyForm";
 			this.Text = "LobyForm";
-			this.Load += new System.EventHandler(this.LobyForm_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -108,7 +106,7 @@
         private System.Windows.Forms.TextBox Players;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.CheckedListBox gameOptions;
+        private System.Windows.Forms.CheckedListBox GameOptions;
         private System.Windows.Forms.Label label2;
     }
 }

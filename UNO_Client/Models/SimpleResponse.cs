@@ -1,8 +1,8 @@
 ﻿namespace UNO_Client.Models
 {
-	class Game
+	public class SimpleResponse
 	{
 		public bool Success { get; set; }
-		public GameState Gamestate { get; set; }
+		public string Message { get; set; }
 	}
 }

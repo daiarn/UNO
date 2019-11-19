@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -49,7 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapter\ConnectionInterface.cs" />
+    <Compile Include="Adapter\IConnection.cs" />
     <Compile Include="Composite\Graphic.cs" />
     <Compile Include="Composite\GraphicComposite.cs" />
     <Compile Include="Composite\Star.cs" />
@@ -94,10 +95,11 @@
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\GamePhase.cs" />
     <Compile Include="Models\GameState.cs" />
-    <Compile Include="Models\JoinPost.cs" />
+    <Compile Include="Models\JoinResponse.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Adapter\HttpAdapter.cs" />
     <Compile Include="Adapter\SoundAdapter.cs" />
+    <Compile Include="Models\SimpleResponse.cs" />
     <Compile Include="Models\WinnerInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

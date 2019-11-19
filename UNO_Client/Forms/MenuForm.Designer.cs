@@ -55,7 +55,7 @@
             this.button4.TabIndex = 3;
             this.button4.Text = "CHECK STATISTICS";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.Statistics_Click);
+            //this.button4.Click += new System.EventHandler(this.Statistics_Click);
             // 
             // button5
             // 
@@ -97,7 +97,6 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MenuForm";
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.MenuForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

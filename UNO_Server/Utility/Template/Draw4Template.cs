@@ -1,17 +1,18 @@
 ﻿using UNO_Server.Models;
 
-namespace UNO_Server.Utility.Strategy
+namespace UNO_Server.Utility.Template
 {
-	class Draw4Strategy : ICardStrategy
+	class Draw4Template : BaseTemplate
 	{
-		public void Action()
+		public override void AlterState(Game game)
 		{
-			var game = Game.GetInstance();
 			var targetPlayer = game.players[game.GetNextPlayerIndexAfter(game.activePlayerIndex)];
-
 			for (int i = 0; i < 4; i++)
 				game.GivePlayerACard(targetPlayer, game.FromDrawPile());
+		}
 
+		public override void PassNextTurn(Game game)
+		{
 			game.SkipNextPlayerTurn();
 		}
 	}

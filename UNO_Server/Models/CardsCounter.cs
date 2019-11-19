@@ -11,12 +11,13 @@ namespace UNO_Server.Models
         private Dictionary<Guid, int> PlayerCarsCounter;
 
 
-        public CardsCounter(Player[] players, int playerCounter)
+        public CardsCounter(Player[] players)
         {
             PlayerCarsCounter = new Dictionary<Guid, int>();
-            for (int i = 0; i < playerCounter; i++)
+            for (int i = 0; i < players.Length; i++)
             {
-                PlayerCarsCounter.Add(players[i].id, 0);
+				if (players[i] != null)
+					PlayerCarsCounter.Add(players[i].id, 0);
             }
         }
         public void AddCard(Guid index, int count)

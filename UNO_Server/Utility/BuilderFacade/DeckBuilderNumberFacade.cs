@@ -1,29 +1,25 @@
-﻿using UNO_Server.Models;
-
-namespace UNO_Server.Utility.BuilderFacade
+﻿namespace UNO_Server.Utility.BuilderFacade
 {
 	public class DeckBuilderNumberFacade : DeckBuilderFacade
 	{
-		public DeckBuilderNumberFacade(Deck deck)
+		public DeckBuilderNumberFacade(DeckInfo info)
 		{
-			this.deck = deck;
+			this.info = info;
 		}
 
-		public DeckBuilderNumberFacade AddNonZeroNumberCards(int num)
+		public DeckBuilderNumberFacade SetAllNumberCards(int num)
 		{
-			for (int i = 1; i < 10; i++)
-				for (int j = 0; j < num; j++)
-					AddAllColors(deck, Card.numberCardTypes[i]);
+			for (int i = 0; i < 10; i++)
+				info.numberCards[i] = num;
 
 			return this;
 		}
 
-		public DeckBuilderNumberFacade AddIndividualNumberCards(int cardNumber, int amount)
+		public DeckBuilderNumberFacade SetIndividualNumberCards(int cardNumber, int amount)
 		{
 			if (cardNumber < 0 || cardNumber > 9) return this;
-			AddAllColors(deck, Card.numberCardTypes[amount]);
+			info.numberCards[cardNumber] = amount;
 			return this;
 		}
-
 	}
 }

@@ -337,15 +337,15 @@ namespace UNO_Server.Controllers
 					game.discardPile = new Deck();
 					game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.Zero));
 					game.drawPile = new Utility.BuilderFacade.DeckBuilderFacade()
-						.number.AddIndividualNumberCards(0, 1)
-						.action.AddSkipCards(1)
-						.number.AddIndividualNumberCards(1, 1)
-						.wild.AddWildCards(1)
-						.action.AddReverseCards(1)
-						.action.AddDraw2Cards(1)
-						.wild.AddDraw4Cards(1)
-						.number.AddIndividualNumberCards(11, 1) // just for tests
-						.number.AddIndividualNumberCards(-1, 1) // just for tests
+						.number.SetIndividualNumberCards(0, 1)
+						.action.SetSkipCards(1)
+						.number.SetIndividualNumberCards(1, 1)
+						.wild.SetWildCards(1)
+						.action.SetReverseCards(1)
+						.action.SetDraw2Cards(1)
+						.wild.SetDraw4Cards(1)
+						.number.SetIndividualNumberCards(11, 1) // just for tests
+						.number.SetIndividualNumberCards(-1, 1) // just for tests
 					.Build();
 
 					var p1Hand = new List<Card>();

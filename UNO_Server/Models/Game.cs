@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UNO_Server.Models.SendData;
-using UNO_Server.Utility;
 using UNO_Server.Utility.BuilderFacade;
-using UNO_Server.Utility.Strategy;
+using UNO_Server.Utility.Template;
 
 namespace UNO_Server.Models
 {
@@ -34,7 +31,7 @@ namespace UNO_Server.Models
         public CardsCounter cardsCounter;
 
 		private static Game instance = new Game();
-		private static readonly StrategyFactory cardActionFactory = new CardActionFactory();
+		private static readonly ActionFactory cardActionFactory = new ActionFactory();
 		private readonly Deck perfectDeck;
 		private readonly Deck semiPerfectDeck;
 		private Game()
@@ -52,18 +49,18 @@ namespace UNO_Server.Models
 
 			perfectDeck = new DeckBuilderFacade()
 				.number
-					.AddNonZeroNumberCards(2)
-					.AddIndividualNumberCards(0, 1)
+					.SetAllNumberCards(2)
+					.SetIndividualNumberCards(0, 1)
 				.action
-					.AddActionCards(2)
+					.SetActionCards(2)
 				.wild
-					.AddBlackCards(4)
+					.SetBlackCards(4)
 				.Build();
 
 			semiPerfectDeck = new DeckBuilderFacade()
 				.number
-					.AddNonZeroNumberCards(2)
-					.AddIndividualNumberCards(0, 1)
+					.SetAllNumberCards(2)
+					.SetIndividualNumberCards(0, 1)
 				.Build();
 		}
 
@@ -222,7 +219,7 @@ namespace UNO_Server.Models
 		private void NotifyAllObservers(Card card)
 		{
             var iterator = gameWatcher.GetIterator();
-            for (Observer o = iterator.First(); iterator.HasNext(); o = iterator.Next())
+            for (var o = iterator.First(); iterator.HasNext(); o = iterator.Next())
             {
                 o.Notify(card);
             }
@@ -278,11 +275,11 @@ namespace UNO_Server.Models
 				GivePlayerACard(player, FromDrawPile());
 			}//*/
 
-			ICardStrategy action = cardActionFactory.CreateAction(card.type);
-			if (action != null)
-				action.Action(); // action card is responsible whose turn is next
-			else
-				NextPlayerTurn();
+			BaseTemplate action = cardActionFactory.Create(card.type);
+			//if (action != null)
+				action.ProcessAction(this); // action card is responsible whose turn is next
+			//else
+			//	NextPlayerTurn();
 		}
 
 		public void PlayerSaysUNO()
@@ -344,7 +341,7 @@ namespace UNO_Server.Models
 			else drawPile = perfectDeck.MakeDeepCopy();
 			drawPile.Shuffle();
 
-            cardsCounter = new CardsCounter(players, numPlayers);
+            cardsCounter = new CardsCounter(players);
 
 			activePlayerIndex = 0;
 

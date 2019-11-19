@@ -364,6 +364,7 @@ namespace UNO_Tests
 
 			game.players[0].hand.Add(new Card(theCard));
 			game.players[0].hand.Add(new Card(theCard));
+			game.cardsCounter = new CardsCounter(game.players);
 
 			// ACT
 			var response = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }) as JsonResult;
@@ -403,6 +404,7 @@ namespace UNO_Tests
 
 			game.players[0].hand.Add(new Card(theCard));
 			game.players[0].hand.Add(new Card(theCard));
+			game.cardsCounter = new CardsCounter(game.players);
 
 			// ACT
 			var response = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }) as JsonResult;

@@ -22,6 +22,7 @@ namespace UNO_Tests
 			game.phase = GamePhase.Playing;
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
+			game.cardsCounter = new CardsCounter(game.players);
 
 			// ACT
 			var response = control.Draw(new PlayerData { id = id }) as JsonResult;
@@ -49,6 +50,7 @@ namespace UNO_Tests
 			game.finiteDeck = true;
 			game.phase = GamePhase.Playing;
 			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
+			game.cardsCounter = new CardsCounter(game.players);
 
 			// ACT
 			var response = control.Draw(new PlayerData { id = id }) as JsonResult;

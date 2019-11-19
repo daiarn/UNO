@@ -13,87 +13,89 @@ using UNO_Client.Composite;
 
 namespace UNO_Client.Forms
 {
-	public partial class GameForm : Form
-	{
-		public float[,] xyImage;
+    public partial class GameForm : Form
+    {
+        public float[,] xyImage;
 
-		private static System.Windows.Forms.Timer GameTimer;
-		private readonly ConnectionInterface serverConnection;
-		private static readonly SoundAdapter soundAdaptor = new SoundAdapter();
-		private Game Game;
+        private static System.Windows.Forms.Timer GameTimer;
+        private readonly ConnectionInterface serverConnection;
+        private static readonly SoundAdapter soundAdaptor = new SoundAdapter();
+        private Game Game;
         private JoinPost joinPost;
         private StateContext stateContext;
+        private bool soundOn;
 
-		public GameForm(JoinPost joinPost)
-		{
+        public GameForm(JoinPost joinPost)
+        {
             this.joinPost = joinPost;
-			serverConnection = new HttpAdapter("https://localhost:44331/api/game", joinPost.Id); // TODO: change url?
+            serverConnection = new HttpAdapter("https://localhost:44331/api/game", joinPost.Id); // TODO: change url?
             stateContext = new StateContext();
-			SetGame();
-			Thread.Sleep(1000);
-			InitializeComponent();
-			SetGameTimer();
+            soundOn = false;
+            SetGame();
+            Thread.Sleep(1000);
+            InitializeComponent();
+            SetGameTimer();
         }
 
-		private void Draw_ClickAsync(object sender, EventArgs e)
-		{
-			serverConnection.SendDrawCard();
-			SetGame();
-		}
+        private void Draw_ClickAsync(object sender, EventArgs e)
+        {
+            serverConnection.SendDrawCard();
+            SetGame();
+        }
 
-		private void GiveUp_Click(object sender, EventArgs e)
-		{
-			serverConnection.SendLeaveGame();
-			SetGame();
-		}
+        private void GiveUp_Click(object sender, EventArgs e)
+        {
+            serverConnection.SendLeaveGame();
+            SetGame();
+        }
 
-		private void UNO_Click(object sender, EventArgs e)
-		{
-			serverConnection.SendSayUNO();
-			soundAdaptor.turnOnSoundEffect();
+        private void UNO_Click(object sender, EventArgs e)
+        {
+            serverConnection.SendSayUNO();
+            soundAdaptor.turnOnSoundEffect();
 
-			SetGame();
-		}
+            SetGame();
+        }
 
-		private void Exit_Click(object sender, EventArgs e)
-		{
-			serverConnection.SendLeaveGame();
-		}
+        private void Exit_Click(object sender, EventArgs e)
+        {
+            serverConnection.SendLeaveGame();
+        }
 
-		const float HandCardWidth = 80f;
+        const float HandCardWidth = 80f;
 
-		private void HandPanel_Paint(object sender, PaintEventArgs e)
-		{
-			if (Game != null)
-			{
-				var widthPerCard = HandCardWidth / 2;
-				var handCount = Game.Gamestate.Hand.Count;
+        private void HandPanel_Paint(object sender, PaintEventArgs e)
+        {
+            if (Game != null)
+            {
+                var widthPerCard = HandCardWidth / 2;
+                var handCount = Game.Gamestate.Hand.Count;
 
-				var graphics = e.Graphics;
-				float movePosition = 0f;
-				xyImage = new float[handCount, 2];
+                var graphics = e.Graphics;
+                float movePosition = 0f;
+                xyImage = new float[handCount, 2];
 
-				float width = (float) handPanel.Width;
-				float height = (float) handPanel.Height;
-				float middlePoint = width / 4f;
+                float width = (float)handPanel.Width;
+                float height = (float)handPanel.Height;
+                float middlePoint = width / 4f;
 
-				if (handCount * widthPerCard > (width - middlePoint))
-				{
-					middlePoint = width - (handCount * widthPerCard);
+                if (handCount * widthPerCard > (width - middlePoint))
+                {
+                    middlePoint = width - (handCount * widthPerCard);
 
-					if (middlePoint < 0)
-					{
-						middlePoint = 0;
-						widthPerCard = width / handCount;
-					}
-				}
+                    if (middlePoint < 0)
+                    {
+                        middlePoint = 0;
+                        widthPerCard = width / handCount;
+                    }
+                }
 
-				for (int i = 0; i < handCount; i++)
-				{
-					var card = Game.Gamestate.Hand[i];
+                for (int i = 0; i < handCount; i++)
+                {
+                    var card = Game.Gamestate.Hand[i];
                     if (card != null)
                     {
-						var img = CardImageStore.GetImage(card);
+                        var img = CardImageStore.GetImage(card);
 
                         xyImage[i, 0] = middlePoint + movePosition;
                         xyImage[i, 1] = 15f; //Recommended cards
@@ -104,152 +106,151 @@ namespace UNO_Client.Forms
 
                         graphics.DrawImage(img, new RectangleF(xyImage[i, 0], xyImage[i, 1], HandCardWidth, dbHeight));
                     }
-				}
-			}
-		}
+                }
+            }
+        }
 
-		private void handPanel_MouseClick(object sender, MouseEventArgs e)
-		{
-			int bild = HitTestCard(e.Location);
-			if (bild != -1)
-			{
-				var card = Game.Gamestate.Hand[bild];
-				var color = card.Color;
+        private void handPanel_MouseClick(object sender, MouseEventArgs e)
+        {
+            int bild = HitTestCard(e.Location);
+            if (bild != -1)
+            {
+                var card = Game.Gamestate.Hand[bild];
+                var color = card.Color;
 
-				if (color == 0)
-				{
-					var chooser = new ColorChooserForm();
-					chooser.ShowDialog(this);
-					color = chooser.Color;
-				}
+                if (color == 0)
+                {
+                    var chooser = new ColorChooserForm();
+                    chooser.ShowDialog(this);
+                    color = chooser.Color;
+                }
 
-				putCard(card, color);
-			}
-		}
+                putCard(card, color);
+            }
+        }
 
-		private void handPanel_MouseMove(object sender, MouseEventArgs e)
-		{
-			//DO NOTHING
-		}
+        private void handPanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            //DO NOTHING
+        }
 
-		int HitTestCard(Point loc)
-		{
-			var x = loc.X;
-			var y = loc.Y;
+        int HitTestCard(Point loc)
+        {
+            var x = loc.X;
+            var y = loc.Y;
 
-			int bild = -1;
-			for (int i = 0; i < Game.Gamestate.Hand.Count; i++)
-			{
-				var img = CardImageStore.GetImage(Game.Gamestate.Hand[i]);
+            int bild = -1;
+            for (int i = 0; i < Game.Gamestate.Hand.Count; i++)
+            {
+                var img = CardImageStore.GetImage(Game.Gamestate.Hand[i]);
 
-				var dblFac = HandCardWidth / (float) img.Width;
-				var dblHeight = dblFac * img.Height;
+                var dblFac = HandCardWidth / (float)img.Width;
+                var dblHeight = dblFac * img.Height;
 
-				float test2 = xyImage[i, 0] + HandCardWidth;
+                float test2 = xyImage[i, 0] + HandCardWidth;
 
-				if (x >= xyImage[i, 0] && x <= xyImage[i, 0] + HandCardWidth && y >= xyImage[i, 1] && y <= xyImage[i, 1] + dblHeight)
-				{
-					bild = i;
-				}
+                if (x >= xyImage[i, 0] && x <= xyImage[i, 0] + HandCardWidth && y >= xyImage[i, 1] && y <= xyImage[i, 1] + dblHeight)
+                {
+                    bild = i;
+                }
 
-			}
-			return bild;
+            }
+            return bild;
 
-		}
+        }
 
-		public const double TAU = 2 * Math.PI;
-		Font playerFont = SystemFonts.CaptionFont;
-		Font activePlayerFont;
-		Bitmap blankCardImage = new Bitmap("..//..//CardImages//_blank.png");
+        public const double TAU = 2 * Math.PI;
+        Font playerFont = SystemFonts.CaptionFont;
+        Font activePlayerFont;
+        Bitmap blankCardImage = new Bitmap("..//..//CardImages//_blank.png");
 
-		private void MainPanel_Paint(object sender, PaintEventArgs e)
-		{
-			if (activePlayerFont == null)
-			{
-				activePlayerFont = new Font(playerFont, FontStyle.Bold);
-			}
+        private void MainPanel_Paint(object sender, PaintEventArgs e)
+        {
+            if (activePlayerFont == null)
+            {
+                activePlayerFont = new Font(playerFont, FontStyle.Bold);
+            }
 
-			var graphics = e.Graphics;
-			var width = (float) mainPanel.Width;
-			var height = (float) mainPanel.Height;
-			var middlePointX = width / 2f;
-			var middlePointY = height / 2f;
+            var graphics = e.Graphics;
+            var width = (float)mainPanel.Width;
+            var height = (float)mainPanel.Height;
+            var middlePointX = width / 2f;
+            var middlePointY = height / 2f;
 
-			//var img = Game.TopCard.GetImage();
+            //var img = Game.TopCard.GetImage();
 
-			float dbWidth = 80f;
-			float dbFac = dbWidth / (float) blankCardImage.Width;
-			var dbHeight = dbFac * blankCardImage.Height;
+            float dbWidth = 80f;
+            float dbFac = dbWidth / (float)blankCardImage.Width;
+            var dbHeight = dbFac * blankCardImage.Height;
 
-			RectangleF rect = new RectangleF(middlePointX - (dbWidth / 2), middlePointY - dbHeight - (dbHeight / 4), dbWidth, dbHeight);
-			RectangleF rectToDecorate = new RectangleF(middlePointX - (dbWidth / 2) - 5, middlePointY - dbHeight - (dbHeight / 4), dbWidth + 10, dbHeight);
-            RectangleF rectComposite = new RectangleF();
+            RectangleF rect = new RectangleF(middlePointX - (dbWidth / 2), middlePointY - dbHeight - (dbHeight / 4), dbWidth, dbHeight);
+            RectangleF rectToDecorate = new RectangleF(middlePointX - (dbWidth / 2) - 5, middlePointY - dbHeight - (dbHeight / 4), dbWidth + 10, dbHeight);
 
-            Star star = new Star(rectComposite, graphics);
-            GraphicComposite graphicComposite = new GraphicComposite();
-            graphicComposite.Add(star); //TODO: make shit work
+            Rect simpleRect = new DiagonalDecorator(new BorderDecorator(new BackgroundDecorator(new SimpleRect(rectToDecorate, graphics))));
+            simpleRect.Draw();
+            graphics.DrawImage(CardImageStore.GetImage(Game.Gamestate.ActiveCard), rect);
+            //Graphics = graphics;
+            if(stateContext.GetState() is WinningState)
+            {
+                PrintStars(graphics);
+            }
+        }
 
-			Rect simpleRect = new DiagonalDecorator(new BorderDecorator(new BackgroundDecorator(new SimpleRect(rectToDecorate, graphics))));
-			simpleRect.Draw();
-			graphics.DrawImage(CardImageStore.GetImage(Game.Gamestate.ActiveCard), rect);
+        private void putCard(Card card, int Color)
+        {
+            serverConnection.SendPlayCard(card, Color);
+            SetGame();
+        }
 
-		}
+        private async void SetGame()
+        {
+            var respondeString = await serverConnection.GetPlayerGameState();
 
-		private void putCard(Card card, int Color)
-		{
-			serverConnection.SendPlayCard(card, Color);
-			SetGame();
-		}
-
-		private async void SetGame()
-		{
-			var respondeString = await serverConnection.GetPlayerGameState();
-
-			//json serializer to Game object and set it globaly
-			Game = JsonConvert.DeserializeObject<Game>(respondeString);
-			ShowPlayersInformation();
-			Update();
-			mainPanel.Refresh();
-			handPanel.Refresh();
+            //json serializer to Game object and set it globaly
+            Game = JsonConvert.DeserializeObject<Game>(respondeString);
+            ShowPlayersInformation();
+            Update();
+            mainPanel.Refresh();
+            handPanel.Refresh();
             UpdatePlayerState();
             UpdateGameCounters();
             stateContext.WritePlayerStatusInGame(this);
         }
-		private void SetGameTimer()
-		{
-			// Create a timer with a two second interval.
-			GameTimer = new System.Windows.Forms.Timer();
-			GameTimer.Tick += new EventHandler(OnTimedGameEvent);
-			// Hook up the Elapsed event for the timer. 
-			GameTimer.Interval = 2000;
-			GameTimer.Start();
-		}
+        private void SetGameTimer()
+        {
+            // Create a timer with a two second interval.
+            GameTimer = new System.Windows.Forms.Timer();
+            GameTimer.Tick += new EventHandler(OnTimedGameEvent);
+            // Hook up the Elapsed event for the timer. 
+            GameTimer.Interval = 2000;
+            GameTimer.Start();
+        }
 
-		private void OnTimedGameEvent(Object myObject, EventArgs myEventArgs)
-		{
-			GameTimer.Stop();
-			//Fetch game data
-			SetGame();
-			GameTimer.Enabled = true;
-		}
+        private void OnTimedGameEvent(Object myObject, EventArgs myEventArgs)
+        {
+            GameTimer.Stop();
+            //Fetch game data
+            SetGame();
+            GameTimer.Enabled = true;
+        }
 
-		private string[] FormatPlayersInformation()
-		{
-			int count = Game.Gamestate.Players.Count;
-			string[] infomration = new string[count];
-			for (int i = 0; i < count; i++)
-			{
-				var player = Game.Gamestate.Players[i];
-				string line = player.Name + " " + player.CardCount;
-				infomration[i] = line;
-			}
-			return infomration;
-		}
-		private void ShowPlayersInformation()
-		{
-			var info = FormatPlayersInformation();
-			PlayersInfo.Lines = info;
-		}
+        private string[] FormatPlayersInformation()
+        {
+            int count = Game.Gamestate.Players.Count;
+            string[] infomration = new string[count];
+            for (int i = 0; i < count; i++)
+            {
+                var player = Game.Gamestate.Players[i];
+                string line = player.Name + " " + player.CardCount;
+                infomration[i] = line;
+            }
+            return infomration;
+        }
+        private void ShowPlayersInformation()
+        {
+            var info = FormatPlayersInformation();
+            PlayersInfo.Lines = info;
+        }
 
         private void UpdatePlayerState()
         {
@@ -259,6 +260,11 @@ namespace UNO_Client.Forms
             if (scoreboardIndex > -1 && scoreboardIndex != playerCount - 1)
             {
                 stateContext.setState(new WinningState());
+                if (!soundOn)
+                {
+                    soundAdaptor.turnOnSoundEffect();
+                    soundOn = true;
+                }
                 return;
             }
 
@@ -302,20 +308,48 @@ namespace UNO_Client.Forms
         {
             return Game.Gamestate.Index == Game.Gamestate.ActivePlayer;
         }
-        private WinnerInfo CheckIfWinner()
+
+        private void PrintStars(Graphics Graphics)
         {
-            int myIndex = Game.Gamestate.Index;
-            WinnerInfo[] winners = Game.Gamestate.Winners;
-            int count = Game.Gamestate.Players.Count;
-            for (int i = 0; i < count; i++)
-            {
-                if (winners[i].Index == myIndex)
-                {
-                    return winners[i];
-                }
-            }
-            return null;
+            //create stars
+            Star star1 = new Star(30, 30, Color.Red, Graphics);
+            Star star2 = new Star(370, 20, Color.Blue, Graphics);
+            Star star3 = new Star(350, 90, Color.Green, Graphics);
+            Star star4 = new Star(110, 35, Color.Pink, Graphics);
+            Star star5 = new Star(310, 70, Color.Yellow, Graphics);
+            Star star6 = new Star(175, 10, Color.Violet, Graphics);
+            Star star7 = new Star(350, 50, Color.LimeGreen, Graphics);
+            Star star8 = new Star(300, 250, Color.Orange, Graphics);
+            Star star9 = new Star(410, 80, Color.Lavender, Graphics);
+
+            //Create composite
+            GraphicComposite graphicCompositeMain = new GraphicComposite();
+            GraphicComposite graphicComposite1 = new GraphicComposite();
+            GraphicComposite graphicComposite2 = new GraphicComposite();
+            GraphicComposite graphicComposite3 = new GraphicComposite();
+
+            //Add stars to composite
+            graphicComposite1.Add(star1);
+            graphicComposite1.Add(star3);
+            graphicComposite1.Add(star5);
+
+            graphicComposite2.Add(star2);
+            graphicComposite2.Add(star4);
+            graphicComposite2.Add(star6);
+
+            graphicComposite3.Add(star7);
+            graphicComposite3.Add(star8);
+            graphicComposite3.Add(star9);
+
+            //Add composite to main
+            graphicCompositeMain.Add(graphicComposite1);
+            graphicCompositeMain.Add(graphicComposite2);
+            graphicCompositeMain.Add(graphicComposite3);
+
+            // Paint
+            graphicCompositeMain.Paint();
         }
+
         private void UpdateGameCounters()
         {
             int zeroCounter = Game.Gamestate.ZeroCounter;

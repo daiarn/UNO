@@ -2,7 +2,7 @@
 using System.Linq;
 using UNO_Server.Models.SendData;
 using UNO_Server.Utility.BuilderFacade;
-using UNO_Server.Utility.Strategy;
+using UNO_Server.Utility.Template;
 
 namespace UNO_Server.Models
 {
@@ -31,7 +31,7 @@ namespace UNO_Server.Models
         public CardsCounter cardsCounter;
 
 		private static Game instance = new Game();
-		private static readonly StrategyFactory cardActionFactory = new CardActionFactory();
+		private static readonly ActionFactory cardActionFactory = new ActionFactory();
 		private readonly Deck perfectDeck;
 		private readonly Deck semiPerfectDeck;
 		private Game()
@@ -275,11 +275,11 @@ namespace UNO_Server.Models
 				GivePlayerACard(player, FromDrawPile());
 			}//*/
 
-			ICardStrategy action = cardActionFactory.CreateAction(card.type);
-			if (action != null)
-				action.Action(); // action card is responsible whose turn is next
-			else
-				NextPlayerTurn();
+			BaseTemplate action = cardActionFactory.Create(card.type);
+			//if (action != null)
+				action.ProcessAction(this); // action card is responsible whose turn is next
+			//else
+			//	NextPlayerTurn();
 		}
 
 		public void PlayerSaysUNO()

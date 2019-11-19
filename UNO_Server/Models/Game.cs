@@ -384,8 +384,8 @@ namespace UNO_Server.Models
 			phase = GamePhase.Finished;
 
 			var stillPlaying = players.Where(p => p != null && p.isPlaying).Select(
-				p => new ScoreboardInfo(Array.IndexOf(players, p), p.hand, (Array.IndexOf(players, p) - activePlayerIndex) % numPlayers))
-			.OrderByDescending(p => p.score).ThenBy(p => p.turn);
+				p => new ScoreboardInfo(Array.IndexOf(players, p), p.hand, (Array.IndexOf(players, p) - activePlayerIndex + numPlayers) % numPlayers))
+			.OrderBy(p => p.score).ThenBy(p => p.turn);
 
 			int start;
 			for (start = 0; start < numPlayers; start++)

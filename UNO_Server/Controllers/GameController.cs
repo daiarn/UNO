@@ -369,7 +369,11 @@ namespace UNO_Server.Controllers
 
 					return new JsonResult(new { success = true });
 
-				default:
+                case 3:
+                    game.GameOver();
+                    return new JsonResult(new { success = true });
+
+                default:
 					return new JsonResult(new { success = false, message = "No such scenario" });
 			}
 

@@ -3,15 +3,17 @@ using UNO_Client.Models;
 
 namespace UNO_Client.Adapter
 {
-	interface IConnection
+	public interface IConnection
 	{
+		void SetIdentifier(string id);
 		Task<GameState> GetPlayerGameStateAsync();
 
-		//Task<HttpResponseMessage> SendJoinGame(); // different parameters?
+		Task<SimpleResponse> SendStartGame(bool finiteDeck, bool onlyNumbers, bool slowGame);
+		Task<JoinResponse> SendJoinGame(string name);
 		Task<SimpleResponse> SendLeaveGameAsync();
 
 		Task<SimpleResponse> SendDrawCardAsync();
-		Task<SimpleResponse> SendSayUNOAsync();
+		Task<SimpleResponse> SendSayUnoAsync();
 		Task<SimpleResponse> SendPlayCardAsync(Card card, int color);
 
 		void SendUndoDraw();

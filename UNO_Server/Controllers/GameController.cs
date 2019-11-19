@@ -99,6 +99,16 @@ namespace UNO_Server.Controllers
 		public ActionResult Leave(PlayerData data)
 		{
 			var game = Game.GetInstance();
+			var player = game.GetPlayerByUUID(data.id);
+			if (player == null)
+			{
+				return new JsonResult(new
+				{
+					success = false,
+					message = "You are not in the game"
+				});
+			}
+
 			if (game.phase != GamePhase.Playing)
 			{
 				game.DeletePlayer(data.id);
@@ -129,15 +139,15 @@ namespace UNO_Server.Controllers
 					message = "Game already started"
 				});
 			} // TODO: enable this for live gameplay
-			/*
-			else if (game.GetActivePlayerCount() < 2)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "Game needs at least 2 players"
-				});
-			}//*/
+			  /*
+			  else if (game.GetActivePlayerCount() < 2)
+			  {
+				  return new JsonResult(new
+				  {
+					  success = false,
+					  message = "Game needs at least 2 players"
+				  });
+			  }//*/
 
 			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
@@ -368,11 +378,11 @@ namespace UNO_Server.Controllers
 
 					return new JsonResult(new { success = true });
 
-                case 3:
-                    game.GameOver();
-                    return new JsonResult(new { success = true });
+				case 3:
+					game.GameOver();
+					return new JsonResult(new { success = true });
 
-                default:
+				default:
 					return new JsonResult(new { success = false, message = "No such scenario" });
 			}
 

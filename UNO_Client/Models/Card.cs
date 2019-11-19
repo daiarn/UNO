@@ -1,6 +1,6 @@
 ﻿namespace UNO_Client.Models
 {
-	class Card
+	public class Card
 	{
 		int color;
 		int type;

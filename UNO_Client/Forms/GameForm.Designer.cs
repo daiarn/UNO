@@ -134,7 +134,7 @@
             this.button2.TabIndex = 9;
             this.button2.Text = "Undo Draw";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.Button2_ClickAsync);
+            this.button2.Click += new System.EventHandler(this.UndoDraw_Click);
             // 
             // button3
             // 
@@ -144,7 +144,7 @@
             this.button3.TabIndex = 10;
             this.button3.Text = "Undo UNO";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.Button3_ClickAsync);
+            this.button3.Click += new System.EventHandler(this.UndoUno_Click);
             // 
             // CounterInformation
             // 
@@ -176,7 +176,6 @@
             this.PlayerTurn.TabIndex = 13;
             this.PlayerTurn.Text = "PlayerTurn";
             this.PlayerTurn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.PlayerTurn.Click += new System.EventHandler(this.PlayerTurn_Click);
             // 
             // GameForm
             // 
@@ -199,7 +198,7 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "GameForm";
             this.Text = "GameForm";
-            this.Load += new System.EventHandler(this.GameForm_Load);
+            //this.Load += new System.EventHandler(this.GameForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

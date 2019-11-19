@@ -34,9 +34,21 @@ namespace UNO_Server.Models
 			this.color = other.color;
 			this.type = other.type;
 		}
+		/*
+		public static bool operator ==(Card left, Card right)
+		{
+			if (left == null) return false;
+			return left.Equals(right);
+		}
+		public static bool operator !=(Card left, Card right)
+		{
+			if (left == null) return false;
+			return !left.Equals(right);
+		}//*/
 
 		public bool Equals(Card other)
 		{
+			//if (other == null) return false;
 			if (type == CardType.Wild && other.type == CardType.Wild) return true;
 			if (type == CardType.Draw4 && other.type == CardType.Draw4) return true;
 			return color == other.color && type == other.type;

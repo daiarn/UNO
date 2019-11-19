@@ -12,11 +12,26 @@ namespace UNO_Client.Adapter
 		private readonly string BASE_URL;
 		public string playerId;
 
-		public HttpAdapter(string base_url, string id)
+		public HttpAdapter(string base_url)
 		{
-			this.BASE_URL = base_url;
-			this.playerId = id;
+			BASE_URL = base_url;
 		}
+		public void SetIdentifier(string id)
+		{
+			playerId = id;
+		}
+
+		private string OnlyPlayerId() => "{\"id\":\"" + playerId + "\"}";
+
+		private async Task<T> PostJsonAsync<T>(string jsonString, string endpoint) // TODO: change from string to object
+		{
+			var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+			var request = await client.PostAsync(BASE_URL + endpoint, content);
+			var response = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
+			return response;
+		}
+
+		// Universal
 
 		public async Task<GameState> GetPlayerGameStateAsync()
 		{
@@ -25,41 +40,39 @@ namespace UNO_Client.Adapter
 			return game.Gamestate;
 		}
 
-		private Task<HttpResponseMessage> SimplePostAsync(string playerId, string path)
+		// Non-gameplay
+
+		public async Task<JoinResponse> SendJoinGame(string name)
 		{
-			string JsonString = "{\"id\":\"" + playerId + "\"}";
-			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-			return client.PostAsync(BASE_URL + path, content);
+			return await PostJsonAsync<JoinResponse>("{\"name\":\"" + name + "\"}", "/join");
 		}
 
-		public async Task<SimpleResponse> SendLeaveGameAsync()
+		public async Task<SimpleResponse> SendStartGame(bool finiteDeck, bool onlyNumbers, bool slowGame)
 		{
-			var request = await SimplePostAsync(playerId, "/leave");
-			var response = JsonConvert.DeserializeObject<SimpleResponse>(await request.Content.ReadAsStringAsync());
-			return response;
+			return await PostJsonAsync<SimpleResponse>("{\"id\":\"" + playerId + "\",\"finiteDeck\":\"" + finiteDeck + "\",\"onlyNumbers\":\"" + onlyNumbers + "\",\"slowGame\":\"" + slowGame + "\"}", "/start");
 		}
 
-		public async Task<SimpleResponse> SendDrawCardAsync()
+		// Gameplay
+
+		public Task<SimpleResponse> SendLeaveGameAsync()
 		{
-			var request = await SimplePostAsync(playerId, "/draw");
-			var response = JsonConvert.DeserializeObject<SimpleResponse>(await request.Content.ReadAsStringAsync());
-			return response;
+			return PostJsonAsync<SimpleResponse>(OnlyPlayerId(), "/leave");
 		}
 
-		public async Task<SimpleResponse> SendSayUNOAsync()
+		public Task<SimpleResponse> SendDrawCardAsync()
 		{
-			var request = await SimplePostAsync(playerId, "/uno");
-			var response = JsonConvert.DeserializeObject<SimpleResponse>(await request.Content.ReadAsStringAsync());
-			return response;
+			return PostJsonAsync<SimpleResponse>(OnlyPlayerId(), "/draw");
+		}
+
+		public Task<SimpleResponse> SendSayUnoAsync()
+		{
+			return PostJsonAsync<SimpleResponse>(OnlyPlayerId(), "/uno");
 		}
 
 		public async Task<SimpleResponse> SendPlayCardAsync(Card card, int color)
 		{
-			string JsonString = "{\"id\":\"" + playerId + "\", \"color\":" + color + ",\"type\":" + card.Type + "}";
-			var content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-			var request = await client.PostAsync(BASE_URL + "/play", content);
-			var response = JsonConvert.DeserializeObject<SimpleResponse>(await request.Content.ReadAsStringAsync());
-			return response;
+			string jsonString = "{\"id\":\"" + playerId + "\", \"color\":" + color + ",\"type\":" + card.Type + "}";
+			return await PostJsonAsync<SimpleResponse>(jsonString, "/play");
 		}
 
 		public void SendUndoDraw()

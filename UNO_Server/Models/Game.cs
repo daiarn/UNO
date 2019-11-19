@@ -392,11 +392,11 @@ namespace UNO_Server.Models
 			foreach (var item in stillPlaying)
 				scoreboard[start++] = item;
 
-			Task.Run(async () =>
-			{
-				await Task.Delay(10000);
-				ResetGame();
-			});
+			//Task.Run(async () =>
+			//{
+			//	await Task.Delay(10000);
+			//	ResetGame();
+			//});
 		}
 	}
 }

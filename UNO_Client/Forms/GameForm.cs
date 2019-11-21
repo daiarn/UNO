@@ -8,6 +8,7 @@ using UNO_Client.State;
 using System.Linq;
 using UNO_Client.Flyweight;
 using System.Threading.Tasks;
+using UNO_Client.Composite;
 
 namespace UNO_Client.Forms
 {
@@ -19,6 +20,7 @@ namespace UNO_Client.Forms
 		private static readonly SoundAdapter SoundAdaptor = new SoundAdapter();
 		private readonly IConnection ServerConnection;
 		private readonly StateContext StateContext = new StateContext();
+		private bool soundOn = false;
 		private GameState Gamestate;
 
 		public GameForm(IConnection connection)
@@ -84,8 +86,8 @@ namespace UNO_Client.Forms
 				float movePosition = 0f;
 				xyImage = new float[handCount, 2];
 
-				float width = (float) handPanel.Width;
-				float height = (float) handPanel.Height;
+				float width = (float)handPanel.Width;
+				float height = (float)handPanel.Height;
 				float middlePoint = width / 4f;
 
 				if (handCount * widthPerCard > (width - middlePoint))
@@ -110,7 +112,7 @@ namespace UNO_Client.Forms
 						xyImage[i, 1] = 15f; // Recommended cards
 						movePosition += widthPerCard;
 
-						var dbWidth = HandCardWidth / (float) img.Width;
+						var dbWidth = HandCardWidth / (float)img.Width;
 						var dbHeight = dbWidth * img.Height;
 
 						graphics.DrawImage(img, new RectangleF(xyImage[i, 0], xyImage[i, 1], HandCardWidth, dbHeight));
@@ -149,7 +151,7 @@ namespace UNO_Client.Forms
 			{
 				var img = CardImageStore.GetImage(Gamestate.Hand[i]);
 
-				var dblFac = HandCardWidth / (float) img.Width;
+				var dblFac = HandCardWidth / (float)img.Width;
 				var dblHeight = dblFac * img.Height;
 
 				if (x >= xyImage[i, 0] && x <= xyImage[i, 0] + HandCardWidth && y >= xyImage[i, 1] && y <= xyImage[i, 1] + dblHeight)
@@ -175,13 +177,13 @@ namespace UNO_Client.Forms
 			}
 
 			var graphics = e.Graphics;
-			var width = (float) mainPanel.Width;
-			var height = (float) mainPanel.Height;
+			var width = (float)mainPanel.Width;
+			var height = (float)mainPanel.Height;
 			var middlePointX = width / 2f;
 			var middlePointY = height / 2f;
 
 			float dbWidth = 80f;
-			float dbFac = dbWidth / (float) blankCardImage.Width;
+			float dbFac = dbWidth / (float)blankCardImage.Width;
 			var dbHeight = dbFac * blankCardImage.Height;
 
 			RectangleF rect = new RectangleF(middlePointX - (dbWidth / 2), middlePointY - dbHeight - (dbHeight / 4), dbWidth, dbHeight);
@@ -190,7 +192,7 @@ namespace UNO_Client.Forms
 			simpleRect.Draw();
 			graphics.DrawImage(CardImageStore.GetImage(Gamestate.ActiveCard), rect);
 
-			if(stateContext.GetState() is WinningState)
+			if (StateContext.GetState() is WinningState)
 			{
 				PrintStars(graphics);
 			}
@@ -236,7 +238,7 @@ namespace UNO_Client.Forms
 				StateContext.setState(new WinningState());
 				if (!soundOn)
 				{
-					soundAdaptor.turnOnSoundEffect();
+					SoundAdaptor.turnOnSoundEffect();
 					soundOn = true;
 				}
 				return;
@@ -282,7 +284,7 @@ namespace UNO_Client.Forms
 		{
 			return Gamestate.Index == Gamestate.ActivePlayer;
 		}
-		
+
 		private void PrintStars(Graphics Graphics)
 		{
 			// Create stars

@@ -84,19 +84,6 @@ namespace UNO_Server.Models
 			return players[index].id;
 		}
 
-		public void DeletePlayer(Guid id)
-		{
-			var index = -1;
-			for (int i = 0; i < numPlayers; i++)
-				if (players[i].id == id) index = i;
-			if (index < 0 || index > numPlayers) return;
-
-			var last = players[numPlayers - 1];
-			players[index] = last;
-			players[numPlayers - 1] = null;
-			numPlayers--;
-		}
-
 		public void EliminatePlayer(Guid id)
 		{
 			var index = -1;
@@ -104,19 +91,23 @@ namespace UNO_Server.Models
 				if (players[i].id == id) index = i;
 			if (index < 0 || index > numPlayers) return;
 
-			PlayerLoses(index);
-
-			if (!slowGame)
+			if (phase != GamePhase.Playing)
 			{
-				GameOver();
-				return;
+				var last = players[numPlayers - 1];
+				players[index] = last;
+				players[numPlayers - 1] = null;
+				numPlayers--;
 			}
+			else
+			{
+				PlayerLoses(index);
 
-			if (index == activePlayerIndex)
-				NextPlayerTurn();
+				if (index == activePlayerIndex)
+					NextPlayerTurn();
 
-			if (GetActivePlayerCount() < 2)
-				GameOver();
+				if (GetActivePlayerCount() < 2)
+					GameOver();
+			}
 		}
 
 		public void PlayerWins(int index)

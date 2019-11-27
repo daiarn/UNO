@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using UNO_Server.ChainOfResponsibility;
 using UNO_Server.Models;
 using UNO_Server.Models.RecvData;
 using UNO_Server.Models.SendData;
@@ -19,20 +20,19 @@ namespace UNO_Server.Controllers
 		public ActionResult<BaseResult> Get()
 		{
 			var game = Game.GetInstance();
-
 			return new GamestateResult(new GameSpectatorState(game));
 		}
 
 		[HttpGet("{id}")]
 		public ActionResult<BaseResult> Get(Guid id)
 		{
+			var chain = new CheckIfPlayerExists(id)
+				.Then(new ConcludeAndExecute(
+					g => new GamestateResult(new GamePlayerState(g, id))
+				));
+
 			var game = Game.GetInstance();
-			var player = game.GetPlayerByUUID(id);
-
-			if (player == null)
-				return new FailResult("You are not in the game");
-
-			return new GamestateResult(new GamePlayerState(game, player));
+			return chain.ProcessChain(game);
 		}
 
 		#endregion
@@ -44,50 +44,40 @@ namespace UNO_Server.Controllers
 		[HttpPost("join")]
 		public ActionResult<BaseResult> Join(JoinData data)
 		{
-			var game = Game.GetInstance();
-			if (game.phase != GamePhase.WaitingForPlayers)
-				return new FailResult("Game already started");
-			else if (game.GetActivePlayerCount() >= 10)
-				return new FailResult("Game player capacity exceeded");
+			var chain = new CheckGamePhase(GamePhase.WaitingForPlayers)
+				.Then(new CheckCustomPredicate(g => g.GetActivePlayerCount() < 10, "Game player capacity exceeded"))
+				.Then(new ConcludeAndExecute(
+					g => new JoinResult(g.AddPlayer(data.name))
+				));
 
-			return new JoinResult(game.AddPlayer(data.name));
+			var game = Game.GetInstance();
+			return chain.ProcessChain(game);
 		}
 
 		[HttpPost("leave")]
 		public ActionResult<BaseResult> Leave(PlayerData data)
 		{
+			var chain = new CheckIfPlayerExists(data.id)
+				.Then(new ConcludeAndExecute(
+					g => { g.EliminatePlayer(data.id); return new BaseResult(); }
+				));
+
 			var game = Game.GetInstance();
-			var player = game.GetPlayerByUUID(data.id);
-
-			if (player == null)
-				return new FailResult("You are not in the game");
-
-			if (game.phase != GamePhase.Playing)
-				game.DeletePlayer(data.id);
-			else
-				game.EliminatePlayer(data.id);
-
-			return new BaseResult();
+			return chain.ProcessChain(game);
 		}
 
 		[HttpPost("start")]
 		public ActionResult<BaseResult> Start(StartData data)
 		{
+			var chain = new CheckGamePhase(GamePhase.WaitingForPlayers)
+				//.Then(new CheckCustomPredicate(g => g.GetActivePlayerCount() >= 2, "Game needs at least 2 players")) // TODO: enable this for live gameplay
+				.Then(new CheckIfPlayerExists(data.id))
+				.Then(new ConcludeAndExecute(
+					g => { g.StartGame(data.finiteDeck, data.onlyNumbers, data.slowGame); return new BaseResult(); }
+				));
+
 			var game = Game.GetInstance();
-			var player = game.GetPlayerByUUID(data.id);
-
-			if (game.phase != GamePhase.WaitingForPlayers)
-				return new FailResult("Game already started");
-			//else if (game.GetActivePlayerCount() < 2)// TODO: enable this for live gameplay
-			  //return new FailResult("Game needs at least 2 players");
-
-			if (player == null)
-				return new FailResult("You are not in the game");
-
-			// that's probably enough checks
-
-			game.StartGame(data.finiteDeck, data.onlyNumbers, data.slowGame);
-			return new BaseResult();
+			return chain.ProcessChain(game);
 		}
 
 		#endregion
@@ -97,70 +87,50 @@ namespace UNO_Server.Controllers
 		[HttpPost("play")]
 		public ActionResult<BaseResult> Play(PlayData data)
 		{
-			var game = Game.GetInstance();
-			var player = game.GetPlayerByUUID(data.id);
 			var card = new Card(data.color, data.type);
+			var chain = new CheckGamePhase(GamePhase.Playing)
+				.Then(new CheckIfPlayerExists(data.id))
+				.Then(new CheckIfPlayerTurn(data.id))
+				.Then(new CheckCustomPredicate(g => g.GetPlayerByUUID(data.id).hand.Contains(card), "You don't have that card"))
+				.Then(new CheckCustomPredicate(g => g.CanCardBePlayed(card), "You can't play that card"))
+				.Then(new CheckCustomPredicate(
+					g => (card.type == CardType.Wild || card.type == CardType.Draw4) && card.color == CardColor.Black, "You have to choose a color"))
+				.Then(new ConcludeAndExecute(
+					g => { g.PlayerPlaysCard(card); return new BaseResult(); }
+				));
 
-			if (game.phase != GamePhase.Playing)
-				return new FailResult("Game isn't started");
-
-			if (player == null)
-				return new FailResult("You are not in the game");
-			else if (game.players[game.activePlayerIndex].id != data.id)
-				return new FailResult("Not your turn");
-
-			if (!player.hand.Contains(card))
-				return new FailResult("You don't have that card");
-			else if (!game.CanCardBePlayed(card))
-				return new FailResult("Card cannot be placed on active card");
-
-			if ((card.type == CardType.Wild || card.type == CardType.Draw4) && card.color == CardColor.Black)
-				return new FailResult("You have to choose a color");
-
-			// TODO: check if player has to say uno
-
-			game.PlayerPlaysCard(card);
-			return new BaseResult();
+			var game = Game.GetInstance();
+			return chain.ProcessChain(game);
 		}
 
 		[HttpPost("draw")]
 		public ActionResult<BaseResult> Draw(PlayerData data)
 		{
+			var chain = new CheckGamePhase(GamePhase.Playing)
+				.Then(new CheckIfPlayerExists(data.id))
+				.Then(new CheckIfPlayerTurn(data.id))
+				.Then(new CheckCustomPredicate(g => g.CanPlayerPlayAnyOn(g.GetPlayerByUUID(data.id)), "You can't draw a card right now"))
+				.Then(new ConcludeAndExecute(
+					g => { g.PlayerDrawsCard(); return new BaseResult(); }
+				));
+
 			var game = Game.GetInstance();
-			if (game.phase != GamePhase.Playing)
-				return new FailResult("Game isn't started");
-
-			var player = game.GetPlayerByUUID(data.id);
-			if (player == null)
-				return new FailResult("You are not in the game");
-			else if (game.players[game.activePlayerIndex] != player)
-				return new FailResult("Not your turn");
-			else if (game.CanPlayerPlayAnyOn(player))
-				return new FailResult("You can't draw a card right now");
-
-			game.PlayerDrawsCard();
-			//drawCard.Execute();
-
-			return new BaseResult();
+			return chain.ProcessChain(game);
 		}
 
 		[HttpPost("uno")]
 		public ActionResult<BaseResult> Uno(PlayerData data)
 		{
+			var chain = new CheckGamePhase(GamePhase.Playing)
+				.Then(new CheckIfPlayerExists(data.id))
+				.Then(new CheckIfPlayerTurn(data.id))
+				// TODO: add a few more here?
+				.Then(new ConcludeAndExecute(
+					g => { g.PlayerSaysUNO(); return new BaseResult(); }
+				));
+
 			var game = Game.GetInstance();
-			var player = game.GetPlayerByUUID(data.id);
-
-			/*
-			if (game.phase != GamePhase.Playing)
-				return new FailResult("Game isn't started");
-
-			if (player == null)
-				return new FailResult("You are not in the game");
-			//*/
-
-			game.PlayerSaysUNO();
-			//uno.Execute();
-			return new BaseResult();
+			return chain.ProcessChain(game);
 		}
 
 		#endregion

@@ -12,6 +12,7 @@ namespace UNO_Server.ChainOfResponsibility
 		{
 			this.action = action;
 		}
+
 		public override BaseResult ProcessChain(Game game)
 		{
 			return action.Invoke(game);

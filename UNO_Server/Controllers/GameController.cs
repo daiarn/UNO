@@ -13,9 +13,6 @@ namespace UNO_Server.Controllers
 	[ApiController]
 	public class GameController : ControllerBase
 	{
-		DrawCard drawCard = new DrawCard();
-		Uno uno = new Uno();
-
 		#region UNIVERSAL
 
 		[HttpGet]
@@ -61,6 +58,7 @@ namespace UNO_Server.Controllers
 		{
 			var game = Game.GetInstance();
 			var player = game.GetPlayerByUUID(data.id);
+
 			if (player == null)
 				return new FailResult("You are not in the game");
 
@@ -76,12 +74,13 @@ namespace UNO_Server.Controllers
 		public ActionResult<BaseResult> Start(StartData data)
 		{
 			var game = Game.GetInstance();
+			var player = game.GetPlayerByUUID(data.id);
+
 			if (game.phase != GamePhase.WaitingForPlayers)
 				return new FailResult("Game already started");
 			//else if (game.GetActivePlayerCount() < 2)// TODO: enable this for live gameplay
 			  //return new FailResult("Game needs at least 2 players");
 
-			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
 				return new FailResult("You are not in the game");
 
@@ -99,16 +98,17 @@ namespace UNO_Server.Controllers
 		public ActionResult<BaseResult> Play(PlayData data)
 		{
 			var game = Game.GetInstance();
+			var player = game.GetPlayerByUUID(data.id);
+			var card = new Card(data.color, data.type);
+
 			if (game.phase != GamePhase.Playing)
 				return new FailResult("Game isn't started");
 
-			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
 				return new FailResult("You are not in the game");
 			else if (game.players[game.activePlayerIndex].id != data.id)
 				return new FailResult("Not your turn");
 
-			var card = new Card(data.color, data.type);
 			if (!player.hand.Contains(card))
 				return new FailResult("You don't have that card");
 			else if (!game.CanCardBePlayed(card))
@@ -145,14 +145,15 @@ namespace UNO_Server.Controllers
 		}
 
 		[HttpPost("uno")]
-		public ActionResult<BaseResult> Uno(PlayerData data) // 
+		public ActionResult<BaseResult> Uno(PlayerData data)
 		{
 			var game = Game.GetInstance();
+			var player = game.GetPlayerByUUID(data.id);
+
 			/*
 			if (game.phase != GamePhase.Playing)
 				return new FailResult("Game isn't started");
 
-			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
 				return new FailResult("You are not in the game");
 			//*/
@@ -177,7 +178,7 @@ namespace UNO_Server.Controllers
 
 				case 1: // Scenario 1: Generic two player game with few but diverse cards
 					if (game.GetActivePlayerCount() != 2)
-						return new FailResult("Exactly 2 players must be present");
+						return new FailResult("Exactly 2 players must be active");
 
 					game.phase = GamePhase.Playing;
 					game.finiteDeck = false;
@@ -217,7 +218,7 @@ namespace UNO_Server.Controllers
 
 					return new BaseResult();
 
-				case 3:
+				case 9:
 					game.GameOver();
 					return new BaseResult();
 
@@ -227,6 +228,9 @@ namespace UNO_Server.Controllers
 
 		}
 		#endregion
+
+		DrawCard drawCard = new DrawCard();
+		Uno uno = new Uno();
 
 		[HttpPost("draw/undo")]
 		public ActionResult<BaseResult> UndoDraw()

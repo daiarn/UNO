@@ -4,20 +4,19 @@ using UNO_Server.Models.SendResult;
 
 namespace UNO_Server.ChainOfResponsibility
 {
-	public class CheckIfPlayerExists : ConditionChain
+	public class CheckIfPlayerTurn : ConditionChain
 	{
-		private Guid id;
+		private readonly Guid id;
 
-		public CheckIfPlayerExists(Guid id)
+		public CheckIfPlayerTurn(Guid id)
 		{
 			this.id = id;
 		}
 
 		public override BaseResult ProcessChain(Game game)
 		{
-			var player = game.GetPlayerByUUID(id);
-			if (player == null)
-				return new FailResult("You are not in the game");
+			if (game.players[game.activePlayerIndex].id != id)
+				return new FailResult("Not your turn");
 
 			return next.ProcessChain(game);
 		}

@@ -33,9 +33,7 @@ namespace UNO_Server.Controllers
 			var player = game.GetPlayerByUUID(id);
 
 			if (player == null)
-			{
 				return new FailResult("You are not in the game");
-			}
 
 			return new GamestateResult(new GamePlayerState(game, player));
 		}
@@ -75,37 +73,22 @@ namespace UNO_Server.Controllers
 		}
 
 		[HttpPost("start")]
-		public ActionResult Start(StartData data)
+		public ActionResult<BaseResult> Start(StartData data)
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.WaitingForPlayers)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "Game already started"
-				});
-			} // TODO: enable this for live gameplay
-			  /*
-			  else if (game.GetActivePlayerCount() < 2)
-			  {
-				  return new JsonResult(new
-				  {
-					  success = false,
-					  message = "Game needs at least 2 players"
-				  });
-			  }//*/
+				return new FailResult("Game already started");
+			//else if (game.GetActivePlayerCount() < 2)// TODO: enable this for live gameplay
+			  //return new FailResult("Game needs at least 2 players");
 
 			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
-			{
-				return new JsonResult(new FailResult("You are not in the game"));
-			}
+				return new FailResult("You are not in the game");
 
 			// that's probably enough checks
 
 			game.StartGame(data.finiteDeck, data.onlyNumbers, data.slowGame);
-			return new JsonResult(new { success = true });
+			return new BaseResult();
 		}
 
 		#endregion
@@ -113,149 +96,88 @@ namespace UNO_Server.Controllers
 		#region GAMEPLAY
 
 		[HttpPost("play")]
-		public ActionResult Play(PlayData data)
+		public ActionResult<BaseResult> Play(PlayData data)
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.Playing)
-			{
-				return new JsonResult(new FailResult("Game isn't started"));
-			}
+				return new FailResult("Game isn't started");
 
 			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
-			{
-				return new JsonResult(new FailResult("You are not in the game"));
-			}
+				return new FailResult("You are not in the game");
 			else if (game.players[game.activePlayerIndex].id != data.id)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "Not your turn"
-				});
-			}
+				return new FailResult("Not your turn");
 
 			var card = new Card(data.color, data.type);
 			if (!player.hand.Contains(card))
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You don't have that card"
-				});
-			}
+				return new FailResult("You don't have that card");
 			else if (!game.CanCardBePlayed(card))
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "Card cannot be placed on active card"
-				});
-			}
+				return new FailResult("Card cannot be placed on active card");
 
 			if ((card.type == CardType.Wild || card.type == CardType.Draw4) && card.color == CardColor.Black)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You have to choose a color"
-				});
-			}
+				return new FailResult("You have to choose a color");
 
 			// TODO: check if player has to say uno
 
 			game.PlayerPlaysCard(card);
-			return new JsonResult(new { success = true });
+			return new BaseResult();
 		}
 
 		[HttpPost("draw")]
-		public ActionResult Draw(PlayerData data)
+		public ActionResult<BaseResult> Draw(PlayerData data)
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.Playing)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "Game isn't started"
-				});
-			}
+				return new FailResult("Game isn't started");
 
 			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You are not in the game"
-				});
-			}
+				return new FailResult("You are not in the game");
 			else if (game.players[game.activePlayerIndex] != player)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "Not your turn"
-				});
-			}
+				return new FailResult("Not your turn");
 			else if (game.CanPlayerPlayAnyOn(player))
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You can't draw a card right now"
-				});
-			}
+				return new FailResult("You can't draw a card right now");
 
-			drawCard.Execute();
-			return new JsonResult(new { success = true });
+			game.PlayerDrawsCard();
+			//drawCard.Execute();
+
+			return new BaseResult();
 		}
 
 		[HttpPost("uno")]
-		public ActionResult Uno(PlayerData data) // 
+		public ActionResult<BaseResult> Uno(PlayerData data) // 
 		{
 			var game = Game.GetInstance();
 			/*
 			if (game.phase != GamePhase.Playing)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "Game isn't started"
-				});
-			}
+				return new FailResult("Game isn't started");
 
 			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You are not in the game"
-				});
-			}
+				return new FailResult("You are not in the game");
 			//*/
 
-			uno.Execute();
-			return new JsonResult(new { success = true });
+			game.PlayerSaysUNO();
+			//uno.Execute();
+			return new BaseResult();
 		}
 
 		#endregion
 
 		#region TESTING
 		[HttpPost("scenario/{scenario}")]
-		public ActionResult Scenario(int scenario)
+		public ActionResult<BaseResult> Scenario(int scenario)
 		{
 			var game = Game.GetInstance();
 			switch (scenario)
 			{
 				case 0:
 					Game.ResetGame();
-					return new JsonResult(new { success = true });
+					return new BaseResult();
 
 				case 1: // Scenario 1: Generic two player game with few but diverse cards
 					if (game.GetActivePlayerCount() != 2)
-						return new JsonResult(new { success = false, message = "Exactly 2 players must be present" });
+						return new FailResult("Exactly 2 players must be present");
 
 					game.phase = GamePhase.Playing;
 					game.finiteDeck = false;
@@ -293,38 +215,31 @@ namespace UNO_Server.Controllers
 					game.players[0].hand = p1Hand;
 					game.players[1].hand = p2Hand;
 
-					return new JsonResult(new { success = true });
+					return new BaseResult();
 
 				case 3:
 					game.GameOver();
-					return new JsonResult(new { success = true });
+					return new BaseResult();
 
 				default:
-					return new JsonResult(new { success = false, message = "No such scenario" });
+					return new FailResult("No such scenario");
 			}
 
 		}
 		#endregion
 
-		#region QUESTIONABLE
-
-		// POST api/game/draw/undo
 		[HttpPost("draw/undo")]
-		public ActionResult UndoDraw()
+		public ActionResult<BaseResult> UndoDraw()
 		{
 			drawCard.Undo();
-			return new JsonResult(new { success = true });
+			return new BaseResult();
 		}
 
-		// POST api/game/uno/undo
 		[HttpPost("uno/undo")]
-		public ActionResult UndoUno()
+		public ActionResult<BaseResult> UndoUno()
 		{
 			uno.Undo();
-			return new JsonResult(new { success = true });
+			return new BaseResult();
 		}
-
-		#endregion
-
 	}
 }

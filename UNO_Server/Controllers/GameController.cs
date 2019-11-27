@@ -94,7 +94,7 @@ namespace UNO_Server.Controllers
 				.Then(new CheckCustomPredicate(g => g.GetPlayerByUUID(data.id).hand.Contains(card), "You don't have that card"))
 				.Then(new CheckCustomPredicate(g => g.CanCardBePlayed(card), "You can't play that card"))
 				.Then(new CheckCustomPredicate(
-					g => (card.type == CardType.Wild || card.type == CardType.Draw4) && card.color == CardColor.Black, "You have to choose a color"))
+					g => !((card.type == CardType.Wild || card.type == CardType.Draw4) && card.color == CardColor.Black), "You have to choose a color"))
 				.Then(new ConcludeAndExecute(
 					g => { g.PlayerPlaysCard(card); return new BaseResult(); }
 				));
@@ -109,7 +109,7 @@ namespace UNO_Server.Controllers
 			var chain = new CheckGamePhase(GamePhase.Playing)
 				.Then(new CheckIfPlayerExists(data.id))
 				.Then(new CheckIfPlayerTurn(data.id))
-				.Then(new CheckCustomPredicate(g => g.CanPlayerPlayAnyOn(g.GetPlayerByUUID(data.id)), "You can't draw a card right now"))
+				.Then(new CheckCustomPredicate(g => !g.CanPlayerPlayAnyOn(g.GetPlayerByUUID(data.id)), "You can't draw a card right now"))
 				.Then(new ConcludeAndExecute(
 					g => { g.PlayerDrawsCard(); return new BaseResult(); }
 				));

@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
 using UNO_Server.Models.RecvData;
+using UNO_Server.Models.SendResult;
 
 namespace UNO_Tests
 {
@@ -18,15 +18,12 @@ namespace UNO_Tests
 			var control = new GameController();
 
 			// ACT
-			var response = control.Play(new PlayData { id = new Guid(), color = CardColor.Red, type = CardType.Zero }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = new Guid(), color = CardColor.Red, type = CardType.Zero }).Value as FailResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
+			Assert.IsNotNull(result);
+			Console.WriteLine(result.Message);
+			Assert.IsFalse(result.Success);
 		}
 
 		[Test]
@@ -40,15 +37,12 @@ namespace UNO_Tests
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 
 			// ACT
-			var response = control.Play(new PlayData { id = new Guid(), color = CardColor.Red, type = CardType.Zero }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = new Guid(), color = CardColor.Red, type = CardType.Zero }).Value as FailResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
+			Assert.IsNotNull(result);
+			Console.WriteLine(result.Message);
+			Assert.IsFalse(result.Success);
 		}
 
 		[Test]
@@ -66,15 +60,12 @@ namespace UNO_Tests
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.Zero));
 
 			// ACT
-			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Zero }).Value as FailResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
+			Assert.IsNotNull(result);
+			Console.WriteLine(result.Message);
+			Assert.IsFalse(result.Success);
 		}
 
 		[Test]
@@ -92,15 +83,12 @@ namespace UNO_Tests
 			game.discardPile.AddToBottom(new Card(CardColor.Yellow, CardType.One));
 
 			// ACT
-			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Zero }).Value as FailResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
+			Assert.IsNotNull(result);
+			Console.WriteLine(result.Message);
+			Assert.IsFalse(result.Success);
 		}
 
 		[Test]
@@ -120,15 +108,12 @@ namespace UNO_Tests
 			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Zero));
 
 			// ACT
-			var response = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Zero }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = id, color = CardColor.Red, type = CardType.Zero }).Value as FailResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
+			Assert.IsNotNull(result);
+			Console.WriteLine(result.Success);
+			Assert.IsFalse(result.Success);
 		}
 
 		[Test]
@@ -153,14 +138,11 @@ namespace UNO_Tests
 			game.players[0].hand.Add(new Card(theCard));
 
 			// ACT
-			var response = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
 			Assert.IsTrue(theCard.Equals(game.discardPile.PeekBottomCard()));
 		}
@@ -181,19 +163,17 @@ namespace UNO_Tests
 			game.activePlayerIndex = 0;
 			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
 
-			var theCard = new Card(CardColor.Black, CardType.Wild); // wild cards
+			var theCard = new Card(CardColor.Black, CardType.Wild); // wild card
+			game.players[0].hand.Add(new Card(theCard));
 			game.players[0].hand.Add(new Card(theCard));
 
 			// ACT
-			var response = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }).Value as FailResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
+			Assert.IsNotNull(result);
+			Console.WriteLine(result.Message);
+			Assert.IsFalse(result.Success);
 
 			Assert.IsTrue(game.players[0].hand.Contains(theCard));
 		}
@@ -219,14 +199,11 @@ namespace UNO_Tests
 			game.players[0].hand.Add(new Card(theCard));
 
 			// ACT
-			var response = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
 			Assert.IsTrue(theCard.Equals(game.discardPile.PeekBottomCard()));
 			Assert.AreEqual(0, game.activePlayerIndex);
@@ -255,14 +232,11 @@ namespace UNO_Tests
 			game.players[0].hand.Add(new Card(theCard));
 
 			// ACT
-			var response = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
 			Assert.IsTrue(theCard.Equals(game.discardPile.PeekBottomCard()));
 			Assert.AreEqual(2, game.activePlayerIndex);
@@ -290,14 +264,11 @@ namespace UNO_Tests
 			game.players[0].hand.Add(new Card(theCard));
 
 			// ACT
-			var response = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
 			Assert.IsTrue(theCard.Equals(game.discardPile.PeekBottomCard()));
 			Assert.AreEqual(true, game.flowClockWise);
@@ -328,15 +299,12 @@ namespace UNO_Tests
 			game.players[0].hand.Add(new Card(theCard));
 
 			// ACT
-			var response = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
+			Assert.IsNotNull(result);
+			//Console.WriteLine(result.Message);
+			Assert.IsTrue(result.Success);
 
 			Assert.IsTrue(theCard.Equals(game.discardPile.PeekBottomCard()));
 			Assert.AreNotEqual(true, game.flowClockWise);
@@ -367,14 +335,11 @@ namespace UNO_Tests
 			game.cardsCounter = new CardsCounter(game.players);
 
 			// ACT
-			var response = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
 			Assert.IsTrue(theCard.Equals(game.discardPile.PeekBottomCard()));
 			Assert.AreEqual(2, game.players[1].hand.Count);
@@ -407,15 +372,12 @@ namespace UNO_Tests
 			game.cardsCounter = new CardsCounter(game.players);
 
 			// ACT
-			var response = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Play(new PlayData { id = id, color = theCard.color, type = theCard.type }).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
+			Assert.IsNotNull(result);
+			//Console.WriteLine(result.Message);
+			Assert.IsTrue(result.Success);
 
 			Assert.IsTrue(theCard.Equals(game.discardPile.PeekBottomCard()));
 			Assert.AreEqual(2, game.players[1].hand.Count);

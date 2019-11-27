@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using UNO_Server.Models;
 using UNO_Server.Models.RecvData;
 using UNO_Server.Models.SendData;
+using UNO_Server.Models.SendResult;
 using UNO_Server.Utility.Command;
 
 namespace UNO_Server.Controllers
@@ -17,116 +18,62 @@ namespace UNO_Server.Controllers
 
 		#region UNIVERSAL
 
-		/// <summary>
-		/// GET api/game
-		/// Gets the state of the game from a spectator's point of view
-		/// </summary>
-		/// <returns>Game state</returns>
 		[HttpGet]
-		public ActionResult Get()
+		public ActionResult<BaseResult> Get()
 		{
 			var game = Game.GetInstance();
 
-			return new JsonResult(new { success = true, gamestate = new GameSpectatorState(game) });
+			return new GamestateResult(new GameSpectatorState(game));
 		}
 
-		/// <summary>
-		/// GET api/game/5
-		/// Gets the state of the game from a player's point of view
-		/// </summary>
-		/// <param name="id">Player authentification identifier</param>
-		/// <returns>Game state</returns>
 		[HttpGet("{id}")]
-		public ActionResult Get(Guid id)
+		public ActionResult<BaseResult> Get(Guid id)
 		{
 			var game = Game.GetInstance();
 			var player = game.GetPlayerByUUID(id);
 
 			if (player == null)
 			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You are not in the game"
-				});
+				return new FailResult("You are not in the game");
 			}
 
-			return new JsonResult(new { success = true, gamestate = new GamePlayerState(game, player) });
+			return new GamestateResult(new GamePlayerState(game, player));
 		}
 
 		#endregion
 
+
+
 		#region NON-GAMEPLAY
 
-		/// <summary>
-		/// POST api/game/join
-		/// A new player attempts to join the game
-		/// </summary>
-		/// <param name="data">Player information</param>
-		/// <returns>Response message</returns>
 		[HttpPost("join")]
-		public ActionResult Join(JoinData data)
+		public ActionResult<BaseResult> Join(JoinData data)
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.WaitingForPlayers)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "Game already started"
-				});
-			}
+				return new FailResult("Game already started");
 			else if (game.GetActivePlayerCount() >= 10)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "Game player capacity exceeded"
-				});
-			}
+				return new FailResult("Game player capacity exceeded");
 
-			Guid id = game.AddPlayer(data.name);
-			return new JsonResult(new { success = true, id = id });
+			return new JoinResult(game.AddPlayer(data.name));
 		}
 
-		/// <summary>
-		/// POST api/game/leave
-		/// Player leaves or surrenders
-		/// </summary>
-		/// <param name="data">Player authentification identifier</param>
-		/// <returns>Response message</returns>
 		[HttpPost("leave")]
-		public ActionResult Leave(PlayerData data)
+		public ActionResult<BaseResult> Leave(PlayerData data)
 		{
 			var game = Game.GetInstance();
 			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
-			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You are not in the game"
-				});
-			}
+				return new FailResult("You are not in the game");
 
 			if (game.phase != GamePhase.Playing)
-			{
 				game.DeletePlayer(data.id);
-				return new JsonResult(new { success = true });
-			}
 			else
-			{
 				game.EliminatePlayer(data.id);
-				return new JsonResult(new { success = true, message = "You were in an in-progress game, but left anyway" });
-			}
+
+			return new BaseResult();
 		}
 
-		/// <summary>
-		/// POST api/game/start
-		/// Player attempts to start the game
-		/// </summary>
-		/// <param name="data">Game rule information</param>
-		/// <returns>Response message</returns>
 		[HttpPost("start")]
 		public ActionResult Start(StartData data)
 		{
@@ -152,11 +99,7 @@ namespace UNO_Server.Controllers
 			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
 			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You are not in the game"
-				});
+				return new JsonResult(new FailResult("You are not in the game"));
 			}
 
 			// that's probably enough checks
@@ -169,33 +112,19 @@ namespace UNO_Server.Controllers
 
 		#region GAMEPLAY
 
-		/// <summary>
-		/// POST api/game/play
-		/// Player plays a card
-		/// </summary>
-		/// <param name="data">Player and card information</param>
-		/// <returns>Response message</returns>
 		[HttpPost("play")]
 		public ActionResult Play(PlayData data)
 		{
 			var game = Game.GetInstance();
 			if (game.phase != GamePhase.Playing)
 			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "Game isn't started"
-				});
+				return new JsonResult(new FailResult("Game isn't started"));
 			}
 
 			var player = game.GetPlayerByUUID(data.id);
 			if (player == null)
 			{
-				return new JsonResult(new
-				{
-					success = false,
-					message = "You are not in the game"
-				});
+				return new JsonResult(new FailResult("You are not in the game"));
 			}
 			else if (game.players[game.activePlayerIndex].id != data.id)
 			{
@@ -239,12 +168,6 @@ namespace UNO_Server.Controllers
 			return new JsonResult(new { success = true });
 		}
 
-		/// <summary>
-		/// POST api/game/draw
-		/// Player draws a card
-		/// </summary>
-		/// <param name="data">Player authentification identifier</param>
-		/// <returns>Response message</returns>
 		[HttpPost("draw")]
 		public ActionResult Draw(PlayerData data)
 		{
@@ -288,12 +211,6 @@ namespace UNO_Server.Controllers
 			return new JsonResult(new { success = true });
 		}
 
-		/// <summary>
-		/// POST api/game/uno
-		/// Player says "UNO!" announcing that he has only one card and avoids the penalty of drawing two extra cards
-		/// </summary>
-		/// <param name="data">Player authentification identifier</param>
-		/// <returns>Response message</returns>
 		[HttpPost("uno")]
 		public ActionResult Uno(PlayerData data) // 
 		{

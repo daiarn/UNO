@@ -53,9 +53,9 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(121, 44);
             this.button4.TabIndex = 3;
-            this.button4.Text = "CHECK STATISTICS";
+            this.button4.Text = "CONVERT ROMAN NUMBER";
             this.button4.UseVisualStyleBackColor = true;
-            //this.button4.Click += new System.EventHandler(this.Statistics_Click);
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button5
             // 

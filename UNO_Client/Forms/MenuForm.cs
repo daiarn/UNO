@@ -41,5 +41,12 @@ namespace UNO_Client
 		{
 			this.Close();
 		}
-	}
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            ParserForm form = new ParserForm();
+            form.Show();
+            this.Hide();
+        }
+    }
 }

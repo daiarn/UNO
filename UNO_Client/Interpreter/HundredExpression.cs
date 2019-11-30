@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace UNO_Client.Interpreter
 {
-    public class HundredExpression : Expression
+    public class HundredExpression : NumberExpression
     {
-        public override string One() { return "C"; }
-        public override string Four() { return "CD"; }
-        public override string Five() { return "D"; }
-        public override string Nine() { return "CM"; }
-        public override int Multiplier() { return 100; }
+		protected override string One() { return "C"; }
+		protected override string Four() { return "CD"; }
+		protected override string Five() { return "D"; }
+		protected override string Nine() { return "CM"; }
+		protected override int Multiplier() { return 100; }
     }
 }

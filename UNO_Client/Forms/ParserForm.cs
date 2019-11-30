@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using UNO_Client.Interpreter;
 
 namespace UNO_Client.Forms
 {
-    public partial class ParserForm : Form
+	public partial class ParserForm : Form
     {
-        Parser parser;
+		private readonly Parser parser;
         public ParserForm()
         {
             InitializeComponent();
@@ -40,7 +35,7 @@ namespace UNO_Client.Forms
         {
             string text = roman.Text;
             Context context = new Context(text);
-            parser.Interpret(context);
+            parser.Parse(context);
             decimalNumber.Text = context.Output.ToString();
         }
     }

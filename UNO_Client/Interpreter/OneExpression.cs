@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace UNO_Client.Interpreter
 {
-    public class OneExpression : Expression
-    {
-        public override string One() { return "I"; }
-        public override string Four() { return "IV"; }
-        public override string Five() { return "V"; }
-        public override string Nine() { return "IX"; }
-        public override int Multiplier() { return 1; }
+    public class OneExpression : NumberExpression
+	{
+        protected override string One() { return "I"; }
+		protected override string Four() { return "IV"; }
+		protected override string Five() { return "V"; }
+		protected override string Nine() { return "IX"; }
+		protected override int Multiplier() { return 1; }
     }
 }

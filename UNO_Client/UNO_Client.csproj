@@ -92,8 +92,8 @@
       <DependentUpon>ParserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Interpreter\Context.cs" />
-    <Compile Include="Interpreter\Expression.cs" />
     <Compile Include="Interpreter\HundredExpression.cs" />
+    <Compile Include="Interpreter\NumberExpression.cs" />
     <Compile Include="Interpreter\OneExpression.cs" />
     <Compile Include="Interpreter\Parser.cs" />
     <Compile Include="Interpreter\TenExpression.cs" />

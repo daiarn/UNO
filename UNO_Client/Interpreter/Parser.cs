@@ -1,56 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace UNO_Client.Interpreter
 {
-    public class Parser : Expression
+	public class Parser
     {
-        List<Expression> tree;
+        List<NumberExpression> tree;
 
         public Parser()
         {
             // Build the 'parse tree'
-            tree = new List<Expression>();
+            tree = new List<NumberExpression>();
             tree.Add(new ThousandExpression());
             tree.Add(new HundredExpression());
             tree.Add(new TenExpression());
             tree.Add(new OneExpression());
         }
-        public override void Interpret(Context context)
+        public void Parse(Context context)
         {
             // Interpret
-            foreach (Expression exp in tree)
+            foreach (NumberExpression exp in tree)
             {
                 exp.Interpret(context);
             }
-        }
-
-        public override string Five()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string Four()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override int Multiplier()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string Nine()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string One()
-        {
-            throw new NotImplementedException();
         }
     }
 }

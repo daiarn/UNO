@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UNO_Client.Interpreter
+﻿namespace UNO_Client.Interpreter
 {
-    public abstract class Expression
+	public abstract class NumberExpression
     {
         public virtual void Interpret(Context context)
         {
@@ -36,10 +30,10 @@ namespace UNO_Client.Interpreter
             }
         }
 
-        public abstract string One();
-        public abstract string Four();
-        public abstract string Five();
-        public abstract string Nine();
-        public abstract int Multiplier();
+        protected abstract string One();
+        protected abstract string Four();
+        protected abstract string Five();
+        protected abstract string Nine();
+        protected abstract int Multiplier();
     }
 }

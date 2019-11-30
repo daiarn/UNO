@@ -4,6 +4,7 @@ using System.Linq;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
 using UNO_Server.Models.SendData;
+using UNO_Server.Models.SendResult;
 
 namespace UNO_Tests
 {
@@ -14,7 +15,7 @@ namespace UNO_Tests
 		public void TestSingleton()
 		{
 			var game = Game.GetInstance();
-            Assert.AreSame(game, Game.GetInstance());
+			Assert.AreSame(game, Game.GetInstance());
 		}
 
 		[Test]
@@ -25,16 +26,13 @@ namespace UNO_Tests
 			var control = new GameController();
 
 			// ACT
-			var response = control.Get() as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Get().Value as GamestateResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
-			var success = (bool) data["success"];
-			var gamestate = (GameSpectatorState) data["gamestate"];
-
-			Assert.IsTrue(success);
+			var gamestate = result.Gamestate;
 			Assert.IsNotNull(gamestate);
 
 			Assert.AreEqual(0, gamestate.zeroCounter);
@@ -57,16 +55,13 @@ namespace UNO_Tests
 			game.AddPlayer("Player Two");
 
 			// ACT
-			var response = control.Get() as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Get().Value as GamestateResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
-			var success = (bool) data["success"];
-			var gamestate = (GameSpectatorState) data["gamestate"];
-
-			Assert.IsTrue(success);
+			var gamestate = result.Gamestate;
 			Assert.IsNotNull(gamestate);
 
 			Assert.AreEqual(0, gamestate.zeroCounter);
@@ -86,15 +81,12 @@ namespace UNO_Tests
 			var control = new GameController();
 
 			// ACT
-			var response = control.Get(new System.Guid()) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Get(new System.Guid()).Value as FailResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			System.Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
+			Assert.IsNotNull(result);
+			System.Console.WriteLine(result.Message);
+			Assert.IsFalse(result.Success);
 		}
 
 		[Test]
@@ -108,15 +100,13 @@ namespace UNO_Tests
 			game.AddPlayer("Player Two");
 
 			// ACT
-			var response = control.Get(id) as JsonResult;
-			var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			var result = control.Get(id).Value as GamestateResult;
 
 			// ASSERT
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
-			var success = (bool) data["success"];
-			var gamestate = (GamePlayerState) data["gamestate"];
-
-			Assert.IsTrue(success);
+			var gamestate = (GamePlayerState) result.Gamestate;
 			Assert.IsNotNull(gamestate);
 
 			Assert.AreEqual(0, gamestate.zeroCounter);
@@ -132,49 +122,46 @@ namespace UNO_Tests
 			Assert.AreEqual(0, gamestate.hand.Count());
 		}
 
-        [Test]
-        public void TestGameControllerResults()
-        {
-            // ARRANGE
-            var game = Game.ResetGame();
-            var control = new GameController();
+		[Test]
+		public void TestGameControllerAllResults()
+		{
+			// ARRANGE
+			var game = Game.ResetGame();
+			var control = new GameController();
 
-            var id = game.AddPlayer("Player One");
-            game.AddPlayer("Player Two");
-            game.players[0].isPlaying = true;
-            game.players[1].isPlaying = true;
+			var id = game.AddPlayer("Player One");
+			game.AddPlayer("Player Two");
+			game.players[0].isPlaying = true;
+			game.players[1].isPlaying = true;
 
-            game.phase = GamePhase.Playing;
-            game.drawPile = new Deck();
-            game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.One));
-            game.discardPile = new Deck();
-            game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
-            game.activePlayerIndex = 0;
-            game.gameWatcher.observers[0].Counter = 4;
-            game.gameWatcher.observers[1].Counter = 0;
+			game.phase = GamePhase.Playing;
+			game.drawPile = new Deck();
+			game.drawPile.AddToBottom(new Card(CardColor.Red, CardType.One));
+			game.discardPile = new Deck();
+			game.discardPile.AddToBottom(new Card(CardColor.Red, CardType.One));
+			game.activePlayerIndex = 0;
+			game.gameWatcher.observers[0].Counter = 4;
+			game.gameWatcher.observers[1].Counter = 0;
 
-            game.players[0].hand.Add(new Card(CardColor.Red, CardType.Zero));
+			game.players[0].hand.Add(new Card(CardColor.Red, CardType.Zero));
 
-            // ACT
-            var response = control.Get(id) as JsonResult;
-            var data = new Microsoft.AspNetCore.Routing.RouteValueDictionary(response.Value);
+			// ACT
+			var result = control.Get(id).Value as GamestateResult;
 
-            // ASSERT
-            Assert.IsNotNull(response);
+			// ASSERT
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
-            var success = (bool)data["success"];
-            var gamestate = (GamePlayerState)data["gamestate"];
-
-            Assert.IsTrue(success);
+			var gamestate = (GamePlayerState) result.Gamestate; // TODO: casting is not necessary, add some stuff for that player
 			Assert.IsNotNull(gamestate);
 
 			Assert.AreEqual(4, gamestate.zeroCounter);
-            Assert.AreEqual(0, gamestate.wildCounter);
-            Assert.AreEqual(1, gamestate.discardPileCount);
-            Assert.AreEqual(1, gamestate.drawPileCount);
-            Assert.AreEqual(new Card(CardColor.Red, CardType.One), gamestate.activeCard);
-            Assert.AreEqual(0, gamestate.activePlayer);
-            Assert.AreEqual(2, gamestate.players.Count());
-        }
+			Assert.AreEqual(0, gamestate.wildCounter);
+			Assert.AreEqual(1, gamestate.discardPileCount);
+			Assert.AreEqual(1, gamestate.drawPileCount);
+			Assert.AreEqual(new Card(CardColor.Red, CardType.One), gamestate.activeCard);
+			Assert.AreEqual(0, gamestate.activePlayer);
+			Assert.AreEqual(2, gamestate.players.Count());
+		}
 	}
 }

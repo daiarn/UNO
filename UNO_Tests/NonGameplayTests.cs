@@ -5,56 +5,49 @@ using System;
 using UNO_Server.Controllers;
 using UNO_Server.Models;
 using UNO_Server.Models.RecvData;
+using UNO_Server.Models.SendResult;
 
 namespace UNO_Tests
 {
 	[TestFixture]
 	public class NonGameplayTests
 	{
-        private Game game;
-        private GameController control;
+		private Game game;
+		private GameController control;
 
-        [SetUp]
-        public void TestInit()
-        {
-            this.game = Game.ResetGame();
-            this.control = new GameController();
-        }
+		[SetUp]
+		public void TestInit()
+		{
+			game = Game.ResetGame();
+			control = new GameController();
+		}
 
 		[Test]
 		public void TestJoinSuccess()
 		{
-
 			JoinData joinData = new JoinData { name = "My name" };
-
-			var response = control.Join(joinData) as JsonResult;
-			var data = new RouteValueDictionary(response.Value);
+			var result = control.Join(joinData).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
 			Assert.AreEqual(1, game.GetActivePlayerCount());
 		}
 
-        [TestCase(GamePhase.Playing)]
-        [TestCase(GamePhase.Finished)]
+		[TestCase(GamePhase.Playing)]
+		[TestCase(GamePhase.Finished)]
 		[Test]
 		public void TestJoinPhase(GamePhase gamePhase)
 		{
-			JoinData joinData = new JoinData { name = "My name" };
 			game.phase = gamePhase;
 
-			var response = control.Join(joinData) as JsonResult;
-			var data = new RouteValueDictionary(response.Value);
+			JoinData joinData = new JoinData { name = "My name" };
+			var result = control.Join(joinData).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
+			Assert.IsNotNull(result);
+			Assert.IsFalse(result.Success);
 
 			Assert.AreEqual(0, game.GetActivePlayerCount());
 		}
@@ -73,14 +66,12 @@ namespace UNO_Tests
 			game.AddPlayer("Player Nine");
 
 			JoinData joinData = new JoinData { name = "My name" };
-
-			var response = control.Join(joinData) as JsonResult;
-			var data = new RouteValueDictionary(response.Value);
+			var result = control.Join(joinData).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
+			Assert.IsNotNull(result);
 
-			var success = (bool) data["success"];
+			var success = result.Success;
 			Assert.IsTrue(success);
 
 			Assert.AreEqual(10, game.GetActivePlayerCount());
@@ -101,23 +92,19 @@ namespace UNO_Tests
 			game.AddPlayer("Player Ten");
 
 			JoinData joinData = new JoinData { name = "My name" };
-
-			var response = control.Join(joinData) as JsonResult;
-			var data = new RouteValueDictionary(response.Value);
+			var result = control.Join(joinData).Value as FailResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
+			Assert.IsNotNull(result);
+			Console.WriteLine(result.Message);
+			Assert.IsFalse(result.Success);
 
 			Assert.AreEqual(10, game.GetActivePlayerCount());
 		}
 
-        [TestCase(GamePhase.WaitingForPlayers)]
-        [TestCase(GamePhase.Playing)]
-        [TestCase(GamePhase.Finished)]
+		[TestCase(GamePhase.WaitingForPlayers)]
+		[TestCase(GamePhase.Playing)]
+		[TestCase(GamePhase.Finished)]
 		[Test]
 		public void TestLeaveGame(GamePhase gamePhase)
 		{
@@ -132,15 +119,13 @@ namespace UNO_Tests
 			game.phase = gamePhase;
 			game.scoreboard = new UNO_Server.Models.SendData.ScoreboardInfo[3];
 
-			var response = control.Leave(new PlayerData { id = player }) as JsonResult;
-			var data = new RouteValueDictionary(response.Value);
+			var result = control.Leave(new PlayerData { id = player }).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
+			Assert.IsNotNull(result);
+			//Console.WriteLine(result.Message);
+			Assert.IsTrue(result.Success);
 
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
 			Console.WriteLine(game.phase);
 
 			Assert.AreEqual(2, game.GetActivePlayerCount());
@@ -152,14 +137,12 @@ namespace UNO_Tests
 			var player = game.AddPlayer("Player One");
 			game.phase = GamePhase.Finished;
 
-			var response = control.Start(new StartData { id = player, finiteDeck = false, onlyNumbers = false }) as JsonResult;
-			var data = new RouteValueDictionary(response.Value);
+			var result = control.Start(new StartData { id = player, finiteDeck = false, onlyNumbers = false }).Value as FailResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
+			Assert.IsNotNull(result);
+			Console.WriteLine(result.Message);
+			Assert.IsFalse(result.Success);
 		}
 
 		[Test]
@@ -167,15 +150,12 @@ namespace UNO_Tests
 		{
 			game.phase = GamePhase.WaitingForPlayers;
 
-			var response = control.Start(new StartData { id = new Guid(), finiteDeck = false, onlyNumbers = false }) as JsonResult;
-			var data = new RouteValueDictionary(response.Value);
+			var result = control.Start(new StartData { id = new Guid(), finiteDeck = false, onlyNumbers = false }).Value as FailResult;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-			Console.WriteLine(data["message"]);
-
-			var success = (bool) data["success"];
-			Assert.IsFalse(success);
+			Assert.IsNotNull(result);
+			Console.WriteLine(result.Message);
+			Assert.IsFalse(result.Success);
 
 			Assert.AreEqual(game.phase, GamePhase.WaitingForPlayers);
 		}
@@ -187,14 +167,11 @@ namespace UNO_Tests
 			game.AddPlayer("Player Two");
 			game.phase = GamePhase.WaitingForPlayers;
 
-			var response = control.Start(new StartData { id = id, finiteDeck = false, onlyNumbers = false }) as JsonResult;
-			var data = new RouteValueDictionary(response.Value);
+			var result = control.Start(new StartData { id = id, finiteDeck = false, onlyNumbers = false }).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
 			Assert.AreEqual(game.phase, GamePhase.Playing);
 		}
@@ -206,14 +183,11 @@ namespace UNO_Tests
 			game.AddPlayer("Player Two");
 			game.phase = GamePhase.WaitingForPlayers;
 
-			var response = control.Start(new StartData { id = id, finiteDeck = true, onlyNumbers = true }) as JsonResult;
-			var data = new RouteValueDictionary(response.Value);
+			var result = control.Start(new StartData { id = id, finiteDeck = true, onlyNumbers = true }).Value;
 
 			// ASSERT
-			Assert.IsNotNull(response);
-
-			var success = (bool) data["success"];
-			Assert.IsTrue(success);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Success);
 
 			Assert.AreEqual(game.phase, GamePhase.Playing);
 		}

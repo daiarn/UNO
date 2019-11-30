@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace UNO_Server.Models.SendData
 {
@@ -8,8 +9,10 @@ namespace UNO_Server.Models.SendData
 		public int index;
 		public int scoreboardIndex;
 
-		public GamePlayerState(Game game, Player player) : base(game)
+		public GamePlayerState(Game game, Guid id) : base(game)
 		{
+			var player = game.GetPlayerByUUID(id);
+
 			hand = player.hand;
 			index = System.Array.IndexOf(game.players, player);
 

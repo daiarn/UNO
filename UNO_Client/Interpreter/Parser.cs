@@ -2,7 +2,7 @@
 
 namespace UNO_Client.Interpreter
 {
-	public class Parser
+	public class Parser : Expression
     {
         List<NumberExpression> tree;
 
@@ -15,7 +15,8 @@ namespace UNO_Client.Interpreter
             tree.Add(new TenExpression());
             tree.Add(new OneExpression());
         }
-        public void Parse(Context context)
+
+        public override void Interpret(Context context)
         {
             // Interpret
             foreach (NumberExpression exp in tree)

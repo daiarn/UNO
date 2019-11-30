@@ -1,8 +1,8 @@
 ﻿namespace UNO_Client.Interpreter
 {
-	public abstract class NumberExpression
+	public abstract class NumberExpression : Expression
     {
-        public virtual void Interpret(Context context)
+        public override void Interpret(Context context)
         {
             if (context.Input.Length == 0)
                 return;

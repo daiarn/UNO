@@ -35,7 +35,7 @@ namespace UNO_Client.Forms
         {
             string text = roman.Text;
             Context context = new Context(text);
-            parser.Parse(context);
+            parser.Interpret(context);
             decimalNumber.Text = context.Output.ToString();
         }
     }

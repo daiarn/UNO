@@ -13,7 +13,7 @@ namespace UNO_Client.Interpreter
 
         public Context(string input)
         {
-            Input = input;
+            Input = input.ToUpper();
         }
     }
 }

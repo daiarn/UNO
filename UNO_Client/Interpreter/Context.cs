@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UNO_Client.Interpreter
 {
-    class Context
+    public class Context
     {
         public string Input;
         public int Output;

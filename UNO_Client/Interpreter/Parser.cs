@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UNO_Client.Interpreter
 {
-    class Parser : Expression
+    public class Parser : Expression
     {
         List<Expression> tree;
 

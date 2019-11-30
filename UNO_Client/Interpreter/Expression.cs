@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UNO_Client.Interpreter
 {
-    abstract class Expression
+    public abstract class Expression
     {
         public virtual void Interpret(Context context)
         {

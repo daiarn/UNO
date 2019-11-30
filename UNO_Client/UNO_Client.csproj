@@ -85,12 +85,19 @@
     <Compile Include="Forms\NameForm.Designer.cs">
       <DependentUpon>NameForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\StatiscticsForm.cs">
+    <Compile Include="Forms\ParserForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\StatiscticsForm.Designer.cs">
-      <DependentUpon>StatiscticsForm.cs</DependentUpon>
+    <Compile Include="Forms\ParserForm.Designer.cs">
+      <DependentUpon>ParserForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Interpreter\Context.cs" />
+    <Compile Include="Interpreter\Expression.cs" />
+    <Compile Include="Interpreter\HundredExpression.cs" />
+    <Compile Include="Interpreter\OneExpression.cs" />
+    <Compile Include="Interpreter\Parser.cs" />
+    <Compile Include="Interpreter\TenExpression.cs" />
+    <Compile Include="Interpreter\ThousandExpression.cs" />
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\GamePhase.cs" />
@@ -130,8 +137,8 @@
     <EmbeddedResource Include="Forms\NameForm.resx">
       <DependentUpon>NameForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\StatiscticsForm.resx">
-      <DependentUpon>StatiscticsForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\ParserForm.resx">
+      <DependentUpon>ParserForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

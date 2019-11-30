@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UNO_Client.Interpreter
 {
-    class HundredExpression : Expression
+    public class HundredExpression : Expression
     {
         public override string One() { return "C"; }
         public override string Four() { return "CD"; }

@@ -35,6 +35,11 @@ namespace UNO_Server.Models
 		private static readonly ActionFactory cardActionFactory = new ActionFactory();
 		private readonly Deck perfectDeck;
 		private readonly Deck semiPerfectDeck;
+
+        public int cardCount;
+        public int moveCount;
+        public int skipCount;
+
 		private Game()
 		{
 			phase = GamePhase.WaitingForPlayers;
@@ -63,7 +68,11 @@ namespace UNO_Server.Models
 					.SetAllNumberCards(2)
 					.SetIndividualNumberCards(0, 1)
 				.Build();
-		}
+
+            cardCount = 0;
+            moveCount = 0;
+            skipCount = 0;
+        }
 
 		public static Game ResetGame()
 		{

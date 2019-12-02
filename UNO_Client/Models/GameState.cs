@@ -14,8 +14,7 @@ namespace UNO_Client.Models
 		public List<Player> Players { get; set; }
 		public List<Card> Hand { get; set; }
 		public int Index { get; set; }
-		internal WinnerInfo[] Winners { get; set; }
 		public GamePhase GamePhase { get; set; }
-		public int ScoreboardIndex { get; set; }
+		public int WinnerIndex { get; set; }
 	}
 }

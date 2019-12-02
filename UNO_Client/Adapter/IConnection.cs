@@ -16,7 +16,6 @@ namespace UNO_Client.Adapter
 		Task<SimpleResponse> SendSayUnoAsync();
 		Task<SimpleResponse> SendPlayCardAsync(Card card, int color);
 
-		void SendUndoDraw();
-		void SendUndoUNO();
+		Task<SimpleResponse> SendUndoAsync();
 	}
 }

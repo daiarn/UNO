@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
-using UNO_Server.Models.SendData;
+using UNO_Server.Utility;
 using UNO_Server.Utility.BuilderFacade;
 using UNO_Server.Utility.Template;
 
@@ -29,6 +28,7 @@ namespace UNO_Server.Models
 
 		public GameWatcher gameWatcher; // observers inside
 		public CardsCounter cardsCounter;
+		public GameMemento lastMemento;
 
 		private static Game instance = new Game();
 		private static readonly ActionFactory cardActionFactory = new ActionFactory();

@@ -24,9 +24,8 @@ namespace UNO_Client.Forms
 		{
 			bool isOnlyNumbers = GameOptions.GetItemChecked(0);
 			bool isFiniteDeck = GameOptions.GetItemChecked(1);
-			bool slowGame = GameOptions.GetItemChecked(2);
 
-			var response = await ServerConnection.SendStartGame(isFiniteDeck, isOnlyNumbers, slowGame);
+			var response = await ServerConnection.SendStartGame(isFiniteDeck, isOnlyNumbers, false);
 			if (!response.Success)
 			{
 				throw new NotImplementedException("(LobbyForm.cs) Failed to start! " + response.Message);

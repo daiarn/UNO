@@ -7,6 +7,9 @@ namespace UNO_Server.Models.SendData
 	{
 		public int zeroCounter;
 		public int wildCounter;
+        public int cardCounter;
+        public int skipCounter;
+        public int moveCounter;
 
 		public GamePhase phase;
 		public int discardPileCount;
@@ -22,6 +25,9 @@ namespace UNO_Server.Models.SendData
 		{
             zeroCounter = game.gameWatcher.observers[0].Counter;
             wildCounter = game.gameWatcher.observers[1].Counter;
+            cardCounter = game.cardCount;
+            skipCounter = game.skipCount;
+            moveCounter = game.moveCount;
 
             phase = game.phase;
 			discardPileCount = game.discardPile.Count();

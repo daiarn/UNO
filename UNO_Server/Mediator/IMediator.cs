@@ -7,6 +7,6 @@ namespace UNO_Server.Mediator
 {
     public interface IMediator
     {
-        void Notify(object sender, string ev);
+        void Notify(string ev);
     }
 }

@@ -155,6 +155,7 @@
             this.CounterInformation.ReadOnly = true;
             this.CounterInformation.Size = new System.Drawing.Size(171, 141);
             this.CounterInformation.TabIndex = 11;
+            this.CounterInformation.TextChanged += new System.EventHandler(this.CounterInformation_TextChanged);
             // 
             // label2
             // 
@@ -198,7 +199,6 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "GameForm";
             this.Text = "GameForm";
-            //this.Load += new System.EventHandler(this.GameForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

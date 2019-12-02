@@ -330,8 +330,11 @@ namespace UNO_Client.Forms
 		{
 			int zeroCounter = Gamestate.ZeroCounter;
 			int wildCounter = Gamestate.WildCounter;
+            int cardCounter = Gamestate.CardCounter;
+            int skipCounter = Gamestate.SkipCounter;
+            int moveCounter = Gamestate.MoveCounter;
 
-			string counterInfo = String.Format("Zero cards drawn in the game {0}\n Wild cards drawn in the game {1}\n", zeroCounter, wildCounter);
+			string counterInfo = String.Format("Zero cards drawn in the game {0} \n Wild cards drawn in the game {1} \n Cards placed in the game count {2} \n Skip cards placed in the game {3} \n Move count {4} \n", zeroCounter, wildCounter,cardCounter,skipCounter,moveCounter);
 
 			CounterInformation.Text = counterInfo;
 		}
@@ -347,5 +350,10 @@ namespace UNO_Client.Forms
 			//serverConnection.SendUndoUNO();
 			//_ = UpdateGameStateAsync();
 		}
-	}
+
+        private void CounterInformation_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
 }

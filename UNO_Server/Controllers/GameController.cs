@@ -71,7 +71,7 @@ namespace UNO_Server.Controllers
 		public ActionResult<BaseResult> Start(StartData data)
 		{
 			var chain = new CheckGamePhase(GamePhase.WaitingForPlayers)
-				//.Then(new CheckCustomPredicate(g => g.GetActivePlayerCount() >= 2, "Game needs at least 2 players")) // TODO: enable this for live gameplay
+				.Then(new CheckCustomPredicate(g => g.GetActivePlayerCount() >= 2, "Game needs at least 2 players"))
 				.Then(new CheckIfPlayerExists(data.id))
 				.Then(new ConcludeAndExecute(
 					g => { g.StartGame(data.finiteDeck, data.onlyNumbers, data.slowGame); return new BaseResult(); }

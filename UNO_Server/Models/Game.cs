@@ -25,6 +25,7 @@ namespace UNO_Server.Models
 		public int numPlayers;
 
 		public int activePlayerIndex;
+        public int winnerIndex = -1;
 
 		public GameWatcher gameWatcher; // observers inside
 		public CardsCounter cardsCounter;
@@ -340,8 +341,7 @@ namespace UNO_Server.Models
         public void PlayerWins(int index)
         {
             phase = GamePhase.Finished;
-
-            // TODO: save winner ;)
+            winnerIndex = index;
         }
 
         public void GameOver()
@@ -353,14 +353,13 @@ namespace UNO_Server.Models
             .ThenBy(p => (Array.IndexOf(players, p) - activePlayerIndex + numPlayers) % numPlayers)
             .First();
 
+            winnerIndex = Array.IndexOf(players, stillPlaying);
 
-            // TODO: save winner ;)
-
-			//Task.Run(async () =>
-			//{
-			//	await Task.Delay(10000);
-			//	ResetGame();
-			//});
-		}
+            //Task.Run(async () =>
+            //{
+            //	await Task.Delay(10000);
+            //	ResetGame();
+            //});
+        }
 	}
 }

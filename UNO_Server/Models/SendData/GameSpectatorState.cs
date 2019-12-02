@@ -19,7 +19,7 @@ namespace UNO_Server.Models.SendData
 		public int activePlayer;
         public GamePhase gamePhase;
 		public List<PlayerInfo> players;
-		public ScoreboardInfo[] scoreboard;
+        public int winnerIndex;
 
 		public GameSpectatorState(Game game)
 		{
@@ -37,7 +37,7 @@ namespace UNO_Server.Models.SendData
 			activePlayer = game.activePlayerIndex;
             gamePhase = game.phase;
             players = game.players.Where(p => p != null).Select(p => new PlayerInfo(p)).ToList();
-			scoreboard = game.scoreboard;
+            winnerIndex = game.winnerIndex;
 		}
 	}
 }

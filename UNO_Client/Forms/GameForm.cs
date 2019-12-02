@@ -230,10 +230,7 @@ namespace UNO_Client.Forms
 
 		private void UpdatePlayerState()
 		{
-			int playerCount = Gamestate.Players.Count();
-			var scoreboardIndex = Gamestate.ScoreboardIndex;
-
-			if (scoreboardIndex > -1 && scoreboardIndex != playerCount - 1)
+			if (Gamestate.WinnerIndex == Gamestate.Index)
 			{
 				StateContext.setState(new WinningState());
 				if (!soundOn)
@@ -244,7 +241,7 @@ namespace UNO_Client.Forms
 				return;
 			}
 
-			if (scoreboardIndex == playerCount - 1)
+			if (Gamestate.GamePhase == GamePhase.Finished)
 			{
 				StateContext.setState(new LosingState());
 				return;
@@ -339,21 +336,10 @@ namespace UNO_Client.Forms
 			CounterInformation.Text = counterInfo;
 		}
 
-		private void UndoDraw_Click(object sender, EventArgs e)
+		private void Undo_Click(object sender, EventArgs e)
 		{
-			//serverConnection.SendUndoDraw();
-			//_ = UpdateGameStateAsync();
+			ServerConnection.SendUndoAsync();
+			_ = UpdateGameStateAsync();
 		}
-
-		private void UndoUno_Click(object sender, EventArgs e)
-		{
-			//serverConnection.SendUndoUNO();
-			//_ = UpdateGameStateAsync();
-		}
-
-        private void CounterInformation_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

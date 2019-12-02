@@ -108,7 +108,6 @@
     <Compile Include="Adapter\HttpAdapter.cs" />
     <Compile Include="Adapter\SoundAdapter.cs" />
     <Compile Include="Models\SimpleResponse.cs" />
-    <Compile Include="Models\WinnerInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Decorator\BackgroundDecorator.cs" />

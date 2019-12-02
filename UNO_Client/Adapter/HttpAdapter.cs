@@ -75,16 +75,9 @@ namespace UNO_Client.Adapter
 			return await PostJsonAsync<SimpleResponse>(jsonString, "/play");
 		}
 
-		public void SendUndoDraw()
+		public Task<SimpleResponse> SendUndoAsync()
 		{
-			//var content = new StringContent("{}", Encoding.UTF8, "application/json");
-			//client.PostAsync(BASE_URL + "/draw/undo", content);
-		}
-
-		public void SendUndoUNO()
-		{
-			//var content = new StringContent("{}", Encoding.UTF8, "application/json");
-			//client.PostAsync(BASE_URL + "/uno/undo", content);
+			return PostJsonAsync<SimpleResponse>("", "/undo");
 		}
 	}
 }

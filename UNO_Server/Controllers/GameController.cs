@@ -6,6 +6,7 @@ using UNO_Server.Models;
 using UNO_Server.Models.RecvData;
 using UNO_Server.Models.SendData;
 using UNO_Server.Models.SendResult;
+using UNO_Server.Utility;
 using UNO_Server.Utility.Command;
 
 namespace UNO_Server.Controllers
@@ -70,7 +71,7 @@ namespace UNO_Server.Controllers
 		public ActionResult<BaseResult> Start(StartData data)
 		{
 			var chain = new CheckGamePhase(GamePhase.WaitingForPlayers)
-				//.Then(new CheckCustomPredicate(g => g.GetActivePlayerCount() >= 2, "Game needs at least 2 players")) // TODO: enable this for live gameplay
+				.Then(new CheckCustomPredicate(g => g.GetActivePlayerCount() >= 2, "Game needs at least 2 players"))
 				.Then(new CheckIfPlayerExists(data.id))
 				.Then(new ConcludeAndExecute(
 					g => { g.StartGame(data.finiteDeck, data.onlyNumbers, data.slowGame); return new BaseResult(); }
@@ -96,7 +97,9 @@ namespace UNO_Server.Controllers
 				.Then(new CheckCustomPredicate(
 					g => !((card.type == CardType.Wild || card.type == CardType.Draw4) && card.color == CardColor.Black), "You have to choose a color"))
 				.Then(new ConcludeAndExecute(
-					g => { g.PlayerPlaysCard(card);
+					g => {
+						g.lastMemento = new GameMemento(g);
+						g.PlayerPlaysCard(card);
                         if (card.type == CardType.Skip)
                         {
                             g.mediator.Notify("skip");
@@ -106,7 +109,8 @@ namespace UNO_Server.Controllers
                             g.mediator.Notify("card");
                         }
 
-                        return new BaseResult(); }
+                        return new BaseResult();
+					}
 				));
 
 			var game = Game.GetInstance();
@@ -121,7 +125,7 @@ namespace UNO_Server.Controllers
 				.Then(new CheckIfPlayerTurn(data.id))
 				.Then(new CheckCustomPredicate(g => !g.CanPlayerPlayAnyOn(g.GetPlayerByUUID(data.id)), "You can't draw a card right now"))
 				.Then(new ConcludeAndExecute(
-					g => { g.PlayerDrawsCard(); g.mediator.Notify("move"); return new BaseResult(); }
+					g => { g.lastMemento = new GameMemento(g); g.PlayerDrawsCard(); g.mediator.Notify("move"); return new BaseResult(); }
 				));
 
 			var game = Game.GetInstance();
@@ -136,8 +140,12 @@ namespace UNO_Server.Controllers
 				.Then(new CheckIfPlayerTurn(data.id))
 				// TODO: add a few more here?
 				.Then(new ConcludeAndExecute(
-					g => { g.PlayerSaysUNO();
-                        g.mediator.Notify("move"); return new BaseResult(); }
+					g => {
+						g.lastMemento = new GameMemento(g);
+						g.PlayerSaysUNO();
+                        g.mediator.Notify("move");
+						return new BaseResult();
+					}
 				));
 
 			var game = Game.GetInstance();
@@ -210,21 +218,17 @@ namespace UNO_Server.Controllers
 		}
 		#endregion
 
-		DrawCard drawCard = new DrawCard();
-		Uno uno = new Uno();
-
-		[HttpPost("draw/undo")]
-		public ActionResult<BaseResult> UndoDraw()
+		[HttpPost("undo")]
+		public ActionResult<BaseResult> Undo()
 		{
-			drawCard.Undo();
-			return new BaseResult();
-		}
-
-		[HttpPost("uno/undo")]
-		public ActionResult<BaseResult> UndoUno()
-		{
-			uno.Undo();
-			return new BaseResult();
+			var game = Game.GetInstance();
+			if (game.lastMemento != null)
+			{
+				game.lastMemento.RestoreMemento(game);
+				game.lastMemento = null;
+				return new BaseResult();
+			}
+			return new FailResult("Nothing to undo");
 		}
 	}
 }

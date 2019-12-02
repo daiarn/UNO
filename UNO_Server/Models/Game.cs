@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using UNO_Server.Utility;
+using UNO_Server.Mediator;
+using UNO_Server.Models.Utility;
 using UNO_Server.Utility.BuilderFacade;
 using UNO_Server.Utility.Template;
 
@@ -34,6 +35,12 @@ namespace UNO_Server.Models
 		private static readonly ActionFactory cardActionFactory = new ActionFactory();
 		private readonly Deck perfectDeck;
 		private readonly Deck semiPerfectDeck;
+
+        public int cardCount;
+        public int moveCount;
+        public int skipCount;
+        public IMediator mediator;
+
 		private Game()
 		{
 			phase = GamePhase.WaitingForPlayers;
@@ -62,7 +69,15 @@ namespace UNO_Server.Models
 					.SetAllNumberCards(2)
 					.SetIndividualNumberCards(0, 1)
 				.Build();
-		}
+
+            cardCount = 0;
+            moveCount = 0;
+            skipCount = 0;
+            CardCounter cardCounter = new CardCounter();
+            SkipCounter skipCounter = new SkipCounter();
+            MoveCounter moveCounter = new MoveCounter();
+            mediator = new ConcreteMediator(this, cardCounter, moveCounter, skipCounter);
+        }
 
 		public static Game ResetGame()
 		{

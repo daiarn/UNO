@@ -97,7 +97,20 @@ namespace UNO_Server.Controllers
 				.Then(new CheckCustomPredicate(
 					g => !((card.type == CardType.Wild || card.type == CardType.Draw4) && card.color == CardColor.Black), "You have to choose a color"))
 				.Then(new ConcludeAndExecute(
-					g => { g.lastMemento = new GameMemento(g); g.PlayerPlaysCard(card); return new BaseResult(); }
+					g => {
+						g.lastMemento = new GameMemento(g);
+						g.PlayerPlaysCard(card);
+                        if (card.type == CardType.Skip)
+                        {
+                            g.mediator.Notify("skip");
+                        }
+                        else
+                        {
+                            g.mediator.Notify("card");
+                        }
+
+                        return new BaseResult();
+					}
 				));
 
 			var game = Game.GetInstance();
@@ -112,7 +125,7 @@ namespace UNO_Server.Controllers
 				.Then(new CheckIfPlayerTurn(data.id))
 				.Then(new CheckCustomPredicate(g => !g.CanPlayerPlayAnyOn(g.GetPlayerByUUID(data.id)), "You can't draw a card right now"))
 				.Then(new ConcludeAndExecute(
-					g => { g.lastMemento = new GameMemento(g); g.PlayerDrawsCard(); return new BaseResult(); }
+					g => { g.lastMemento = new GameMemento(g); g.PlayerDrawsCard(); g.mediator.Notify("move"); return new BaseResult(); }
 				));
 
 			var game = Game.GetInstance();
@@ -127,7 +140,12 @@ namespace UNO_Server.Controllers
 				.Then(new CheckIfPlayerTurn(data.id))
 				// TODO: add a few more here?
 				.Then(new ConcludeAndExecute(
-					g => { g.lastMemento = new GameMemento(g); g.PlayerSaysUNO(); return new BaseResult(); }
+					g => {
+						g.lastMemento = new GameMemento(g);
+						g.PlayerSaysUNO();
+                        g.mediator.Notify("move");
+						return new BaseResult();
+					}
 				));
 
 			var game = Game.GetInstance();

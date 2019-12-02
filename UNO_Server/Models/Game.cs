@@ -16,7 +16,6 @@ namespace UNO_Server.Models
 	{
 		public GamePhase phase;
 		public bool finiteDeck = false;
-		public bool slowGame = false;
 
 		public bool flowClockWise { get; set; }
 		public Deck drawPile { get; set; }
@@ -24,7 +23,6 @@ namespace UNO_Server.Models
 
 		public Player[] players;
 		public int numPlayers;
-		public ScoreboardInfo[] scoreboard;
 
 		public int activePlayerIndex;
 
@@ -110,26 +108,9 @@ namespace UNO_Server.Models
 			}
 		}
 
-		public void PlayerWins(int index)
-		{
-			for (int i = 0; i < numPlayers; i++)
-				if (scoreboard[i] == null)
-				{
-					players[index].isPlaying = false;
-					scoreboard[i] = new ScoreboardInfo(index);
-					break;
-				}
-		}
-
 		public void PlayerLoses(int index)
 		{
-			for (int i = numPlayers - 1; i >= 0; i--)
-				if (scoreboard[i] == null)
-				{
-					players[index].isPlaying = false;
-					scoreboard[i] = new ScoreboardInfo(index);
-					break;
-				}
+			players[index].isPlaying = false;
 		}
 
 		public Player GetPlayerByUUID(Guid id)
@@ -243,15 +224,6 @@ namespace UNO_Server.Models
 			if (player.hand.Count == 0) // winner
 			{
 				PlayerWins(activePlayerIndex);
-
-				if (!slowGame)
-					GameOver();
-
-				if (GetActivePlayerCount() < 2)
-				{
-					GameOver();
-					return;
-				}
 			}
 
 			bool playerSaidUNO = true; // TODO: check player UNO penalty
@@ -325,7 +297,7 @@ namespace UNO_Server.Models
 		{
 			phase = GamePhase.Playing;
 			this.finiteDeck = finiteDeck;
-			this.slowGame = slowGame;
+			// this.slowGame = slowGame;
 
 			flowClockWise = true;
 			discardPile = new Deck();
@@ -336,8 +308,6 @@ namespace UNO_Server.Models
 			cardsCounter = new CardsCounter(players);
 
 			activePlayerIndex = 0;
-
-			scoreboard = new ScoreboardInfo[numPlayers];
 
 			for (int i = 0; i < numPlayers; i++)
 			{
@@ -367,21 +337,25 @@ namespace UNO_Server.Models
 			discardPile.AddToBottom(firstCard);
 			NextPlayerTurn();
 		}
+        
+        public void PlayerWins(int index)
+        {
+            phase = GamePhase.Finished;
 
-		public void GameOver()
+            // TODO: save winner ;)
+        }
+
+        public void GameOver()
 		{
 			phase = GamePhase.Finished;
 
-			var stillPlaying = players.Where(p => p != null && p.isPlaying).Select(
-				p => new ScoreboardInfo(Array.IndexOf(players, p), p.hand, (Array.IndexOf(players, p) - activePlayerIndex + numPlayers) % numPlayers))
-			.OrderBy(p => p.score).ThenBy(p => p.turn);
+			var stillPlaying = players.Where(p => p != null && p.isPlaying)
+			.OrderBy(p => p.hand.Aggregate(0, (sum, next) => sum + next.GetScore()))
+            .ThenBy(p => (Array.IndexOf(players, p) - activePlayerIndex + numPlayers) % numPlayers)
+            .First();
 
-			int start;
-			for (start = 0; start < numPlayers; start++)
-				if (scoreboard[start] == null) break;
 
-			foreach (var item in stillPlaying)
-				scoreboard[start++] = item;
+            // TODO: save winner ;)
 
 			//Task.Run(async () =>
 			//{

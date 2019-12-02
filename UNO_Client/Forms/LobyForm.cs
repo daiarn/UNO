@@ -73,7 +73,7 @@ namespace UNO_Client.Forms
 		private void BeginGameTimer()
 		{
 			// Create a timer with a two second interval.
-			RefreshTimer = new System.Windows.Forms.Timer();
+			RefreshTimer = new Timer();
 			RefreshTimer.Tick += new EventHandler(OnTimedGameEventAsync);
 			// Hook up the Elapsed event for the timer. 
 			RefreshTimer.Interval = 2000;
@@ -84,7 +84,9 @@ namespace UNO_Client.Forms
 		{
 			RefreshTimer.Stop();
 			await UpdateGameInfoAsync();
-			RefreshTimer.Enabled = true;
+
+			if (Gamestate.GamePhase == GamePhase.WaitingForPlayers)
+				RefreshTimer.Enabled = true;
 		}
 	}
 }

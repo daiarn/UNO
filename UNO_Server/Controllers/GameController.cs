@@ -6,6 +6,7 @@ using UNO_Server.Models;
 using UNO_Server.Models.RecvData;
 using UNO_Server.Models.SendData;
 using UNO_Server.Models.SendResult;
+using UNO_Server.Utility;
 using UNO_Server.Utility.Command;
 
 namespace UNO_Server.Controllers
@@ -96,7 +97,7 @@ namespace UNO_Server.Controllers
 				.Then(new CheckCustomPredicate(
 					g => !((card.type == CardType.Wild || card.type == CardType.Draw4) && card.color == CardColor.Black), "You have to choose a color"))
 				.Then(new ConcludeAndExecute(
-					g => { g.PlayerPlaysCard(card); return new BaseResult(); }
+					g => { memento = new GameMemento(g); g.PlayerPlaysCard(card); return new BaseResult(); }
 				));
 
 			var game = Game.GetInstance();
@@ -111,7 +112,7 @@ namespace UNO_Server.Controllers
 				.Then(new CheckIfPlayerTurn(data.id))
 				.Then(new CheckCustomPredicate(g => !g.CanPlayerPlayAnyOn(g.GetPlayerByUUID(data.id)), "You can't draw a card right now"))
 				.Then(new ConcludeAndExecute(
-					g => { g.PlayerDrawsCard(); return new BaseResult(); }
+					g => { memento = new GameMemento(g); g.PlayerDrawsCard(); return new BaseResult(); }
 				));
 
 			var game = Game.GetInstance();
@@ -126,7 +127,7 @@ namespace UNO_Server.Controllers
 				.Then(new CheckIfPlayerTurn(data.id))
 				// TODO: add a few more here?
 				.Then(new ConcludeAndExecute(
-					g => { g.PlayerSaysUNO(); return new BaseResult(); }
+					g => { memento = new GameMemento(g); g.PlayerSaysUNO(); return new BaseResult(); }
 				));
 
 			var game = Game.GetInstance();
@@ -197,22 +198,20 @@ namespace UNO_Server.Controllers
 			}
 
 		}
-		#endregion
+        #endregion
 
-		DrawCard drawCard = new DrawCard();
-		Uno uno = new Uno();
+        GameMemento memento;
 
-		[HttpPost("draw/undo")]
-		public ActionResult<BaseResult> UndoDraw()
+        [HttpPost("undo")]
+		public ActionResult<BaseResult> Undo()
 		{
-			drawCard.Undo();
-			return new BaseResult();
-		}
-
-		[HttpPost("uno/undo")]
-		public ActionResult<BaseResult> UndoUno()
-		{
-			uno.Undo();
+            if (memento != null)
+            {
+                // restore memento
+                var game = Game.GetInstance();
+                memento.RestoreMemento(game);
+                memento = null;
+            }
 			return new BaseResult();
 		}
 	}

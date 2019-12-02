@@ -297,7 +297,6 @@ namespace UNO_Server.Models
 		{
 			phase = GamePhase.Playing;
 			this.finiteDeck = finiteDeck;
-			// this.slowGame = slowGame;
 
 			flowClockWise = true;
 			discardPile = new Deck();

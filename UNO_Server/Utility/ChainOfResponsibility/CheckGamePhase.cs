@@ -1,7 +1,7 @@
 ﻿using UNO_Server.Models;
 using UNO_Server.Models.SendResult;
 
-namespace UNO_Server.ChainOfResponsibility
+namespace UNO_Server.Utility.ChainOfResponsibility
 {
 	public class CheckGamePhase : ConditionChain
 	{

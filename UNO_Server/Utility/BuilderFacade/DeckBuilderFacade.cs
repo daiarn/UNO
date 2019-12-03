@@ -14,8 +14,8 @@ namespace UNO_Server.Utility.BuilderFacade
 		{
 			deck.AddToBottom(new Card(CardColor.Red, type));
 			deck.AddToBottom(new Card(CardColor.Yellow, type));
-			//deck.AddToBottom(new Card(CardColor.Green, type));
-			//deck.AddToBottom(new Card(CardColor.Blue, type));
+			deck.AddToBottom(new Card(CardColor.Green, type));
+			deck.AddToBottom(new Card(CardColor.Blue, type));
 		}
 
 		public Deck Build()

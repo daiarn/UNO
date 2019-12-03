@@ -115,9 +115,7 @@ namespace UNO_Tests
 			game.players[1].isPlaying = true;
 			game.players[2].isPlaying = true;
 
-			game.slowGame = true;
 			game.phase = gamePhase;
-			game.scoreboard = new UNO_Server.Models.SendData.ScoreboardInfo[3];
 
 			var result = control.Leave(new PlayerData { id = player }).Value;
 

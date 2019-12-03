@@ -26,7 +26,7 @@ namespace UNO_Client.Forms
 		public GameForm(IConnection connection)
 		{
 			ServerConnection = connection;
-			_ = UpdateGameStateAsync();
+			_ = FetchGameStateAsync();
 
 			InitializeComponent();
 			BeginGameTimer();
@@ -35,13 +35,13 @@ namespace UNO_Client.Forms
 		private async void Draw_Click(object sender, EventArgs e)
 		{
 			await ServerConnection.SendDrawCardAsync();
-			_ = UpdateGameStateAsync();
+			_ = FetchGameStateAsync();
 		}
 
 		private async void GiveUp_Click(object sender, EventArgs e)
 		{
 			await ServerConnection.SendLeaveGameAsync();
-			_ = UpdateGameStateAsync();
+			_ = FetchGameStateAsync();
 		}
 
 		private async void UNO_Click(object sender, EventArgs e)
@@ -49,7 +49,7 @@ namespace UNO_Client.Forms
 			await ServerConnection.SendSayUnoAsync();
 			SoundAdaptor.turnOnSoundEffect();
 
-			_ = UpdateGameStateAsync();
+			_ = FetchGameStateAsync();
 		}
 
 		private void Exit_Click(object sender, EventArgs e)
@@ -58,15 +58,19 @@ namespace UNO_Client.Forms
 			Close();
 		}
 
-		private async Task UpdateGameStateAsync()
+		private async Task FetchGameStateAsync()
 		{
+			var PreviousState = Gamestate;
 			Gamestate = await ServerConnection.GetPlayerGameStateAsync();
 
 			ShowPlayersInformation();
 
-			Update();
-			mainPanel.Refresh();
-			handPanel.Refresh();
+			if (PreviousState.Hand.Count != Gamestate.Hand.Count || !PreviousState.ActiveCard.Equals(Gamestate.ActiveCard))
+			{
+				mainPanel.Refresh();
+				handPanel.Refresh();
+				Update();
+			}
 
 			UpdatePlayerState();
 			UpdateGameCounters();
@@ -137,7 +141,7 @@ namespace UNO_Client.Forms
 				}
 
 				await ServerConnection.SendPlayCardAsync(card, color);
-				_ = UpdateGameStateAsync();
+				_ = FetchGameStateAsync();
 			}
 		}
 
@@ -211,7 +215,7 @@ namespace UNO_Client.Forms
 		private async void OnTimedGameEvent(Object myObject, EventArgs myEventArgs)
 		{
 			RefreshTimer.Stop();
-			await UpdateGameStateAsync();
+			await FetchGameStateAsync();
 			RefreshTimer.Enabled = true;
 		}
 
@@ -339,7 +343,7 @@ namespace UNO_Client.Forms
 		private void Undo_Click(object sender, EventArgs e)
 		{
 			ServerConnection.SendUndoAsync();
-			_ = UpdateGameStateAsync();
+			_ = FetchGameStateAsync();
 		}
     }
 }

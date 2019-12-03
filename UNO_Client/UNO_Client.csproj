@@ -175,10 +175,8 @@
     <Content Include="CardImages\b7.png" />
     <Content Include="CardImages\b8.png" />
     <Content Include="CardImages\b9.png" />
-    <Content Include="CardImages\bp.png" />
     <Content Include="CardImages\br.png" />
     <Content Include="CardImages\bs.png" />
-    <Content Include="CardImages\c.png" />
     <Content Include="CardImages\g0.png" />
     <Content Include="CardImages\g1.png" />
     <Content Include="CardImages\g2.png" />
@@ -189,10 +187,8 @@
     <Content Include="CardImages\g7.png" />
     <Content Include="CardImages\g8.png" />
     <Content Include="CardImages\g9.png" />
-    <Content Include="CardImages\gp.png" />
     <Content Include="CardImages\gr.png" />
     <Content Include="CardImages\gs.png" />
-    <Content Include="CardImages\p4.png" />
     <Content Include="CardImages\r0.png" />
     <Content Include="CardImages\r1.png" />
     <Content Include="CardImages\r2.png" />
@@ -203,7 +199,6 @@
     <Content Include="CardImages\r7.png" />
     <Content Include="CardImages\r8.png" />
     <Content Include="CardImages\r9.png" />
-    <Content Include="CardImages\rp.png" />
     <Content Include="CardImages\rr.png" />
     <Content Include="CardImages\rs.png" />
     <Content Include="CardImages\UNO_Logo.png" />
@@ -217,7 +212,6 @@
     <Content Include="CardImages\y7.png" />
     <Content Include="CardImages\y8.png" />
     <Content Include="CardImages\y9.png" />
-    <Content Include="CardImages\yp.png" />
     <Content Include="CardImages\yr.png" />
     <Content Include="CardImages\ys.png" />
     <Content Include="Sounds\fireworks.wav" />

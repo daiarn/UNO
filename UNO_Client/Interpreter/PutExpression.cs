@@ -18,14 +18,19 @@ namespace UNO_Client.Interpreter
         }
         public override async void Interpret(Context context)
         {
-            string[] parts = context.Input.Split(' ');
+            if (context.Input.Length < 1)
+            {
+                return;
+            }
+            string[] parts = context.Input.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
             if (parts[0] != "PUT")
             {
                 return;
             }
-            string commandColor = parts[1].Remove(0, 1);
+            string commandColor = parts[1].Substring(0, 1);
+            string commandType = parts[1].Substring(1, parts[1].Length - 1);
             CardColor color = PickColor(commandColor);
-            CardType type = PickType(parts[1]);
+            CardType type = PickType(commandType);
 
 
             Card card = new Card((int)color, (int)type);

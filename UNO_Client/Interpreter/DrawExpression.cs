@@ -19,6 +19,10 @@ namespace UNO_Client.Interpreter
 
         public override async void Interpret(Context context)
         {
+            if (context.Input.Length < 1)
+            {
+                return;
+            }
             string[] parts = context.Input.Split(' ');
             if (parts[0] != "DRAW")
             {

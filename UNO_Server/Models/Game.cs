@@ -21,6 +21,7 @@ namespace UNO_Server.Models
 		public bool flowClockWise { get; set; }
 		public Deck drawPile { get; set; }
 		public Deck discardPile { get; set; }
+		public bool playerSaidUno = false;
 
 		public Player[] players;
 		public int numPlayers;
@@ -242,8 +243,7 @@ namespace UNO_Server.Models
 				PlayerWins(activePlayerIndex);
 			}
 
-			bool playerSaidUNO = true; // TODO: check player UNO penalty
-			if (!playerSaidUNO && player.hand.Count == 1)
+			if (!playerSaidUno && player.hand.Count == 1)
 			{
 				GivePlayerACard(player, FromDrawPile());
 				GivePlayerACard(player, FromDrawPile());
@@ -258,15 +258,13 @@ namespace UNO_Server.Models
 			BaseTemplate action = cardActionFactory.Create(card.type);
 			//if (action != null)
 			action.ProcessAction(this); // action card is responsible whose turn is next
-										//else
-										//	NextPlayerTurn();
+			//else
+			//	NextPlayerTurn();
 		}
 
 		public void PlayerSaysUNO()
 		{
-			//var player = players[activePlayerIndex];
-
-			// TODO: avoid UNO penalty here
+			playerSaidUno = true;
 		}
 
 		public int GetNextPlayerIndexAfter(int playerIndex)
@@ -296,11 +294,13 @@ namespace UNO_Server.Models
 
 		public void SkipNextPlayerTurn()
 		{
+			playerSaidUno = false;
 			activePlayerIndex = GetNextPlayerIndexAfter(GetNextPlayerIndexAfter(activePlayerIndex));
 		}
 
 		public void NextPlayerTurn()
 		{
+			playerSaidUno = false;
 			activePlayerIndex = GetNextPlayerIndexAfter(activePlayerIndex);
 		}
 

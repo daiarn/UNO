@@ -34,7 +34,7 @@ namespace UNO_Client.Interpreter
 
 
             Card card = new Card((int)color, (int)type);
-            var response = await connection.SendPlayCardAsync(card, card.Type);
+            var response = await connection.SendPlayCardAsync(card.Type, card.Color);
             Output = string.Format("Success: {0} Message: {1}", response.Success, response.Message);
         }
         private CardColor PickColor(string commandColor)

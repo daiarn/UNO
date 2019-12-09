@@ -143,7 +143,7 @@ namespace UNO_Client.Forms
 					color = chooser.Color;
 				}
 
-				await ServerConnection.SendPlayCardAsync(card, color);
+				await ServerConnection.SendPlayCardAsync(card.Type, color);
 				_ = FetchGameStateAsync();
 			}
 		}

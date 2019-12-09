@@ -12,7 +12,7 @@ namespace UNO_Client.Forms
         public ParserForm()
         {
             InitializeComponent();
-            parser = new Parser();
+            //parser = new Parser();
         }
 
         private void BackStatistics_Click(object sender, EventArgs e)

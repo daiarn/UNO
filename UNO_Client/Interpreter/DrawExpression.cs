@@ -25,7 +25,7 @@ namespace UNO_Client.Interpreter
                 return;
             }
             var response = await connection.SendDrawCardAsync();
-            context.Output = string.Format("Success: {0} Message: {1}", response.Success, response.Message);
+            Output = string.Format("Success: {0} Message: {1}", response.Success, response.Message);
         }
     }
 }

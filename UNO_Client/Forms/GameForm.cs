@@ -351,6 +351,7 @@ namespace UNO_Client.Forms
 
         private void submit_Click(object sender, EventArgs e)
         {
+            responseLine.Text = "";
             submit.Enabled = false;
             string command = commandLine.Text;
             commandLine.Text = "";

@@ -23,6 +23,7 @@ namespace UNO_Client.Interpreter
             foreach (Expression exp in tree)
             {
                 exp.Interpret(context);
+                context.Output = exp.Output;
             }
         }
     }

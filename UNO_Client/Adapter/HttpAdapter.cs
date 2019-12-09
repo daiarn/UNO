@@ -69,9 +69,9 @@ namespace UNO_Client.Adapter
 			return PostJsonAsync<SimpleResponse>(OnlyPlayerId(), "/uno");
 		}
 
-		public async Task<SimpleResponse> SendPlayCardAsync(Card card, int color)
+		public async Task<SimpleResponse> SendPlayCardAsync(int type, int color)
 		{
-			string jsonString = "{\"id\":\"" + playerId + "\", \"color\":" + color + ",\"type\":" + card.Type + "}";
+			string jsonString = "{\"id\":\"" + playerId + "\",\"type\":" + type + ", \"color\":" + color + "}";
 			return await PostJsonAsync<SimpleResponse>(jsonString, "/play");
 		}
 

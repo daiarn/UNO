@@ -40,7 +40,7 @@
             this.CounterInformation = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.PlayerTurn = new System.Windows.Forms.Label();
-            this.comandLine = new System.Windows.Forms.TextBox();
+            this.commandLine = new System.Windows.Forms.TextBox();
             this.responseLine = new System.Windows.Forms.TextBox();
             this.submit = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -169,15 +169,16 @@
             this.PlayerTurn.Text = "PlayerTurn";
             this.PlayerTurn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // comandLine
+            // commandLine
             // 
-            this.comandLine.Location = new System.Drawing.Point(11, 367);
-            this.comandLine.Name = "comandLine";
-            this.comandLine.Size = new System.Drawing.Size(603, 20);
-            this.comandLine.TabIndex = 14;
+            this.commandLine.Location = new System.Drawing.Point(11, 367);
+            this.commandLine.Name = "commandLine";
+            this.commandLine.Size = new System.Drawing.Size(603, 20);
+            this.commandLine.TabIndex = 14;
             // 
             // responseLine
             // 
+            this.responseLine.Enabled = false;
             this.responseLine.Location = new System.Drawing.Point(10, 393);
             this.responseLine.Name = "responseLine";
             this.responseLine.Size = new System.Drawing.Size(604, 20);
@@ -191,6 +192,7 @@
             this.submit.TabIndex = 16;
             this.submit.Text = "Submit";
             this.submit.UseVisualStyleBackColor = true;
+            this.submit.Click += new System.EventHandler(this.submit_Click);
             // 
             // GameForm
             // 
@@ -199,7 +201,7 @@
             this.ClientSize = new System.Drawing.Size(888, 417);
             this.Controls.Add(this.submit);
             this.Controls.Add(this.responseLine);
-            this.Controls.Add(this.comandLine);
+            this.Controls.Add(this.commandLine);
             this.Controls.Add(this.PlayerTurn);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.CounterInformation);
@@ -234,7 +236,7 @@
         private System.Windows.Forms.TextBox CounterInformation;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label PlayerTurn;
-        private System.Windows.Forms.TextBox comandLine;
+        private System.Windows.Forms.TextBox commandLine;
         private System.Windows.Forms.TextBox responseLine;
         private System.Windows.Forms.Button submit;
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UNO_Client.Adapter;
+using UNO_Client.Models;
 
 namespace UNO_Client.Interpreter
 {
@@ -16,15 +17,15 @@ namespace UNO_Client.Interpreter
             this.connection = connection;
         }
 
-        public override void Interpret(Context context)
+        public override async void Interpret(Context context)
         {
             string[] parts = context.Input.Split(' ');
             if (parts[0] != "DRAW")
             {
                 return;
             }
-            var resopnse = connection.SendDrawCardAsync();
-            context.Output = resopnse.Result.Message;
+            var response = await connection.SendDrawCardAsync();
+            context.Output = string.Format("Success: {0} Message: {1}", response.Success, response.Message);
         }
     }
 }

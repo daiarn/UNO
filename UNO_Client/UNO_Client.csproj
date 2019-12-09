@@ -102,6 +102,8 @@
     <Compile Include="Interpreter\TenExpression.cs" />
     <Compile Include="Interpreter\ThousandExpression.cs" />
     <Compile Include="Models\Card.cs" />
+    <Compile Include="Models\CardColor.cs" />
+    <Compile Include="Models\CardType.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\GamePhase.cs" />
     <Compile Include="Models\GameState.cs" />

@@ -178,9 +178,9 @@
             // 
             // responseLine
             // 
-            this.responseLine.Enabled = false;
             this.responseLine.Location = new System.Drawing.Point(10, 393);
             this.responseLine.Name = "responseLine";
+            this.responseLine.ReadOnly = true;
             this.responseLine.Size = new System.Drawing.Size(604, 20);
             this.responseLine.TabIndex = 15;
             // 

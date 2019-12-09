@@ -13,7 +13,7 @@ namespace UNO_Client.Interpreter
             tree = new List<Expression>
             {
                 new DrawExpression(connection),
-                new PutExpression()
+                new PutExpression(connection)
             };
         }
 

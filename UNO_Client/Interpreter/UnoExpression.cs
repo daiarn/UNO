@@ -4,19 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UNO_Client.Adapter;
-using UNO_Client.Models;
 
 namespace UNO_Client.Interpreter
 {
-    class DrawExpression : Expression
+    class UnoExpression : Expression
     {
         private readonly IConnection connection;
 
-        public DrawExpression(IConnection connection)
+        public UnoExpression(IConnection connection)
         {
             this.connection = connection;
         }
-
         public override async void Interpret(Context context)
         {
             if (context.Input.Length < 1)
@@ -24,11 +22,11 @@ namespace UNO_Client.Interpreter
                 return;
             }
             string[] parts = context.Input.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (parts[0] != "DRAW")
+            if (parts[0] != "UNO")
             {
                 return;
             }
-            var response = await connection.SendDrawCardAsync();
+            var response = await connection.SendSayUnoAsync();
             Output = string.Format("Success: {0} Message: {1}", response.Success, response.Message);
         }
     }

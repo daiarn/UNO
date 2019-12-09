@@ -96,6 +96,7 @@
     <Compile Include="Interpreter\Expression.cs" />
     <Compile Include="Interpreter\Parser.cs" />
     <Compile Include="Interpreter\PutExpression.cs" />
+    <Compile Include="Interpreter\UnoExpression.cs" />
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\CardColor.cs" />
     <Compile Include="Models\CardType.cs" />

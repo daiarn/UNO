@@ -1,27 +1,33 @@
 ﻿using System.Collections.Generic;
+using UNO_Client.Adapter;
 
 namespace UNO_Client.Interpreter
 {
 	public class Parser : Expression
     {
-        List<NumberExpression> tree;
+        readonly List<Expression> tree;
 
-        public Parser()
+        public Parser(IConnection connection)
         {
             // Build the 'parse tree'
-            tree = new List<NumberExpression>();
-            tree.Add(new ThousandExpression());
-            tree.Add(new HundredExpression());
-            tree.Add(new TenExpression());
-            tree.Add(new OneExpression());
+            tree = new List<Expression>
+            {
+                new DrawExpression(connection),
+                new PutExpression(connection),
+                new UnoExpression(connection)
+            };
         }
 
         public override void Interpret(Context context)
         {
             // Interpret
-            foreach (NumberExpression exp in tree)
+            foreach (Expression exp in tree)
             {
                 exp.Interpret(context);
+                if (exp.Output != null)
+                {
+                    context.Output = exp.Output;
+                }
             }
         }
     }

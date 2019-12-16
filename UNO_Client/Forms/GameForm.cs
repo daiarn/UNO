@@ -9,6 +9,7 @@ using System.Linq;
 using UNO_Client.Flyweight;
 using System.Threading.Tasks;
 using UNO_Client.Composite;
+using UNO_Client.Interpreter;
 
 namespace UNO_Client.Forms
 {
@@ -22,10 +23,12 @@ namespace UNO_Client.Forms
 		private readonly StateContext StateContext = new StateContext();
 		private bool soundOn = false;
 		private GameState Gamestate;
+        private Parser parser;
 
 		public GameForm(IConnection connection)
 		{
 			ServerConnection = connection;
+            parser = new Parser(ServerConnection);
 			_ = FetchGameStateAsync();
 
 			InitializeComponent();
@@ -140,7 +143,7 @@ namespace UNO_Client.Forms
 					color = chooser.Color;
 				}
 
-				await ServerConnection.SendPlayCardAsync(card, color);
+				await ServerConnection.SendPlayCardAsync(card.Type, color);
 				_ = FetchGameStateAsync();
 			}
 		}
@@ -345,5 +348,17 @@ namespace UNO_Client.Forms
 			ServerConnection.SendUndoAsync();
 			_ = FetchGameStateAsync();
 		}
+
+        private void submit_Click(object sender, EventArgs e)
+        {
+            responseLine.Text = "";
+            submit.Enabled = false;
+            string command = commandLine.Text;
+            commandLine.Text = "";
+            Context context = new Context(command);
+            parser.Interpret(context);
+            responseLine.Text = context.Output;
+            submit.Enabled = true;
+        }
     }
 }

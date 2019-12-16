@@ -9,7 +9,7 @@ namespace UNO_Client.Interpreter
     public class Context
     {
         public string Input;
-        public int Output;
+        public string Output;
 
         public Context(string input)
         {
